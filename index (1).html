@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <base href="/genshinshibari-roulette/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webルーレット</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .setup-container, .roulette-container {
+            position: relative;
+            width: 500px;
+            border: 5px solid #333;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            display: none;
+        }
+        .roulette-container {
+            height: 500px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .active {
+            display: block;
+        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+        }
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button, #startButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #startButton, #preSpinButton, #mainSpinButton, #nextSpinButton {
+            background-color: #4CAF50;
+        }
+        #startButton:hover, #preSpinButton:hover, #mainSpinButton:hover, #nextSpinButton:hover {
+            background-color: #45a049;
+        }
+        #preStopButton, #mainStopButton, #nextStopButton, .rerollButton {
+            background-color: #ff4d4d;
+        }
+        #preStopButton:hover, #mainStopButton:hover, #nextStopButton:hover, .rerollButton:hover {
+            background-color: #e04343;
+        }
+        button:disabled, #startButton:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 20px solid red;
+            z-index: 10;
+        }
+        .setup-container label {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+        .setup-container select, .setup-container input {
+            font-size: 18px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webルーレット</h1>
+    <!-- セットアップ画面 -->
+    <div id="setup" class="setup-container active">
+        <label for="playerCount">プレイ人数:</label>
+        <select id="playerCount">
+            <option value="1">1人</option>
+            <option value="2">2人</option>
+            <option value="3">3人</option>
+            <option value="4">4人</option>
+        </select>
+        <label for="mainSpinCount">メルーレットの回転回数:</label>
+        <input type="number" id="mainSpinCount" min="1" value="1">
+        <button id="startButton">開始</button>
+    </div>
+    <!-- プレルーレット -->
+    <div id="preRoulette" class="roulette-container">
+        <div class="pointer"></div>
+        <canvas id="preWheel" width="500" height="500" class="wheel"></canvas>
+    </div>
+    <!-- メルーレット -->
+    <div id="mainRoulette" class="roulette-container">
+        <div class="pointer"></div>
+        <canvas id="mainWheel" width="500" height="500" class="wheel"></canvas>
+    </div>
+    <!-- 次のルーレット -->
+    <div id="nextRoulette" class="roulette-container">
+        <div class="pointer"></div>
+        <canvas id="nextWheel" width="500" height="500" class="wheel"></canvas>
+    </div>
+    <!-- プレルーレットのボタンと結果 -->
+    <div class="button-container" id="preButtons" style="display: none;">
+        <button id="preSpinButton">スピン</button>
+        <button id="preStopButton" disabled>ストップ</button>
+    </div>
+    <!-- メルーレットのボタンと結果 -->
+    <div class="button-container" id="mainButtons" style="display: none;">
+        <button id="mainSpinButton">スピン</button>
+        <button id="mainStopButton" disabled>ストップ</button>
+    </div>
+    <!-- 次のルーレットのボタンと結果 -->
+    <div class="button-container" id="nextButtons" style="display: none;">
+        <button id="nextSpinButton">スピン</button>
+        <button id="nextStopButton" disabled>ストップ</button>
+    </div>
+    <div id="preResult" class="result"></div>
+    <div id="mainResult" class="result"></div>
+    <div id="nextResult" class="result"></div>
+
+    <script>
+        // セットアップの設定
+        const setup = document.getElementById('setup');
+        const playerCountSelect = document.getElementById('playerCount');
+        const mainSpinCountInput = document.getElementById('mainSpinCount');
+        const startButton = document.getElementById('startButton');
+
+        // プレルーレットの設定
+        const preCanvas = document.getElementById('preWheel');
+        const preCtx = preCanvas.getContext('2d');
+        const preSpinButton = document.getElementById('preSpinButton');
+        const preStopButton = document.getElementById('preStopButton');
+        const preResultDiv = document.getElementById('preResult');
+        const preRoulette = document.getElementById('preRoulette');
+        const preButtons = document.getElementById('preButtons');
+        const preRadius = preCanvas.width / 2;
+
+        // メルーレットの設定
+        const mainCanvas = document.getElementById('mainWheel');
+        const mainCtx = mainCanvas.getContext('2d');
+        const mainSpinButton = document.getElementById('mainSpinButton');
+        const mainStopButton = document.getElementById('mainStopButton');
+        const mainResultDiv = document.getElementById('mainResult');
+        const mainRoulette = document.getElementById('mainRoulette');
+        const mainButtons = document.getElementById('mainButtons');
+        const mainRadius = mainCanvas.width / 2;
+
+        // 次のルーレットの設定
+        const nextCanvas = document.getElementById('nextWheel');
+        const nextCtx = nextCanvas.getContext('2d');
+        const nextSpinButton = document.getElementById('nextSpinButton');
+        const nextStopButton = document.getElementById('nextStopButton');
+        const nextResultDiv = document.getElementById('nextResult');
+        const nextRoulette = document.getElementById('nextRoulette');
+        const nextButtons = document.getElementById('nextButtons');
+        const nextRadius = nextCanvas.width / 2;
+
+        // プレルーレットのセクション
+        const preSections = [
+            { name: '無相の炎', color: '#ff4d4d' },
+            { name: '無相の水', color: '#4d79ff' },
+            { name: '無相の風', color: '#4dff4d' },
+            { name: '無相の雷', color: '#b34dff' },
+            { name: '無相の草', color: '#94ff4d' },
+            { name: '無相の氷', color: '#4dffff' },
+            { name: '無相の岩', color: '#ff944d' },
+            { name: '純水精霊', color: '#4db3ff' },
+            { name: '雷音権現', color: '#d94dff' },
+            { name: '水形タルパ', color: '#4dffd9' },
+            { name: '深罪の浸礼者', color: '#ff4dff' },
+            { name: '黄金王獣', color: '#ffd94d' },
+            { name: '深淵なるミミック・パピラ', color: '#ff4d79' },
+            { name: '遺跡サーペント', color: '#4dffb3' },
+            { name: '恒常からくり陣形', color: '#b3ff4d' },
+            { name: '兆載永劫ドレイク', color: '#ff4db3' },
+            { name: '半永久統制マトリックス', color: '#4d79b3' },
+            { name: '氷風組曲コペリウス', color: '#ff944d' },
+            { name: '氷風組曲コッペリア', color: '#4dffff' },
+            { name: '秘源機兵・機構デバイス', color: '#ff4d4d' },
+            { name: '魔偶剣鬼', color: '#4d79ff' },
+            { name: '実験用フィールド生成装置', color: '#4dff4d' },
+            { name: '迷える霊覚の修権者', color: '#ffff4d' },
+            { name: '爆炎樹', color: '#b34dff' },
+            { name: '迅電樹', color: '#94ff4d' },
+            { name: '急凍樹', color: '#ff944d' },
+            { name: 'エンシェントヴィシャップ・岩', color: '#4db3ff' },
+            { name: 'アビサルヴィシャップ', color: '#d94dff' },
+            { name: 'マッシュラプトル', color: '#4dffd9' },
+            { name: '風食ウェネト', color: '#ff4dff' },
+            { name: '鉄甲熔炎帝王', color: '#ffd94d' },
+            { name: '千年真珠の海駿', color: '#ff4d79' },
+            { name: '山隠れの猊獣', color: '#4dffb3' },
+            { name: '魔像レガトゥス', color: '#b3ff4d' },
+            { name: '暴君・金焔のクク竜', color: '#ff4db3' },
+            { name: '山の王・貪食のユムカ竜', color: '#4d79b3' },
+            { name: '輝ける溶岩の龍像', color: '#ff944d' },
+            { name: '秘源機兵・統御デバイス', color: '#4dffff' },
+            { name: 'アンドリアス', color: '#ff4d4d' },
+            { name: '公子', color: '#4d79ff' },
+            { name: '若陀龍王', color: '#4dff4d' },
+            { name: '淑女', color: '#ffff4d' },
+            { name: '禍津御建鳴神命', color: '#b34dff' },
+            { name: '正機の神', color: '#94ff4d' },
+            { name: 'アペプ', color: '#ff944d' },
+            { name: '吞星の鯨', color: '#4db3ff' },
+            { name: '召使', color: '#d94dff' },
+            { name: 'グーシートース', color: '#4dffd9' },
+            { name: 'キング＆クイーン', color: '#ff4dff' },
+            { name: 'ヴィヴィアン', color: '#ffd94d' },
+            { name: 'ニニアン', color: '#ff4d79' },
+            { name: 'イゾルト', color: '#4dffb3' },
+            { name: 'リアム', color: '#b3ff4d' },
+            { name: 'ロッキー', color: '#ff4db3' },
+            { name: 'ディアンナラ', color: '#4d79b3' },
+            { name: '赤璋巡岳府君', color: '#ff944d' },
+            { name: 'シネアス', color: '#4dffff' },
+            { name: '異色三連星', color: '#ff4d4d' },
+            { name: 'バラチコ', color: '#4d79ff' },
+            { name: 'コシーホ', color: '#4dff4d' },
+            { name: 'ジャプー', color: '#ffff4d' },
+            { name: 'リライ', color: '#b34dff' },
+            { name: '銅の掟', color: '#94ff4d' },
+            { name: 'ピーク', color: '#ff944d' },
+            { name: '戦羊・鉄爪', color: '#4db3ff' },
+            { name: '微末', color: '#d94dff' }
+        ];
+        const preNumSections = preSections.length;
+        const preAnglePerSection = (2 * Math.PI) / preNumSections;
+
+        // メルーレットのセクション
+        const mainSections = [
+            { name: '☆4キャラ武器', color: '#ff4d4d' },
+            { name: '回復禁止', color: '#4d79ff' },
+            { name: '恒常☆5', color: '#4dff4d' },
+            { name: '所持率100%', color: '#ffff4d' },
+            { name: '国縛り', color: '#b34dff' },
+            { name: '初期キャラのみ', color: '#ff944d' },
+            { name: 'UI非表示+リロール', color: '#4dffff' },
+            { name: '死んだらダメ', color: '#ff4d79' },
+            { name: '無凸縛り', color: '#4dffb3' },
+            { name: 'キャラルーレット', color: '#ffd94d' },
+            { name: '武器種', color: '#ff4d79' },
+            { name: 'キャラ武器', color: '#4db3ff' },
+            { name: '聖遺物', color: '#94ff4d' },
+            { name: '爆発禁止+リロール', color: '#d94dff' },
+            { name: '旅人縛り', color: '#4dffd9' },
+            { name: 'モノ元素', color: '#ff944d' },
+            { name: '0.0縛り', color: '#4d79b3' },
+            { name: '誕生月縛り', color: '#b3ff4d' },
+            { name: 'アルファベット縛り', color: '#ff4db3' },
+            { name: '☆1縛り', color: '#4dffb3' }
+        ];
+        const mainNumSections = mainSections.length;
+        const mainAnglePerSection = (2 * Math.PI) / mainNumSections;
+
+        // 次のルーレットのセクション定義
+        const nextSectionTypes = {
+            '国縛り': [
+                { name: 'モンド', color: '#4dcccc' }, // 水色のような緑
+                { name: '璃月', color: '#ffaa44' }, // 黄色よりのオレンジ
+                { name: '稲妻', color: '#aa44ff' }, // 紫
+                { name: 'スメール', color: '#aaffaa' }, // 黄緑
+                { name: 'フォンテーヌ', color: '#44aaff' }, // 薄い青
+                { name: 'ナタ', color: '#ff5544' }, // オレンジっぽい赤
+                { name: 'スネージナヤ', color: '#aaffff' } // 白っぽい水色
+            ],
+            'キャラルーレット': [
+                { name: '旅人', color: '#ff4d4d' },
+                { name: 'ジン', color: '#4d79ff' },
+                { name: 'アンバー', color: '#4dff4d' },
+                { name: 'リサ', color: '#ffff4d' },
+                { name: 'ガイア', color: '#b34dff' },
+                { name: 'バーバラ', color: '#ff944d' },
+                { name: 'ディルック', color: '#4dffff' },
+                { name: 'レザー', color: '#ff4dff' },
+                { name: 'ウェンティ', color: '#4dffb3' },
+                { name: 'クレー', color: '#ffd94d' },
+                { name: 'ベネット', color: '#ff4d79' },
+                { name: 'ノエル', color: '#4db3ff' },
+                { name: 'フィッシュル', color: '#94ff4d' },
+                { name: 'スクロース', color: '#d94dff' },
+                { name: 'モナ', color: '#4dffd9' },
+                { name: 'ディオナ', color: '#ff944d' },
+                { name: 'アルベド', color: '#4d79b3' },
+                { name: 'ロサリア', color: '#b3ff4d' },
+                { name: 'エウルア', color: '#ff4db3' },
+                { name: 'ミカ', color: '#4dffff' },
+                { name: '魈', color: '#ff4d4d' },
+                { name: '北斗', color: '#4d79ff' },
+                { name: '凝光', color: '#4dff4d' },
+                { name: '香菱', color: '#ffff4d' },
+                { name: '行秋', color: '#b34dff' },
+                { name: '重雲', color: '#ff944d' },
+                { name: '七七', color: '#4dffff' },
+                { name: '刻晴', color: '#ff4dff' },
+                { name: 'タルタリヤ', color: '#4dffb3' },
+                { name: '鍾離', color: '#ffd94d' },
+                { name: '辛炎', color: '#ff4d79' },
+                { name: '甘雨', color: '#4db3ff' },
+                { name: '胡桃', color: '#94ff4d' },
+                { name: '煙緋', color: '#d94dff' },
+                { name: '申鶴', color: '#4dffd9' },
+                { name: '雲菫', color: '#ff944d' },
+                { name: '夜蘭', color: '#4d79b3' },
+                { name: 'ヨォーヨ', color: '#b3ff4d' },
+                { name: '白朮', color: '#ff4db3' },
+                { name: '閑雲', color: '#4dffff' },
+                { name: '嘉明', color: '#ff4d4d' },
+                { name: '藍硯', color: '#4d79ff' },
+                { name: '神里綾華', color: '#4dff4d' },
+                { name: '神里綾人', color: '#ffff4d' },
+                { name: '楓原万葉', color: '#b34dff' },
+                { name: '宵宮', color: '#ff944d' },
+                { name: '早柚', color: '#4dffff' },
+                { name: '雷電将軍', color: '#ff4dff' },
+                { name: '九条裟羅', color: '#4dffb3' },
+                { name: '珊瑚宮心海', color: '#ffd94d' },
+                { name: 'トーマ', color: '#ff4d79' },
+                { name: '荒瀧一斗', color: '#4db3ff' },
+                { name: 'ゴロー', color: '#94ff4d' },
+                { name: '八重神子', color: '#d94dff' },
+                { name: '久岐忍', color: '#4dffd9' },
+                { name: '鹿野院平蔵', color: '#ff944d' },
+                { name: '綺良々', color: '#4d79b3' },
+                { name: '夢見月瑞希', color: '#b3ff4d' },
+                { name: 'ティナリ', color: '#ff4db3' },
+                { name: 'コレイ', color: '#4dffff' },
+                { name: 'ドリー', color: '#ff4d4d' },
+                { name: 'セノ', color: '#4d79ff' },
+                { name: 'キャンディス', color: '#4dff4d' },
+                { name: 'ニィロウ', color: '#ffff4d' },
+                { name: 'ナヒーダ', color: '#b34dff' },
+                { name: 'レイラ', color: '#ff944d' },
+                { name: '放浪者', color: '#4dffff' },
+                { name: 'ファルザン', color: '#ff4dff' },
+                { name: 'アルハイゼン', color: '#4dffb3' },
+                { name: 'ディシア', color: '#ffd94d' },
+                { name: 'カーヴェ', color: '#ff4d79' },
+                { name: 'セトス', color: '#4db3ff' },
+                { name: 'リネ', color: '#94ff4d' },
+                { name: 'リネット', color: '#d94dff' },
+                { name: 'フレミネ', color: '#4dffd9' },
+                { name: 'ヌヴィレット', color: '#ff944d' },
+                { name: 'リオセスリ', color: '#4d79b3' },
+                { name: 'シャルロット', color: '#b3ff4d' },
+                { name: 'フリーナ', color: '#ff4db3' },
+                { name: 'ナヴィア', color: '#4dffff' },
+                { name: 'シュヴルーズ', color: '#ff4d4d' },
+                { name: '千織', color: '#4d79ff' },
+                { name: 'アルレッキーノ', color: '#4dff4d' },
+                { name: 'クロリンデ', color: '#ffff4d' },
+                { name: 'シグウィン', color: '#b34dff' },
+                { name: 'エミリエ', color: '#ff944d' },
+                { name: 'エスコフィエ', color: '#4dffff' },
+                { name: 'ムアラニ', color: '#ff4dff' },
+                { name: 'カチーナ', color: '#4dffb3' },
+                { name: 'キィニチ', color: '#ffd94d' },
+                { name: 'シロネン', color: '#ff4d79' },
+                { name: 'チャスカ', color: '#4db3ff' },
+                { name: 'オロルン', color: '#94ff4d' },
+                { name: 'シトラリ', color: '#d94dff' },
+                { name: 'マーヴィカ', color: '#4dffd9' },
+                { name: 'ヴァレサ', color: '#ff944d' },
+                { name: 'イファ', color: '#4d79b3' },
+                { name: 'イアンサ', color: '#b3ff4d' }
+            ],
+            '武器種': [
+                { name: '片手剣', color: '#ff4d4d' },
+                { name: '両手剣', color: '#4d79ff' },
+                { name: '長柄武器', color: '#4dff4d' },
+                { name: '法器', color: '#ffff4d' },
+                { name: '弓', color: '#b34dff' }
+            ],
+            'モノ元素': [
+                { name: '炎', color: '#ff5544' }, // ナタと同じ
+                { name: '水', color: '#44aaff' }, // フォンテーヌと同じ
+                { name: '草', color: '#aaffaa' }, // スメールと同じ
+                { name: '風', color: '#4dcccc' }, // モンドと同じ
+                { name: '氷', color: '#aaffff' }, // スネージナヤと同じ
+                { name: '岩', color: '#ffaa44' }, // 璃月と同じ
+                { name: '雷', color: '#aa44ff' } // 稲妻と同じ
+            ],
+            '0.0縛り': [
+                { name: 'n.0', color: '#ff4d4d' },
+                { name: 'n.1', color: '#4d79ff' },
+                { name: 'n.2', color: '#4dff4d' },
+                { name: 'n.3', color: '#ffff4d' },
+                { name: 'n.4', color: '#b34dff' },
+                { name: 'n.5', color: '#ff944d' },
+                { name: 'n.6', color: '#4dffff' },
+                { name: 'n.7', color: '#ff4dff' },
+                { name: 'n.8', color: '#4dffb3' }
+            ],
+            '誕生月縛り': [
+                { name: '1月', color: '#ff4d4d' },
+                { name: '2月', color: '#4d79ff' },
+                { name: '3月', color: '#4dff4d' },
+                { name: '4月', color: '#ffff4d' },
+                { name: '5月', color: '#b34dff' },
+                { name: '6月', color: '#ff944d' },
+                { name: '7月', color: '#4dffff' },
+                { name: '8月', color: '#ff4dff' },
+                { name: '9月', color: '#4dffb3' },
+                { name: '10月', color: '#ffd94d' },
+                { name: '11月', color: '#ff4d79' },
+                { name: '12月', color: '#4db3ff' }
+            ],
+            'アルファベット縛り': [
+                { name: 'A', color: '#ff4d4d' },
+                { name: 'B', color: '#4d79ff' },
+                { name: 'C', color: '#4dff4d' },
+                { name: 'D', color: '#ffff4d' },
+                { name: 'E', color: '#b34dff' },
+                { name: 'F', color: '#ff944d' },
+                { name: 'G', color: '#4dffff' },
+                { name: 'H', color: '#ff4dff' },
+                { name: 'I', color: '#4dffb3' },
+                { name: 'J', color: '#ffd94d' },
+                { name: 'K', color: '#ff4d79' },
+                { name: 'L', color: '#4db3ff' },
+                { name: 'M', color: '#94ff4d' },
+                { name: 'N', color: '#d94dff' },
+                { name: 'O', color: '#4dffd9' },
+                { name: 'P', color: '#ff944d' },
+                { name: 'Q', color: '#4d79b3' },
+                { name: 'R', color: '#b3ff4d' },
+                { name: 'S', color: '#ff4db3' },
+                { name: 'T', color: '#4dffff' },
+                { name: 'U', color: '#ff4d4d' },
+                { name: 'V', color: '#4d79ff' },
+                { name: 'W', color: '#4dff4d' },
+                { name: 'X', color: '#ffff4d' },
+                { name: 'Y', color: '#b34dff' },
+                { name: 'Z', color: '#ff944d' }
+            ]
+        };
+
+        let preIsSpinning = false;
+        let preRotation = 0;
+        let preAnimationFrameId = null;
+        let mainIsSpinning = false;
+        let mainRotation = 0;
+        let mainAnimationFrameId = null;
+        let nextIsSpinning = false;
+        let nextRotation = 0;
+        let nextAnimationFrameId = null;
+        let nextSections = [];
+        let nextNumSections = 0;
+        let nextAnglePerSection = 0;
+        let playerCount = 1;
+        let mainSpinCount = 1;
+        let currentMainSpin = 0;
+        let currentPlayer = 1;
+        let currentSpin = 0;
+        let playerResults = [];
+
+        // プレルーレットの描画
+        function drawPreWheel() {
+            preCtx.clearRect(0, 0, preCanvas.width, preCanvas.height);
+            for (let i = 0; i < preNumSections; i++) {
+                const startAngle = i * preAnglePerSection;
+                preCtx.beginPath();
+                preCtx.moveTo(preRadius, preRadius);
+                preCtx.arc(preRadius, preRadius, preRadius, startAngle, startAngle + preAnglePerSection);
+                preCtx.fillStyle = preSections[i].color;
+                preCtx.fill();
+
+                preCtx.save();
+                preCtx.translate(preRadius, preRadius);
+                preCtx.rotate(startAngle + preAnglePerSection / 2);
+                preCtx.fillStyle = '#000';
+                preCtx.font = '10px Arial';
+                preCtx.textAlign = 'center';
+                const text = preSections[i].name;
+                if (text.length > 10) {
+                    const splitPoint = text.indexOf('・') > -1 ? text.indexOf('・') : Math.floor(text.length / 2);
+                    const line1 = toOneByte(text.slice(0, splitPoint));
+                    const line2 = toOneByte(text.slice(splitPoint));
+                    preCtx.fillText(line1, preRadius - 50, -5);
+                    preCtx.fillText(line2, preRadius - 50, 5);
+                } else {
+                    preCtx.fillText(toOneByte(text), preRadius - 50, 0);
+                }
+                preCtx.restore();
+            }
+        }
+
+        // メルーレットの描画
+        function drawMainWheel() {
+            mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+            for (let i = 0; i < mainNumSections; i++) {
+                const startAngle = i * mainAnglePerSection;
+                mainCtx.beginPath();
+                mainCtx.moveTo(mainRadius, mainRadius);
+                mainCtx.arc(mainRadius, mainRadius, mainRadius, startAngle, startAngle + mainAnglePerSection);
+                mainCtx.fillStyle = mainSections[i].color;
+                mainCtx.fill();
+
+                mainCtx.save();
+                mainCtx.translate(mainRadius, mainRadius);
+                mainCtx.rotate(startAngle + mainAnglePerSection / 2);
+                mainCtx.fillStyle = '#000';
+                mainCtx.font = '12px Arial';
+                mainCtx.textAlign = 'center';
+                const text = mainSections[i].name;
+                if (text.length > 10) {
+                    const splitPoint = text.indexOf('+') > -1 ? text.indexOf('+') : Math.floor(text.length / 2);
+                    const line1 = text.slice(0, splitPoint);
+                    const line2 = text.slice(splitPoint);
+                    mainCtx.fillText(line1, mainRadius - 50, -5);
+                    mainCtx.fillText(line2, mainRadius - 50, 10);
+                } else {
+                    mainCtx.fillText(text, mainRadius - 50, 5);
+                }
+                mainCtx.restore();
+            }
+        }
+
+        // 次のルーレットの描画
+        function drawNextWheel() {
+            nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+            for (let i = 0; i < nextNumSections; i++) {
+                const startAngle = i * nextAnglePerSection;
+                nextCtx.beginPath();
+                nextCtx.moveTo(nextRadius, nextRadius);
+                nextCtx.arc(nextRadius, nextRadius, nextRadius, startAngle, startAngle + nextAnglePerSection);
+                nextCtx.fillStyle = nextSections[i].color;
+                nextCtx.fill();
+
+                nextCtx.save();
+                nextCtx.translate(nextRadius, nextRadius);
+                nextCtx.rotate(startAngle + nextAnglePerSection / 2);
+                nextCtx.fillStyle = '#000';
+                nextCtx.font = nextNumSections > 50 ? '10px Arial' : '12px Arial';
+                nextCtx.textAlign = 'center';
+                const text = nextSections[i].name;
+                if (text.length > 10) {
+                    const splitPoint = text.indexOf('・') > -1 ? text.indexOf('・') : Math.floor(text.length / 2);
+                    const line1 = toOneByte(text.slice(0, splitPoint));
+                    const line2 = toOneByte(text.slice(splitPoint));
+                    nextCtx.fillText(line1, nextRadius - 50, -5);
+                    nextCtx.fillText(line2, nextRadius - 50, 5);
+                } else {
+                    nextCtx.fillText(toOneByte(text), nextRadius - 50, 0);
+                }
+                nextCtx.restore();
+            }
+        }
+
+        // プレルーレットの回転
+        function spinPreWheel() {
+            if (preIsSpinning) {
+                preRotation += 5;
+                preCanvas.style.transform = `rotate(${preRotation}deg)`;
+                preAnimationFrameId = requestAnimationFrame(spinPreWheel);
+            }
+        }
+
+        // メルーレットの回転
+        function spinMainWheel() {
+            if (mainIsSpinning) {
+                mainRotation += 5;
+                mainCanvas.style.transform = `rotate(${mainRotation}deg)`;
+                mainAnimationFrameId = requestAnimationFrame(spinMainWheel);
+            }
+        }
+
+        // 次のルーレットの回転
+        function spinNextWheel() {
+            if (nextIsSpinning) {
+                nextRotation += 5;
+                nextCanvas.style.transform = `rotate(${nextRotation}deg)`;
+                nextAnimationFrameId = requestAnimationFrame(spinNextWheel);
+            }
+        }
+
+        function toOneByte(str) {
+            return str.replace(/[０-９]/g, function(s) {
+                return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+            });
+        }
+
+        // 開始ボタン
+        startButton.addEventListener('click', () => {
+            playerCount = parseInt(playerCountSelect.value);
+            mainSpinCount = parseInt(mainSpinCountInput.value) || 1;
+            if (mainSpinCount < 1) mainSpinCount = 1;
+            currentMainSpin = 0;
+            currentPlayer = 1;
+            playerResults = [];
+            setup.classList.remove('active');
+            preRoulette.classList.add('active');
+            preButtons.style.display = 'flex';
+            preResultDiv.textContent = `プレイヤー${currentPlayer} - スピン 1/1`;
+            preResultDiv.style.display = 'block';
+        });
+
+        // プレルーレットのスピン
+        preSpinButton.addEventListener('click', () => {
+            if (!preIsSpinning) {
+                preIsSpinning = true;
+                preSpinButton.disabled = true;
+                preStopButton.disabled = false;
+                spinPreWheel();
+            }
+        });
+
+        // プレルーレットのストップ
+        preStopButton.addEventListener('click', () => {
+            if (preIsSpinning) {
+                preIsSpinning = false;
+                cancelAnimationFrame(preAnimationFrameId);
+                preSpinButton.disabled = false;
+                preStopButton.disabled = true;
+
+                const finalAngle = preRotation % 360;
+                const adjustedAngle = (360 - finalAngle + 90) % 360;
+                const sectionIndex = Math.floor(adjustedAngle / (360 / preNumSections));
+                const result = preSections[sectionIndex].name;
+                preResultDiv.textContent = `プレイヤー${currentPlayer} - スピン 1/1 - 結果: ${result}`;
+                preResultDiv.style.display = 'block';
+
+                setTimeout(() => {
+                    preRoulette.classList.remove('active');
+                    preButtons.style.display = 'none';
+                    preResultDiv.style.display = 'none';
+                    mainRoulette.classList.add('active');
+                    mainButtons.style.display = 'flex';
+                    mainResultDiv.textContent = `プレイヤー${currentPlayer} - スピン ${currentMainSpin + 1}/${mainSpinCount}`;
+                    mainResultDiv.style.display = 'block';
+                }, 5000);
+            }
+        });
+
+        // メルーレットのスピン
+        mainSpinButton.addEventListener('click', () => {
+            if (!mainIsSpinning) {
+                mainIsSpinning = true;
+                mainSpinButton.disabled = true;
+                mainStopButton.disabled = false;
+                spinMainWheel();
+            }
+        });
+
+        // メルーレットのストップ
+        mainStopButton.addEventListener('click', () => {
+            if (mainIsSpinning) {
+                mainIsSpinning = false;
+                cancelAnimationFrame(mainAnimationFrameId);
+                mainSpinButton.disabled = false;
+                mainStopButton.disabled = true;
+
+                const finalAngle = mainRotation % 360;
+                const adjustedAngle = (360 - finalAngle + 90) % 360;
+                const sectionIndex = Math.floor(adjustedAngle / (360 / mainNumSections));
+                const result = mainSections[sectionIndex].name;
+                mainResultDiv.textContent = `プレイヤー${currentPlayer} - スピン ${currentMainSpin + 1}/${mainSpinCount} - 結果: ${result}`;
+                mainResultDiv.style.display = 'block';
+
+                setTimeout(() => {
+                    if (result === 'UI非表示+リロール' || result === '爆発禁止+リロール') {
+                        mainRoulette.classList.add('active');
+                        mainButtons.style.display = 'flex';
+                        mainResultDiv.style.display = 'none';
+                        mainRotation = 0;
+                        mainCanvas.style.transform = `rotate(0deg)`;
+                        mainResultDiv.textContent = `プレイヤー${currentPlayer} - スピン ${currentMainSpin + 1}/${mainSpinCount}`;
+                    } else if (['国縛り', 'キャラルーレット', '武器種', 'モノ元素', '0.0縛り', '誕生月縛り', 'アルファベット縛り'].includes(result)) {
+                        nextSections = nextSectionTypes[result];
+                        nextNumSections = nextSections.length;
+                        nextAnglePerSection = (2 * Math.PI) / nextNumSections;
+                        drawNextWheel();
+                        mainRoulette.classList.remove('active');
+                        mainButtons.style.display = 'none';
+                        mainResultDiv.style.display = 'none';
+                        nextRoulette.classList.add('active');
+                        nextButtons.style.display = 'flex';
+                        currentSpin = 0;
+                        playerResults = [];
+                        nextResultDiv.textContent = `プレイヤー${currentPlayer} - スピン ${currentSpin + 1}/${result === 'キャラルーレット' ? playerCount : 1}`;
+                        nextResultDiv.style.display = 'block';
+                    } else {
+                        currentMainSpin++;
+                        if (currentMainSpin < mainSpinCount) {
+                            mainRoulette.classList.add('active');
+                            mainButtons.style.display = 'flex';
+                            mainResultDiv.style.display = 'none';
+                            mainRotation = 0;
+                            mainCanvas.style.transform = `rotate(0deg)`;
+                            mainResultDiv.textContent = `プレイヤー${currentPlayer} - スピン ${currentMainSpin + 1}/${mainSpinCount}`;
+                        } else {
+                            currentPlayer++;
+                            currentMainSpin = 0;
+                            if (currentPlayer <= playerCount) {
+                                mainRoulette.classList.add('active');
+                                mainButtons.style.display = 'flex';
+                                mainResultDiv.style.display = 'none';
+                                mainRotation = 0;
+                                mainCanvas.style.transform = `rotate(0deg)`;
+                                mainResultDiv.textContent = `プレイヤー${currentPlayer} - スピン ${currentMainSpin + 1}/${mainSpinCount}`;
+                            } else {
+                                mainResultDiv.style.display = 'block';
+                            }
+                        }
+                    }
+                }, 5000);
+            }
+        });
+
+        // 次のルーレットのスピン
+        nextSpinButton.addEventListener('click', () => {
+            if (!nextIsSpinning) {
+                nextIsSpinning = true;
+                nextSpinButton.disabled = true;
+                nextStopButton.disabled = false;
+                nextResultDiv.style.display = 'none';
+                // 既存の「持っていない」ボタンを削除
+                const existingRerollButtons = nextButtons.querySelectorAll('.rerollButton');
+                existingRerollButtons.forEach(btn => btn.remove());
+                spinNextWheel();
+            }
+        });
+
+        // 次のルーレットのストップ
+        nextStopButton.addEventListener('click', () => {
+            if (nextIsSpinning) {
+                nextIsSpinning = false;
+                cancelAnimationFrame(nextAnimationFrameId);
+                nextSpinButton.disabled = false;
+                nextStopButton.disabled = true;
+
+                const finalAngle = nextRotation % 360;
+                const adjustedAngle = (360 - finalAngle + 90) % 360;
+                const sectionIndex = Math.floor(adjustedAngle / (360 / nextNumSections));
+                const result = nextSections[sectionIndex].name;
+                playerResults.unshift(result); // 先頭に結果を追加
+                const maxSpins = nextSections === nextSectionTypes['キャラルーレット'] ? playerCount : 1;
+                nextResultDiv.textContent = `プレイヤー${currentPlayer} - スピン ${currentSpin + 1}/${maxSpins} - 結果: ${result}`;
+                nextResultDiv.style.display = 'block';
+
+                // キャラルーレットの場合、「持っていない」ボタンを追加
+                if (nextSections === nextSectionTypes['キャラルーレット']) {
+                    const rerollButton = document.createElement('button');
+                    rerollButton.textContent = '持っていない';
+                    rerollButton.className = 'rerollButton';
+                    rerollButton.addEventListener('click', () => {
+                        nextButtons.removeChild(rerollButton);
+                        nextRotation = 0;
+                        nextCanvas.style.transform = `rotate(0deg)`;
+                        nextResultDiv.style.display = 'none';
+                        playerResults.shift(); // 先頭の結果を削除
+                        nextIsSpinning = true;
+                        nextSpinButton.disabled = true;
+                        nextStopButton.disabled = false;
+                        spinNextWheel();
+                    });
+                    nextButtons.appendChild(rerollButton);
+                }
+
+                setTimeout(() => {
+                    currentSpin++;
+                    if (currentSpin < maxSpins) {
+                        nextRoulette.classList.add('active');
+                        nextButtons.style.display = 'flex';
+                        nextResultDiv.style.display = 'none';
+                        nextRotation = 0;
+                        nextCanvas.style.transform = `rotate(0deg)`;
+                        nextResultDiv.textContent = `プレイヤー${currentPlayer} - スピン ${currentSpin + 1}/${maxSpins}`;
+                        // 既存の「持っていない」ボタンを削除
+                        const existingRerollButtons = nextButtons.querySelectorAll('.rerollButton');
+                        existingRerollButtons.forEach(btn => btn.remove());
+                    } else {
+                        currentPlayer++;
+                        currentSpin = 0;
+                        if (currentPlayer <= playerCount && currentMainSpin < mainSpinCount) {
+                            nextRoulette.classList.remove('active');
+                            nextButtons.style.display = 'none';
+                            nextResultDiv.style.display = 'none';
+                            mainRoulette.classList.add('active');
+                            mainButtons.style.display = 'flex';
+                            mainResultDiv.textContent = `プレイヤー${currentPlayer} - スピン ${currentMainSpin + 1}/${mainSpinCount}`;
+                            mainResultDiv.style.display = 'block';
+                        } else {
+                            nextResultDiv.style.display = 'block';
+                        }
+                    }
+                }, 5000);
+            }
+        });
+
+        // 初期描画
+        drawPreWheel();
+        drawMainWheel();
+    </script>
+</body>
+</html>
