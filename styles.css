@@ -1,29 +1,34 @@
-/* styles.css */
 body {
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
-}
-
-#container {
-    text-align: center;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-h1, h2 {
+    background-image: url('images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: #333;
 }
 
-input, button {
+#container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+}
+
+h1, h2, h3 {
+    color: #444;
+}
+
+input[type="number"] {
+    width: 60px;
     margin: 10px;
-    padding: 10px;
+    padding: 5px;
     font-size: 16px;
 }
 
@@ -31,8 +36,11 @@ button {
     background-color: #4CAF50;
     color: white;
     border: none;
+    padding: 10px 20px;
+    margin: 5px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
 }
 
 button:disabled {
@@ -45,21 +53,28 @@ button:hover:not(:disabled) {
 }
 
 #roulette-canvas {
+    margin: 20px auto;
     display: block;
-    margin: 0 auto;
 }
 
 #controls {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 #result {
     margin-top: 20px;
     font-size: 18px;
-    font-weight: bold;
+    color: #d32f2f;
+}
+
+#detail-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 #detail-buttons button {
+    flex: 1 1 150px;
     margin: 5px;
 }
 
