@@ -155,7 +155,7 @@ const weapons = {
     "長柄武器": [
         "香りのシンフォニスト", "玉響停の御噺", "鎮山の釘", "虹の行方",
         "ルミドゥースの挽歌", "赤月のシルエット", "砂中の賢者達の問答", "プロスペクタードリル",
-        "フィヨルドの歌", "正義の報酬", "赤砂の杖", "風信の矛", "ムーンピアサー",
+        "フィヨルドの歌", "正義の報酬", "赤砂の杖", "風信の槍", "ムーンピアサー",
         "ドラゴンスピア", "黒纓槍", "黒岩の突槍", "鉄尖槍", "鉾槍",
         "破天の槍", "星鎌・試作", "西風長槍", "草薙の稲光", "白纓槍",
         "流月の針", "新米の長槍", "斬波のひれ長", "護摩の杖", "息災",
@@ -370,12 +370,12 @@ function drawRoulette() {
     shuffledItems.forEach((item, i) => {
         ctx.beginPath();
         ctx.moveTo(radius, radius);
-        ctx.arc(radius, radius, radius - 10, arc * i, arc * (i + 1));
+        ctx.arc(radius, radius, radius - 10, arc * i - angle, arc * (i + 1) - angle);
         ctx.fillStyle = `hsl(${i * 360 / shuffledItems.length}, 70%, 80%)`;
         ctx.fill();
         ctx.save();
         ctx.translate(radius, radius);
-        ctx.rotate(arc * (i + 0.5));
+        ctx.rotate(arc * (i + 0.5) - angle);
         ctx.textAlign = 'right';
         ctx.fillStyle = '#000';
         ctx.font = '12px Arial';
@@ -383,18 +383,19 @@ function drawRoulette() {
         ctx.restore();
     });
 
-    // 赤い三角形 (改善点4)
+    // 赤い三角形 (12時方向に固定、改善点)
+    const triangleSize = 15;
     ctx.beginPath();
     ctx.moveTo(radius, 10);
-    ctx.lineTo(radius - 15, 30);
-    ctx.lineTo(radius + 15, 30);
+    ctx.lineTo(radius - triangleSize, 30);
+    ctx.lineTo(radius + triangleSize, 30);
     ctx.fillStyle = 'red';
     ctx.fill();
 
     // 選択項目の赤い枠線 (改善点3)
     if (!isSpinning && currentResult) {
         const selectedIndex = shuffledItems.indexOf(currentResult);
-        const startAngle = selectedIndex * arc;
+        const startAngle = selectedIndex * arc - angle;
         ctx.beginPath();
         ctx.arc(radius, radius, radius - 10, startAngle, startAngle + arc);
         ctx.strokeStyle = 'red';
@@ -407,11 +408,12 @@ function drawRoulette() {
 function spinRoulette() {
     if (isSpinning) return;
     isSpinning = true;
+    angle = 0; // 回転角度をリセット
     speed = Math.random() * 0.2 + 0.2;
     deceleration = 0.0005; // 初期減速
-    document.getElementById('spin-btn').classList.add('disabled');
-    document.getElementById('stop-btn').classList.remove('disabled');
-    document.getElementById('next-btn').classList.add('disabled');
+    document.getElementById('spin-btn').disabled = true;
+    document.getElementById('stop-btn').disabled = false; // 即座に「止める」を有効化
+    document.getElementById('next-btn').disabled = true;
     animate();
 }
 
@@ -446,9 +448,9 @@ function stopRoulette() {
         const index = Math.floor((2 * Math.PI - adjustedAngle) / arc) % shuffledItems.length;
         currentResult = shuffledItems[index];
         console.log('ルーレット結果:', currentResult);
-        document.getElementById('spin-btn').classList.remove('disabled');
-        document.getElementById('stop-btn').classList.add('disabled');
-        document.getElementById('next-btn').classList.remove('disabled');
+        document.getElementById('spin-btn').disabled = false;
+        document.getElementById('stop-btn').disabled = true;
+        document.getElementById('next-btn').disabled = false;
         showPopup(currentResult); // 改善点5
     } else {
         requestAnimationFrame(animate);
