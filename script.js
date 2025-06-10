@@ -5,7 +5,7 @@ let mode, detailMode, spinCount, currentSpin, selectedChar;
 let isSpinning, angle, speed, deceleration, stopTime;
 let canvas, ctx, shuffledItems, originalIndices;
 
-// データ（以前提供されたものをそのまま使用）
+// データ（以前提供されたものをそのまま使用、コメントで意図を補足）
 const characters = [
     "旅人", "ジン", "アンバー", "リサ", "ガイア", "バーバラ", "ディルック", "レザー", "ウェンティ", "クレー",
     "ベネット", "ノエル", "フィッシュル", "スクロース", "モナ", "ディオナ", "アルベド", "ロサリア", "エウルア", "ミカ",
@@ -17,6 +17,7 @@ const characters = [
     "カーヴェ", "セトス", "リネ", "リネット", "フレミネ", "ヌヴィレット", "リオセスリ", "シャルロット", "フリーナ", "ナヴィア",
     "シュヴルーズ", "千織", "アルレッキーノ", "クロリンデ", "シグウィン", "エミリエ", "エスコフィエ", "ムアラニ", "カチーナ", "キィニチ",
     "シロネン", "チャスカ", "オロルン", "シトラリ", "マーヴィカ", "ヴァレサ", "イファ", "イアンサ", "スカーク", "ダリア"
+    // 注: エスコフィエ、イアンサ等は2025年6月時点で未実装の仮データ
 ];
 
 const bosses = [
@@ -53,6 +54,7 @@ const detailData = {
 
 const detailResultsData = {
     "各1.1縛り": {
+        // n.0: 初期～1.0バージョン, n.1: 1.1バージョン, 以下同様（2025年6月時点の仮データ）
         "n.0": ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋",
             "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ",
             "クレー", "神里綾華", "宵宮", "早柚", "ティナリ", "コレイ", "ドリー", "リネ", "リネット", "フレミネ", "ムアラニ",
@@ -208,9 +210,15 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas = document.getElementById('roulette-canvas');
     if (!canvas) {
         console.error('Canvas element not found!');
+        alert('キャンバスの初期化に失敗しました');
         return;
     }
     ctx = canvas.getContext('2d');
+    if (!ctx) {
+        console.error('Canvas context not available');
+        alert('キャンバスの初期化に失敗しました');
+        return;
+    }
     resetState();
 });
 
@@ -240,8 +248,7 @@ function resetState() {
     shuffledItems = [];
     originalIndices = [];
     console.log('状態をリセットしました');
-    document.getElementById('result').style.display = 'none';
-    document.getElementById('popup').classList.remove('active');
+    showScreen('start-screen');
 }
 
 // 画面表示切り替え
@@ -266,10 +273,12 @@ function startFullFlow() {
     const cc = parseInt(document.getElementById('constraint-count').value);
     if (isNaN(pc) || pc < 1 || pc > 4) {
         alert('プレイヤー数は1～4で入力してください');
+        resetState();
         return;
     }
     if (isNaN(cc) || cc < 1 || cc > 10) {
         alert('縛りの数は1～10で入力してください');
+        resetState();
         return;
     }
     playerCount = pc;
@@ -280,6 +289,7 @@ function startFullFlow() {
     detailResults = {};
     currentConstraint = 1;
     currentPlayer = 1;
+    excluded = [];
     startRoulette('boss', bosses, 'ボスルーレット');
 }
 
@@ -292,6 +302,7 @@ function showIndividual(type) {
         const pc = parseInt(document.getElementById('player-count').value);
         if (isNaN(pc) || pc < 1 || pc > 4) {
             alert('プレイヤー数は1～4で入力してください');
+            resetState();
             return;
         }
         playerCount = pc;
@@ -299,6 +310,7 @@ function showIndividual(type) {
         spinCount = 1;
         currentSpin = 0;
         mode = type;
+        excluded = [];
         const items = type === 'boss' ? bosses : constraints;
         const title = type === 'boss' ? 'ボスルーレット' : '縛りルーレット';
         startRoulette(type, items, title);
@@ -312,10 +324,12 @@ function startDetailRoulette(type) {
     const sc = parseInt(document.getElementById('detail-spin-count').value);
     if (isNaN(pc) || pc < 1 || pc > 4) {
         alert('プレイヤー数は1～4で入力してください');
+        resetState();
         return;
     }
     if (isNaN(sc) || sc < 1 || sc > 10) {
         alert('回数は1～10で入力してください');
+        resetState();
         return;
     }
     playerCount = pc;
@@ -336,9 +350,14 @@ function startDetailRoulette(type) {
 // ルーレット開始
 function startRoulette(type, items, title) {
     console.log(`ルーレット開始: ${title}, アイテム数: ${items.length}`);
+    if (!canvas || !ctx) {
+        alert('キャンバスの初期化に失敗しました');
+        resetState();
+        return;
+    }
     mode = type === 'char' || type === 'weapon' ? mode : type;
     currentItems = items;
-    excluded = excluded || [];
+    excluded = type === 'boss' || type === 'constraint' ? [] : excluded; // ボスや縛りでは除外リストをリセット
     showScreen('roulette-screen');
     const titleElement = document.getElementById('roulette-title');
     if (titleElement) titleElement.textContent = title;
@@ -351,8 +370,10 @@ function startRoulette(type, items, title) {
 
 // ルーレット描画
 function drawRoulette() {
-    if (!ctx) {
-        console.error('Canvas context not available');
+    if (!canvas || !ctx) {
+        console.error('Canvas or context not available');
+        alert('キャンバスの初期化に失敗しました');
+        resetState();
         return;
     }
     const items = currentItems.filter(item => !excluded.includes(item));
@@ -367,23 +388,27 @@ function drawRoulette() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const radius = canvas.width / 2;
     const arc = 2 * Math.PI / shuffledItems.length;
+
+    // ルーレットのセクションを描画
     shuffledItems.forEach((item, i) => {
         ctx.beginPath();
         ctx.moveTo(radius, radius);
         ctx.arc(radius, radius, radius - 10, arc * i - angle, arc * (i + 1) - angle);
         ctx.fillStyle = `hsl(${i * 360 / shuffledItems.length}, 70%, 80%)`;
         ctx.fill();
-        ctx.save();
-        ctx.translate(radius, radius);
-        ctx.rotate(arc * (i + 0.5) - angle);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = '#000';
-        ctx.font = '12px Arial';
-        ctx.fillText(item, radius - 20, 0);
-        ctx.restore();
+        if (!isSpinning) { // 回転中はテキストを非表示
+            ctx.save();
+            ctx.translate(radius, radius);
+            ctx.rotate(arc * (i + 0.5) - angle);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#000';
+            ctx.font = `${Math.min(canvas.width / 20, 12)}px Arial`;
+            ctx.fillText(item, radius - 20, 0);
+            ctx.restore();
+        }
     });
 
-    // 赤い三角形 (12時方向に固定、改善点)
+    // 赤い三角形（12時方向に固定）
     const triangleSize = 15;
     ctx.beginPath();
     ctx.moveTo(radius, 10);
@@ -392,7 +417,7 @@ function drawRoulette() {
     ctx.fillStyle = 'red';
     ctx.fill();
 
-    // 選択項目の赤い枠線 (改善点3)
+    // 選択項目の赤い枠線
     if (!isSpinning && currentResult) {
         const selectedIndex = shuffledItems.indexOf(currentResult);
         const startAngle = selectedIndex * arc - angle;
@@ -408,11 +433,12 @@ function drawRoulette() {
 function spinRoulette() {
     if (isSpinning) return;
     isSpinning = true;
-    angle = 0; // 回転角度をリセット
+    angle = 0;
     speed = Math.random() * 0.2 + 0.2;
-    deceleration = 0.0005; // 初期減速
+    deceleration = 0.001;
+    stopTime = Date.now() + 3000; // 3秒で停止
     document.getElementById('spin-btn').disabled = true;
-    document.getElementById('stop-btn').disabled = false; // 即座に「止める」を有効化
+    document.getElementById('stop-btn').disabled = false;
     document.getElementById('next-btn').disabled = true;
     animate();
 }
@@ -422,42 +448,37 @@ function animate() {
     if (!isSpinning) return;
     angle += speed;
     speed -= deceleration;
-    if (speed <= 0 || (stopTime && Date.now() >= stopTime)) {
+    if (speed <= 0 || Date.now() >= stopTime) {
         stopRoulette();
         return;
     }
-    ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate(angle);
-    ctx.translate(-canvas.width / 2, -canvas.height / 2);
     drawRoulette();
-    ctx.restore();
     requestAnimationFrame(animate);
 }
 
 // ルーレット停止
 function stopRoulette() {
     if (!isSpinning) return;
-    stopTime = Date.now() + (2000 + Math.random() * 3000); // 2～5秒 (改善点3)
-    const progress = (Date.now() - (stopTime - (2000 + Math.random() * 3000))) / (2000 + Math.random() * 3000);
-    speed = easeOutQuad(1 - progress) * (Math.random() * 0.2 + 0.2); // 滑らかな減速
-    if (speed <= 0) {
+    const progress = (Date.now() - (stopTime - 3000)) / 3000;
+    speed = easeOutQuad(1 - progress) * 0.3;
+    if (speed <= 0 || Date.now() >= stopTime) {
         isSpinning = false;
-        const adjustedAngle = (-angle + Math.PI) % (2 * Math.PI);
+        const normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
         const arc = 2 * Math.PI / shuffledItems.length;
-        const index = Math.floor((2 * Math.PI - adjustedAngle) / arc) % shuffledItems.length;
+        const index = Math.floor(normalizedAngle / arc) % shuffledItems.length;
         currentResult = shuffledItems[index];
         console.log('ルーレット結果:', currentResult);
         document.getElementById('spin-btn').disabled = false;
         document.getElementById('stop-btn').disabled = true;
         document.getElementById('next-btn').disabled = false;
-        showPopup(currentResult); // 改善点5
+        drawRoulette();
+        showPopup(currentResult);
     } else {
         requestAnimationFrame(animate);
     }
 }
 
-// ポップアップ表示 (改善点5)
+// ポップアップ表示
 function showPopup(result) {
     const popup = document.getElementById('popup');
     const popupResult = document.getElementById('popup-result');
@@ -470,7 +491,7 @@ function showPopup(result) {
     document.getElementById('reroll-btn').classList.add('disabled');
 }
 
-// ポップアップ閉じる (改善点5)
+// ポップアップ閉じる
 function closePopup() {
     const popup = document.getElementById('popup');
     popup.classList.remove('active');
@@ -627,7 +648,7 @@ function proceedToNextPlayerOrConstraint() {
     }
 }
 
-// ボス再ルーレット (改善点8)
+// ボス再ルーレット
 function rerollBoss() {
     bossResult = null;
     currentStep = 'boss';
@@ -661,11 +682,7 @@ function showResultScreen() {
             } else {
                 for (let c = 1; c <= constraintResults.length; c++) {
                     if (detailResults[c] && detailResults[c][p]) {
-                        if (c === 1 && (constraintResults[c-1] === '国縛り' || constraintResults[c-1] === 'モノ元素縛り')) {
-                            results += `${constraintResults[c-1]}: ${detailResults[c][p].join(', ')} (全プレイヤー)<br/>`;
-                        } else {
-                            results += `${constraintResults[c-1]}: ${detailResults[c][p].join(', ')}<br/>`;
-                        }
+                        results += `${constraintResults[c-1]}: ${detailResults[c][p].join(', ')}<br/>`;
                     }
                 }
             }
