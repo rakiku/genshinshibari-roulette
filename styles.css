@@ -6,6 +6,7 @@ body {
     min-height: 100vh;
     margin: 0;
     background-image: url('images/background.jpg');
+    background-color: #e0e0e0; /* フォールバック背景色 */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -19,6 +20,7 @@ body {
     text-align: center;
     max-width: 600px;
     width: 90%;
+    z-index: 1; /* ポップアップより下 */
 }
 
 h1, h2, h3 {
@@ -55,38 +57,20 @@ button:hover:not(:disabled) {
 #roulette-canvas {
     margin: 20px auto;
     display: block;
+    width: 80vw; /* レスポンシブ対応 */
+    max-width: 400px;
+    height: 80vw;
+    max-height: 400px;
 }
 
 #controls {
     margin-top: 10px;
 }
 
-#result {
-    margin-top: 20px;
-    font-size: 18px;
-    color: #d32f2f;
-    display: none; /* 改善点5で非表示化 */
-}
-
-#detail-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-#detail-buttons button {
-    flex: 1 1 150px;
-    margin: 5px;
-}
-
-#player-results {
-    text-align: left;
-    margin-top: 20px;
-}
-
 #popup.active {
     display: block;
     opacity: 1;
+    z-index: 1000;
 }
 
 #popup {
@@ -103,6 +87,27 @@ button:hover:not(:disabled) {
     opacity: 0;
     transition: opacity 0.3s;
     z-index: 1000;
+}
+
+#popup-result {
+    font-size: 18px;
+    color: #d32f2f;
+}
+
+#detail-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#detail-buttons button {
+    flex: 1 1 150px;
+    margin: 5px;
+}
+
+#player-results {
+    text-align: left;
+    margin-top: 20px;
 }
 
 .disabled {
