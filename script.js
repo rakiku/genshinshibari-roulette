@@ -92,7 +92,7 @@ const version = {
 };
 
 // 状態管理
-let playerCount, bindCount, mode, currentRoulette, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, excludedItems = [], excludedChars = [], excludedWeapons = {};
+let playerCount, bindCount, mode, currentRoulette, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, excludedItems = [], excludedChars = [], excludedWeapons = {}, currentBindIndex = 0;
 const canvas = document.getElementById('rouletteCanvas');
 const ctx = canvas.getContext('2d');
 const colors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
@@ -119,6 +119,22 @@ function showBindSelection() {
             if (selectedBinds.length < bindCount && !selectedBinds.includes(bind)) {
                 selectedBinds.push(bind);
                 button.style.background = '#2ca880';
+                playerCount = parseInt(document.getElementById('playerCount').value);
+                bindCount = selectedBinds.length;
+                mode = 'selected';
+                results = { boss: null, common: [], players: Array(playerCount).fill().map(() => []) };
+                excludedItems = [];
+                excludedChars = [];
+                excludedWeapons = {};
+                currentPlayer = 1;
+                currentBindIndex = 0;
+                showScreen('rouletteScreen');
+                currentRoulette = bind;
+                items = subRoulettes[bind].filter(i => !excludedChars.includes(i) && !(excludedWeapons[bind] && excludedWeapons[bind].includes(i)));
+                if (bind === "キャラルーレット" || bind === "キャラ武器ルーレット") {
+                    document.getElementById('notOwnedButton').classList.remove('hidden');
+                }
+                drawRoulette();
             }
         };
         bindButtons.appendChild(button);
@@ -135,6 +151,7 @@ function startRoulette(type) {
     excludedChars = [];
     excludedWeapons = {};
     currentPlayer = 1;
+    currentBindIndex = 0;
     showScreen('rouletteScreen');
     if (type === 'all' || type === 'boss') {
         currentRoulette = 'boss';
@@ -143,22 +160,6 @@ function startRoulette(type) {
         currentRoulette = 'bind';
         items = binds.filter(b => !excludedItems.includes(b));
     }
-    drawRoulette();
-}
-
-function startSelectedBinds() {
-    if (selectedBinds.length === 0) return;
-    playerCount = parseInt(document.getElementById('playerCount').value);
-    bindCount = selectedBinds.length;
-    mode = 'selected';
-    results = { boss: null, common: [], players: Array(playerCount).fill().map(() => []) };
-    excludedItems = [];
-    excludedChars = [];
-    excludedWeapons = {};
-    currentPlayer = 1;
-    showScreen('rouletteScreen');
-    currentRoulette = 'bind';
-    items = selectedBinds;
     drawRoulette();
 }
 
@@ -210,6 +211,7 @@ function spinRoulette() {
     spinSpeed = 0.2;
     document.getElementById('stopButton').disabled = false;
     document.getElementById('notOwnedButton').classList.add('hidden');
+    document.getElementById('nextButton').classList.add('hidden');
     animate();
 }
 
@@ -232,7 +234,6 @@ function stopRoulette() {
             const index = Math.floor(((2 * Math.PI - angle % (2 * Math.PI)) % (2 * Math.PI)) / arc);
             const result = items[index];
             showPopup(result);
-            processResult(result);
         }
     }, 100);
     document.getElementById('stopButton').disabled = true;
@@ -243,8 +244,26 @@ function showPopup(text) {
     const popup = document.getElementById('popup');
     popup.textContent = text;
     popup.style.display = 'block';
-    popup.onclick = () => popup.style.display = 'none';
-    setTimeout(() => popup.style.display = 'none', 5000);
+    popup.onclick = () => {
+        popup.style.display = 'none';
+        document.getElementById('notOwnedButton').classList.remove('hidden');
+        document.getElementById('nextButton').classList.remove('hidden');
+        if (currentRoulette === "キャラルーレット" || currentRoulette === "キャラ武器ルーレット" || currentRoulette === "weapon") {
+            document.getElementById('notOwnedButton').classList.remove('hidden');
+        } else {
+            document.getElementById('notOwnedButton').classList.add('hidden');
+        }
+    };
+    setTimeout(() => {
+        popup.style.display = 'none';
+        document.getElementById('notOwnedButton').classList.remove('hidden');
+        document.getElementById('nextButton').classList.remove('hidden');
+        if (currentRoulette === "キャラルーレット" || currentRoulette === "キャラ武器ルーレット" || currentRoulette === "weapon") {
+            document.getElementById('notOwnedButton').classList.remove('hidden');
+        } else {
+            document.getElementById('notOwnedButton').classList.add('hidden');
+        }
+    }, 5000);
 }
 
 // 結果処理
@@ -261,7 +280,6 @@ function processResult(result) {
     } else if (currentRoulette === 'bind') {
         if (["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "誰か一人が倒れたら負け縛り", "無凸縛り", "聖遺物禁止", "旅人縛り", "☆１、聖遺物なし"].includes(result)) {
             results.common.push(result === "所持率100％縛り" ? "所持率100％（旅人、ガイア、リサ、アンバー、香菱、コレイ、ノエル、バーバラ）" : result);
-            nextBind();
         } else if (["UI非表示＋リロール", "爆発禁止＋リロール"].includes(result)) {
             results.common.push(result);
             excludedItems.push(result);
@@ -279,37 +297,41 @@ function processResult(result) {
         results.players[currentPlayer - 1].find(r => r.bind === currentRoulette).detail = { char: result, weapon: null };
         currentRoulette = "weapon";
         items = weapons[charWeaponMap[Object.keys(charWeaponMap).find(w => charWeaponMap[w].includes(result))]].filter(w => !excludedWeapons[result]?.includes(w));
-        document.getElementById('notOwnedButton').classList.remove('hidden');
     } else {
         if (currentRoulette === "weapon") {
             const bindResult = results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット");
             bindResult.detail.weapon = result;
-            document.getElementById('notOwnedButton').classList.add('hidden');
         } else {
             results.players[currentPlayer - 1].find(r => r.bind === currentRoulette).detail = result;
-            document.getElementById('notOwnedButton').classList.add('hidden');
         }
         currentPlayer++;
         if (currentPlayer > playerCount) {
             currentPlayer = 1;
+            currentBindIndex++;
             nextBind();
         } else {
             currentRoulette = currentRoulette === "weapon" ? "キャラ武器ルーレット" : currentRoulette;
             items = subRoulettes[currentRoulette]?.filter(i => !excludedChars.includes(i) && !(excludedWeapons[currentRoulette] && excludedWeapons[currentRoulette].includes(i))) || weapons[charWeaponMap[Object.keys(charWeaponMap).find(w => charWeaponMap[w].includes(results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット")?.detail?.char))]].filter(w => !excludedWeapons[results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット")?.detail?.char]?.includes(w));
-            if (currentRoulette === "キャラルーレット" || currentRoulette === "キャラ武器ルーレット") {
-                document.getElementById('notOwnedButton').classList.remove('hidden');
-            }
         }
     }
     drawRoulette();
 }
 
+// 次のステップ
+function nextStep() {
+    const arc = 2 * Math.PI / items.length;
+    const index = Math.floor(((2 * Math.PI - angle % (2 * Math.PI)) % (2 * Math.PI)) / arc);
+    const result = items[index];
+    processResult(result);
+    document.getElementById('nextButton').classList.add('hidden');
+}
+
 // 次の縛り
 function nextBind() {
-    const totalBinds = results.common.length + results.players.reduce((sum, p) => sum + p.length, 0);
+    const totalBinds = results.common.length + currentBindIndex;
     if (mode === 'selected' && totalBinds >= bindCount) {
         showResults();
-    } else if (mode !== 'selected' && totalBinds >= bindCount && results.players.every(p => p.length >= results.players[0].length)) {
+    } else if (mode !== 'selected' && totalBinds >= bindCount) {
         showResults();
     } else {
         currentRoulette = 'bind';
