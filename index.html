@@ -27,7 +27,6 @@
         </div>
         <div id="bindSelection" class="hidden">
             <div class="buttons" id="bindButtons"></div>
-            <button onclick="startSelectedBinds()">次へ</button>
             <button onclick="backToStart()">最初に戻る</button>
         </div>
         <div id="rouletteScreen" class="hidden">
@@ -36,6 +35,7 @@
                 <button onclick="spinRoulette()">回転する</button>
                 <button onclick="stopRoulette()" id="stopButton" disabled>止める</button>
                 <button onclick="notOwned()" id="notOwnedButton" class="hidden">持っていない</button>
+                <button onclick="nextStep()" id="nextButton" class="hidden">次へ</button>
             </div>
             <button onclick="backToStart()" id="backButton">最初に戻る</button>
         </div>
