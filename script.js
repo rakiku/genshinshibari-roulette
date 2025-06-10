@@ -340,11 +340,7 @@ function startDetailRoulette(type) {
     detailMode = type;
     excluded = [];
     selectedChar = null;
-    if (type === 'キャラ武器ルーレット') {
-        startRoulette('char', detailData[type], 'キャラ選択');
-    } else {
-        startRoulette('detail', detailData[type], type);
-    }
+    startRoulette('detail', detailData[type], type);
 }
 
 // ルーレット開始
@@ -358,6 +354,12 @@ function startRoulette(type, items, title) {
     mode = type === 'char' || type === 'weapon' ? mode : type;
     currentItems = items;
     excluded = type === 'boss' || type === 'constraint' ? [] : excluded; // ボスや縛りでは除外リストをリセット
+    isSpinning = false; // 回転状態をリセット
+    angle = 0; // 角度をリセット
+    speed = 0; // 速度をリセット
+    deceleration = null;
+    stopTime = 0;
+    currentResult = null; // 結果をリセット
     showScreen('roulette-screen');
     const titleElement = document.getElementById('roulette-title');
     if (titleElement) titleElement.textContent = title;
@@ -386,34 +388,32 @@ function drawRoulette() {
     originalIndices = shuffledItems.map(item => currentItems.indexOf(item));
     console.log('シャッフル済みアイテム:', shuffledItems);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const radius = canvas.width / 2;
-    const arc = 2 * Math.PI / shuffledItems.length;
+    const radius = canvas.width / 2 - 20; // 半径を縮小して外側にスペース確保
 
     // ルーレットのセクションを描画
+    const arc = 2 * Math.PI / shuffledItems.length;
     shuffledItems.forEach((item, i) => {
         ctx.beginPath();
-        ctx.moveTo(radius, radius);
-        ctx.arc(radius, radius, radius - 10, arc * i - angle, arc * (i + 1) - angle);
+        ctx.moveTo(radius + 20, radius + 20); // 中心を調整
+        ctx.arc(radius + 20, radius + 20, radius, arc * i - angle, arc * (i + 1) - angle);
         ctx.fillStyle = `hsl(${i * 360 / shuffledItems.length}, 70%, 80%)`;
         ctx.fill();
-        if (!isSpinning) { // 回転中はテキストを非表示
-            ctx.save();
-            ctx.translate(radius, radius);
-            ctx.rotate(arc * (i + 0.5) - angle);
-            ctx.textAlign = 'right';
-            ctx.fillStyle = '#000';
-            ctx.font = `${Math.min(canvas.width / 20, 12)}px Arial`;
-            ctx.fillText(item, radius - 20, 0);
-            ctx.restore();
-        }
+        ctx.save();
+        ctx.translate(radius + 20, radius + 20);
+        ctx.rotate(arc * (i + 0.5) - angle);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#000';
+        ctx.font = `${Math.min(canvas.width / 20, 12)}px Arial`;
+        ctx.fillText(item, radius - 10, 0); // 回転中もテキストを表示
+        ctx.restore();
     });
 
-    // 赤い三角形（12時方向に固定）
+    // 赤い三角形（ルーレットの外、12時方向に固定）
     const triangleSize = 15;
     ctx.beginPath();
-    ctx.moveTo(radius, 10);
-    ctx.lineTo(radius - triangleSize, 30);
-    ctx.lineTo(radius + triangleSize, 30);
+    ctx.moveTo(radius + 20, 0); // キャンバス上部（外側）
+    ctx.lineTo(radius + 20 - triangleSize, 20);
+    ctx.lineTo(radius + 20 + triangleSize, 20);
     ctx.fillStyle = 'red';
     ctx.fill();
 
@@ -422,7 +422,7 @@ function drawRoulette() {
         const selectedIndex = shuffledItems.indexOf(currentResult);
         const startAngle = selectedIndex * arc - angle;
         ctx.beginPath();
-        ctx.arc(radius, radius, radius - 10, startAngle, startAngle + arc);
+        ctx.arc(radius + 20, radius + 20, radius, startAngle, startAngle + arc);
         ctx.strokeStyle = 'red';
         ctx.lineWidth = 5;
         ctx.stroke();
@@ -434,12 +434,13 @@ function spinRoulette() {
     if (isSpinning) return;
     isSpinning = true;
     angle = 0;
-    speed = Math.random() * 0.2 + 0.2;
+    speed = Math.random() * 0.2 + 0.2; // 初速をランダム
     deceleration = 0.001;
     stopTime = Date.now() + 3000; // 3秒で停止
     document.getElementById('spin-btn').disabled = true;
     document.getElementById('stop-btn').disabled = false;
     document.getElementById('next-btn').disabled = true;
+    console.log('ルーレット開始: 回転中');
     animate();
 }
 
@@ -459,22 +460,20 @@ function animate() {
 // ルーレット停止
 function stopRoulette() {
     if (!isSpinning) return;
-    const progress = (Date.now() - (stopTime - 3000)) / 3000;
-    speed = easeOutQuad(1 - progress) * 0.3;
-    if (speed <= 0 || Date.now() >= stopTime) {
-        isSpinning = false;
-        const normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-        const arc = 2 * Math.PI / shuffledItems.length;
-        const index = Math.floor(normalizedAngle / arc) % shuffledItems.length;
-        currentResult = shuffledItems[index];
-        console.log('ルーレット結果:', currentResult);
-        document.getElementById('spin-btn').disabled = false;
-        document.getElementById('stop-btn').disabled = true;
-        document.getElementById('next-btn').disabled = false;
-        drawRoulette();
-        showPopup(currentResult);
-    } else {
-        requestAnimationFrame(animate);
+    isSpinning = false;
+    const arc = 2 * Math.PI / shuffledItems.length;
+    const normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    const index = Math.floor(normalizedAngle / arc) % shuffledItems.length;
+    currentResult = shuffledItems[index];
+    console.log('ルーレット結果:', currentResult);
+    drawRoulette();
+    showPopup(currentResult);
+    document.getElementById('spin-btn').disabled = false;
+    document.getElementById('stop-btn').disabled = true;
+    document.getElementById('next-btn').disabled = false;
+    // 一括モードでボスルーレットの場合、自動で次へ
+    if (currentStep === 'boss' && mode === 'boss') {
+        setTimeout(nextStep, 1000); // 1秒後に自動進行
     }
 }
 
