@@ -1,4 +1,4 @@
-// データ（変更なし）
+// データ
 const bosses = [
     "無相の炎", "無相の水", "無相の風", "無相の雷", "無相の草", "無相の氷", "無相の岩", "純水精霊", "雷音権現", "水形タルパ",
     "深罪の浸礼者", "黄金王獣", "深淵なるミミック・パピラ", "遺跡サーペント", "恒常からくり陣形", "兆載永劫ドレイク", "半永久統制マトリックス",
@@ -28,7 +28,7 @@ const subRoulettes = {
 const weapons = {
     "長柄武器": ["香りのシンフォニスト", "玉響停の御噺", "鎮山の釘", "虹の行方", "ルミドゥースの挽歌", "赤月のシルエット", "砂中の賢者達の問答", "プロスペクタードリル", "フィヨルドの歌", "正義の報酬", "赤砂の杖", "風信の矛", "ムーンピアサー", "ドラゴンスピア", "黒纓槍", "黒岩の突槍", "鉄尖槍", "鉾槍", "破天の槍", "星鎌・試作", "西風長槍", "草薙の稲光", "白纓槍", "流月の針", "新米の長槍", "斬波のひれ長", "護摩の杖", "息災", "旧貴族猟槍", "天空の脊", "喜多院十文字槍", "和璞鳶", "千岩長槍", "「漁獲」", "匣中滅龍", "死闘の槍"],
     "法器": ["ヴィヴィッド・ハート", "寝正月の初晴", "祭星者の眺め", "波乗りの旋回", "ヤシュチェの環", "蒼紋の角杯", "サーフィンタイム", "鶴鳴の余韻", "凛流の監視者", "久遠流転の大典", "果てなき紺碧の唄", "古祠の瓏", "純水流華", "碧落の瓏", "トゥライトゥーラの記憶", "千夜に浮かぶ夢", "彷徨える星", "満悦の実", "黒岩の緋玉", "魔導緒論", "金珀・試作", "誓いの明瞳", "龍殺しの英傑譚", "西風秘典", "翡玉法珠", "祭礼の断片", "神楽の真意", "白辰の輪", "特級の宝玉", "流浪楽章", "ダークアレイの酒と詩", "昭心", "冬忍びの実", "異世界旅行記", "浮世の錠", "旧貴族秘法録", "生徒ノート", "天空の巻", "四風原典", "ドドコの物語", "ポケット魔導書", "匣中日月", "不滅の月華", "万国諸海の図譜"],
-    "弓": ["冷寂の音", "星鷲の紅き羽", "花飾りの羽", "チェーンブレイカー", "築雲", "白雨心弦", "レンジゲージ", "烈日の後嗣", "静寂の唄", "始まりの大魔術", "トキの嘴", "王の近侍", "竭沢", "狩人の道", "落霞", "若水", "黒岩の戦弓", "鴉羽の弓", "飛来の鳴弦", "風花の頌歌", "アモスの弓", "リングボウ", "澹月・試作", "西風猟弓", "青翠の狩猟弓", "絶弦", "終焉を嘆く詩", "祭礼の弓", "シャープシューターの誓い", "破魔の弓", "狩猟弓", "曚雲の月", "ダークアレイの狩人", "プレデター", "弾弓", "弓蔵", "幽夜のワルツ", "旧貴族長弓", "天空の翼", "リカーブボウ", "歴戦の狩猟弓", "冬極の白星", "文使い"],
+    "弓": ["冷寂の音", "星鷲の紅き羽", "花飾りの羽", "チェーンブレイカー", "築雲", "白雨心弦", "レンジゲージ", "烈日の後嗣", "静寂の唄", "ael", "トキの嘴", "王の近侍", "竭沢", "狩人の道", "落霞", "若水", "黒岩の戦弓", "鴉羽の弓", "飛来の鳴弦", "風花の頌歌", "アモスの弓", "リングボウ", "澹月・試作", "西風猟弓", "青翠の狩猟弓", "絶弦", "終焉を嘆く詩", "祭礼の弓", "シャープシューターの誓い", "破魔の弓", "狩猟弓", "曚雲の月", "ダークアレイの狩人", "プレデター", "弾弓", "弓蔵", "幽夜のワルツ", "旧貴族長弓", "天空の翼", "リカーブボウ", "歴戦の狩猟弓", "冬極の白星", "文使い"],
     "両手剣": ["千烈の日輪", "実りの鉤鉈", "アースシェイカー", "山の王の長牙", "「スーパーアルティメット覇王魔剣」", "裁断", "携帯型チェンソー", "話死合い棒", "タイダル・シャドー", "葦海の標", "鉄彩の花", "マカイラの水色", "森林のレガリア", "黒岩の斬刀", "飛天大御剣", "雪葬の星銀", "雨裁", "鉄影段平", "鐘の剣", "赤角石塵滅砕", "古華・試作", "訓練用大剣", "西風大剣", "銜玉の海皇", "螭龍の剣", "祭礼の大剣", "白鉄の大剣", "白影の剣", "狼の末路", "龍血を浴びた剣", "桂木斬長正", "松韻の響く頃", "無工の剣", "惡王丸", "旧貴族大剣", "天空の傲", "千岩古剣", "傭兵の重剣", "理屈責め"],
     "片手剣": ["厄水の災い", "岩峰を巡る歌", "ストロングボーン", "エズピツァルの笛", "赦罪", "有楽御簾切", "水仙十字の剣", "静水流転の輝き", "船渠剣", "狼牙", "サーンドルの渡し守", "海淵のフィナーレ", "翠光の裁葉", "東花坊時雨", "サイフォスの月明かり", "聖顕の鍵", "原木刀", "籠鶴瓶一心", "黒岩の長剣", "黒剣", "黎明の神剣", "飛天御剣", "風鷹剣", "霧切の廻光", "降臨の剣", "銀の剣", "鉄蜂の刺し", "シナバースピンドル", "斬岩・試作", "西風剣", "蒼古なる自由への誓い", "腐食の剣", "笛の剣", "祭礼の剣", "盤岩結緑", "波乱月白経津", "暗鉄剣", "ダークアレイの閃光", "無鋒の剣", "旅道の剣", "斬山の刃", "旧貴族長剣", "天空の刃", "天目影打", "チ虎魚の刀", "匣中龍吟", "冷刃", "蒼耀"]
 };
@@ -272,7 +272,7 @@ function showPopup(text) {
     }, 5000);
 }
 
-// 結果処理
+// 結果処理（修正）
 function processResult(result) {
     if (currentRoulette === 'boss') {
         results.boss = result;
@@ -304,14 +304,28 @@ function processResult(result) {
             }
         }
     } else if (currentRoulette === "キャラ武器ルーレット") {
-        results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット").detail = { char: result, weapon: null };
+        // キャラ選択後、武器ルーレットへ
+        let bindResult = results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット");
+        if (!bindResult) {
+            bindResult = { bind: "キャラ武器ルーレット", detail: { char: result, weapon: null } };
+            results.players[currentPlayer - 1].push(bindResult);
+        } else {
+            bindResult.detail = { char: result, weapon: null };
+        }
         currentRoulette = "weapon";
         const weaponType = Object.keys(charWeaponMap).find(w => charWeaponMap[w].includes(result));
-        items = weapons[weaponType].filter(w => !excludedWeapons[result]?.includes(w));
+        if (weaponType && weapons[weaponType]) {
+            items = weapons[weaponType].filter(w => !excludedWeapons[result]?.includes(w));
+        } else {
+            items = [];
+            console.warn(`武器種が見つかりません: ${result}`);
+        }
         document.getElementById('notOwnedButton').classList.remove('hidden');
     } else if (currentRoulette === "weapon") {
         const bindResult = results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット");
-        bindResult.detail.weapon = result;
+        if (bindResult && bindResult.detail) {
+            bindResult.detail.weapon = result;
+        }
         currentPlayer++;
         if (currentPlayer > playerCount) {
             currentPlayer = 1;
@@ -336,13 +350,18 @@ function processResult(result) {
     drawRoulette();
 }
 
-// 次のステップ
+// 次のステップ（修正）
 function nextStep() {
+    if (!items || items.length === 0) {
+        console.error("ルーレットアイテムがありません");
+        return;
+    }
     const arc = 2 * Math.PI / items.length;
     const index = Math.floor(((2 * Math.PI - angle % (2 * Math.PI)) % (2 * Math.PI)) / arc);
     const result = items[index];
     processResult(result);
     document.getElementById('nextButton').classList.add('hidden');
+    document.getElementById('notOwnedButton').classList.add('hidden');
 }
 
 // 次の縛り
@@ -370,7 +389,7 @@ function notOwned() {
         const char = results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット").detail.char;
         if (!excludedWeapons[char]) excludedWeapons[char] = [];
         excludedWeapons[char].push(items[Math.floor(((2 * Math.PI - angle % (2 * Math.PI)) % (2 * Math.PI)) / (2 * Math.PI / items.length))]);
-        items = weapons[charWeaponMap[Object.keys(charWeaponMap).find(w => charWeaponMap[w].includes(char))]].filter(w => !excludedWeapons[char]?.includes(w));
+        items = weapons[Object.keys(charWeaponMap).find(w => charWeaponMap[w].includes(char))].filter(w => !excludedWeapons[char]?.includes(w));
     }
     drawRoulette();
 }
