@@ -5,7 +5,7 @@ const bosses = [
     "氷風組曲コペリウス", "氷風組曲コッペリア", "秘源機兵・機構デバイス", "魔偶剣鬼", "実験用フィールド生成装置", "迷える霊覚の修権者",
     "爆炎樹", "迅電樹", "急凍樹", "エンシェントヴィシャップ・岩", "アビサルヴィシャップ", "マッシュラプトル", "風食ウェネト",
     "鉄甲熔炎帝王", "千年真珠の海駿", "山隠れの猊獣", "魔像レガトゥス", "暴君・金焔のクク竜", "山の王・貪食のユムカ竜",
-    "輝ける溶岩の龍像", "秘源機兵・統御デバイス "アンドリアス", "公子", "若陀龍王", "淑女", "禍津御建鳴神命", "正機の神",
+    "輝ける溶岩の龍像", "秘源機兵・統御デバイス", "アンドリアス", "公子", "若陀龍王", "淑女", "禍津御建鳴神命", "正機の神",
     "アペプ", "吞星の鯨", "召使", "グーシートース", "キング＆クイーン", "ヴィヴィアン", "ニニアン", "イゾルト", "リアム",
     "ロッキー", "ディアンナラ", "赤璋巡岳府君", "シネアス", "異色三連星", "バラチコ", "コシーホ", "ジャプー", "リライ",
     "銅の掟", "ピーク", "戦羊・鉄爪", "微末"
@@ -108,6 +108,15 @@ function showScreen(screenId) {
 
 // 縛り選択画面
 function showBindSelection() {
+    playerCount = parseInt(document.getElementById('playerCount').value) || 1;
+    bindCount = parseInt(document.getElementById('bindCount').value) || 1;
+    selectedBinds = [];
+    results = { boss: null, common: [], players: Array(playerCount).fill().map(() => []) };
+    excludedItems = [];
+    excludedChars = [];
+    excludedWeapons = {};
+    currentPlayer = 1;
+    currentBindIndex = 0;
     showScreen('bindSelection');
     const bindButtons = document.getElementById('bindButtons');
     bindButtons.innerHTML = '';
@@ -116,19 +125,9 @@ function showBindSelection() {
         const button = document.createElement('button');
         button.textContent = bind;
         button.onclick = () => {
-            if (selectedBinds.length < bindCount && !selectedBinds.includes(bind)) {
+            if (!selectedBinds.includes(bind)) {
                 selectedBinds.push(bind);
-                button.style.background = '#2ca880';
-                playerCount = parseInt(document.getElementById('playerCount').value);
-                bindCount = selectedBinds.length;
                 mode = 'selected';
-                results = { boss: null, common: [], players: Array(playerCount).fill().map(() => []) };
-                excludedItems = [];
-                excludedChars = [];
-                excludedWeapons = {};
-                currentPlayer = 1;
-                currentBindIndex = 0;
-                showScreen('rouletteScreen');
                 currentRoulette = bind;
                 if (bind === "キャラ武器ルーレット") {
                     items = subRoulettes["キャラルーレット"].filter(i => !excludedChars.includes(i));
@@ -138,6 +137,7 @@ function showBindSelection() {
                 if (bind === "キャラルーレット" || bind === "キャラ武器ルーレット") {
                     document.getElementById('notOwnedButton').classList.remove('hidden');
                 }
+                showScreen('rouletteScreen');
                 drawRoulette();
             }
         };
@@ -147,9 +147,10 @@ function showBindSelection() {
 
 // ルーレット開始
 function startRoulette(type) {
-    playerCount = parseInt(document.getElementById('playerCount').value);
-    bindCount = parseInt(document.getElementById('bindCount').value);
+    playerCount = parseInt(document.getElementById('playerCount').value) || 1;
+    bindCount = parseInt(document.getElementById('bindCount').value) || 1;
     mode = type;
+    selectedBinds = [];
     results = { boss: null, common: [], players: Array(playerCount).fill().map(() => []) };
     excludedItems = [];
     excludedChars = [];
@@ -157,7 +158,10 @@ function startRoulette(type) {
     currentPlayer = 1;
     currentBindIndex = 0;
     showScreen('rouletteScreen');
-    if (type === 'all' || type === 'boss') {
+    if (type === 'all') {
+        currentRoulette = 'boss';
+        items = bosses;
+    } else if (type === 'boss') {
         currentRoulette = 'boss';
         items = bosses;
     } else if (type === 'bind') {
@@ -366,7 +370,7 @@ function notOwned() {
         const char = results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット").detail.char;
         if (!excludedWeapons[char]) excludedWeapons[char] = [];
         excludedWeapons[char].push(items[Math.floor(((2 * Math.PI - angle % (2 * Math.PI)) % (2 * Math.PI)) / (2 * Math.PI / items.length))]);
-        items = weapons[charWeaponMap[Object.keys(charWeaponMap).find(w => charWeaponMap[w].includes(char))]].filter(w => !excludedWeapons[char].includes(w));
+        items = weapons[charWeaponMap[Object.keys(charWeaponMap).find(w => charWeaponMap[w].includes(char))]].filter(w => !excludedWeapons[char]?.includes(w));
     }
     drawRoulette();
 }
