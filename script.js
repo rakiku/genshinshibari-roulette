@@ -28,7 +28,7 @@ const subRoulettes = {
 const weapons = {
     "長柄武器": ["香りのシンフォニスト", "玉響停の御噺", "鎮山の釘", "虹の行方", "ルミドゥースの挽歌", "赤月のシルエット", "砂中の賢者達の問答", "プロスペクタードリル", "フィヨルドの歌", "正義の報酬", "赤砂の杖", "風信の矛", "ムーンピアサー", "ドラゴンスピア", "黒纓槍", "黒岩の突槍", "鉄尖槍", "鉾槍", "破天の槍", "星鎌・試作", "西風長槍", "草薙の稲光", "白纓槍", "流月の針", "新米の長槍", "斬波のひれ長", "護摩の杖", "息災", "旧貴族猟槍", "天空の脊", "喜多院十文字槍", "和璞鳶", "千岩長槍", "「漁獲」", "匣中滅龍", "死闘の槍"],
     "法器": ["ヴィヴィッド・ハート", "寝正月の初晴", "祭星者の眺め", "波乗りの旋回", "ヤシュチェの環", "蒼紋の角杯", "サーフィンタイム", "鶴鳴の余韻", "凛流の監視者", "久遠流転の大典", "果てなき紺碧の唄", "古祠の瓏", "純水流華", "碧落の瓏", "トゥライトゥーラの記憶", "千夜に浮かぶ夢", "彷徨える星", "満悦の実", "黒岩の緋玉", "魔導緒論", "金珀・試作", "誓いの明瞳", "龍殺しの英傑譚", "西風秘典", "翡玉法珠", "祭礼の断片", "神楽の真意", "白辰の輪", "特級の宝玉", "流浪楽章", "ダークアレイの酒と詩", "昭心", "冬忍びの実", "異世界旅行記", "浮世の錠", "旧貴族秘法録", "生徒ノート", "天空の巻", "四風原典", "ドドコの物語", "ポケット魔導書", "匣中日月", "不滅の月華", "万国諸海の図譜"],
-    "弓": ["冷寂の音", "星鷲の紅き羽", "花飾りの羽", "チェーンブレイカー", "築雲", "白雨心弦", "レンジゲージ", "烈日の後嗣", "静寂の唄", "ael", "トキの嘴", "王の近侍", "竭沢", "狩人の道", "落霞", "若水", "黒岩の戦弓", "鴉羽の弓", "飛来の鳴弦", "風花の頌歌", "アモスの弓", "リングボウ", "澹月・試作", "西風猟弓", "青翠の狩猟弓", "絶弦", "終焉を嘆く詩", "祭礼の弓", "シャープシューターの誓い", "破魔の弓", "狩猟弓", "曚雲の月", "ダークアレイの狩人", "プレデター", "弾弓", "弓蔵", "幽夜のワルツ", "旧貴族長弓", "天空の翼", "リカーブボウ", "歴戦の狩猟弓", "冬極の白星", "文使い"],
+    "弓": ["冷寂の音", "星鷲の紅き羽", "花飾りの羽", "チェーンブレイカー", "築雲", "白雨心弦", "レンジゲージ", "烈日の後嗣", "静寂の唄", "始まりの大魔術", "トキの嘴", "王の近侍", "竭沢", "狩人の道", "落霞", "若水", "黒岩の戦弓", "鴉羽の弓", "飛来の鳴弦", "風花の頌歌", "アモスの弓", "リングボウ", "澹月・試作", "西風猟弓", "青翠の狩猟弓", "絶弦", "終焉を嘆く詩", "祭礼の弓", "シャープシューターの誓い", "破魔の弓", "狩猟弓", "曚雲の月", "ダークアレイの狩人", "プレデター", "弾弓", "弓蔵", "幽夜のワルツ", "旧貴族長弓", "天空の翼", "リカーブボウ", "歴戦の狩猟弓", "冬極の白星", "文使い"],
     "両手剣": ["千烈の日輪", "実りの鉤鉈", "アースシェイカー", "山の王の長牙", "「スーパーアルティメット覇王魔剣」", "裁断", "携帯型チェンソー", "話死合い棒", "タイダル・シャドー", "葦海の標", "鉄彩の花", "マカイラの水色", "森林のレガリア", "黒岩の斬刀", "飛天大御剣", "雪葬の星銀", "雨裁", "鉄影段平", "鐘の剣", "赤角石塵滅砕", "古華・試作", "訓練用大剣", "西風大剣", "銜玉の海皇", "螭龍の剣", "祭礼の大剣", "白鉄の大剣", "白影の剣", "狼の末路", "龍血を浴びた剣", "桂木斬長正", "松韻の響く頃", "無工の剣", "惡王丸", "旧貴族大剣", "天空の傲", "千岩古剣", "傭兵の重剣", "理屈責め"],
     "片手剣": ["厄水の災い", "岩峰を巡る歌", "ストロングボーン", "エズピツァルの笛", "赦罪", "有楽御簾切", "水仙十字の剣", "静水流転の輝き", "船渠剣", "狼牙", "サーンドルの渡し守", "海淵のフィナーレ", "翠光の裁葉", "東花坊時雨", "サイフォスの月明かり", "聖顕の鍵", "原木刀", "籠鶴瓶一心", "黒岩の長剣", "黒剣", "黎明の神剣", "飛天御剣", "風鷹剣", "霧切の廻光", "降臨の剣", "銀の剣", "鉄蜂の刺し", "シナバースピンドル", "斬岩・試作", "西風剣", "蒼古なる自由への誓い", "腐食の剣", "笛の剣", "祭礼の剣", "盤岩結緑", "波乱月白経津", "暗鉄剣", "ダークアレイの閃光", "無鋒の剣", "旅道の剣", "斬山の刃", "旧貴族長剣", "天空の刃", "天目影打", "チ虎魚の刀", "匣中龍吟", "冷刃", "蒼耀"]
 };
@@ -50,7 +50,7 @@ const birthMonth = {
     "８月": ["ムアラニ", "アンバー", "ミカ", "ナヴィア", "千織", "ファルザン", "アルレッキーノ", "凝光", "マーヴィカ", "モナ", "イアンサ"],
     "９月": ["重雲", "レザー", "アルベド", "クロリンデ", "エミリエ", "フレミネ", "神里綾華"],
     "１０月": ["行秋", "フリーナ", "オロルン", "辛炎", "早柚", "エウルア", "ナヒーダ", "楓原万葉"],
-    "１１月": ["香菱", "キィニチ", "刻晴", "リオセスリ", "スクロース", "ガイア", "ヴァレサ"],
+    "１１月": ["香菱", "キィニチ", "刻晴", "リオセスリ", "スクロース", "ガイア", "ヴァレサ", "スカーク"], // スカーク追加
     "１２月": ["甘雨", "ニィロウ", "チャスカ", "ヌヴィレット", "レイラ", "ドリー", "嘉明", "ティナリ", "鍾離"]
 };
 const alphabet = {
@@ -136,6 +136,7 @@ function showBindSelection() {
                 }
                 if (bind === "キャラルーレット" || bind === "キャラ武器ルーレット") {
                     document.getElementById('notOwnedButton').classList.remove('hidden');
+                    document.getElementById('notOwnedButton').disabled = true;
                 }
                 showScreen('rouletteScreen');
                 drawRoulette();
@@ -171,12 +172,16 @@ function startRoulette(type) {
     drawRoulette();
 }
 
-// ルーレット描画
+// ルーレット描画（三角マーカーと項目ランダム化を修正）
 function drawRoulette() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const radius = canvas.width / 2 - 20;
-    const arc = 2 * Math.PI / items.length;
-    for (let i = 0; i < items.length; i++) {
+    
+    // 項目をランダムに並べ替え
+    const shuffledItems = [...items].sort(() => Math.random() - 0.5);
+    
+    const arc = 2 * Math.PI / shuffledItems.length;
+    for (let i = 0; i < shuffledItems.length; i++) {
         const startAngle = i * arc + angle;
         ctx.beginPath();
         ctx.arc(canvas.width / 2, canvas.height / 2, radius, startAngle, startAngle + arc);
@@ -198,16 +203,16 @@ function drawRoulette() {
         ctx.font = '14px Arial';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
-        ctx.fillText(items[i], radius - 10, 0);
+        ctx.fillText(shuffledItems[i], radius - 10, 0);
         ctx.restore();
     }
-    // 逆三角形マーカー
+    // 三角マーカー（3時位置、頂点左向き、赤）
     ctx.beginPath();
-    ctx.moveTo(canvas.width / 2 - 10, 20);
-    ctx.lineTo(canvas.width / 2 + 10, 20);
-    ctx.lineTo(canvas.width / 2, 40);
+    ctx.moveTo(canvas.width - 40, canvas.height / 2 - 10); // 左頂点
+    ctx.lineTo(canvas.width - 40, canvas.height / 2 + 10); // 左下
+    ctx.lineTo(canvas.width - 20, canvas.height / 2); // 右中央
     ctx.closePath();
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = '#ff0000'; // 赤
     ctx.fill();
 }
 
@@ -219,6 +224,7 @@ function spinRoulette() {
     spinSpeed = 0.2;
     document.getElementById('stopButton').disabled = false;
     document.getElementById('notOwnedButton').classList.add('hidden');
+    document.getElementById('notOwnedButton').disabled = true;
     document.getElementById('nextButton').classList.add('hidden');
     animate();
 }
@@ -247,32 +253,30 @@ function stopRoulette() {
     document.getElementById('stopButton').disabled = true;
 }
 
-// ポップアップ表示
+// ポップアップ表示（閉じるボタン対応を修正）
 function showPopup(text) {
     const popup = document.getElementById('popup');
-    popup.textContent = text;
-    popup.style.display = 'block';
-    popup.onclick = () => {
+    const popupText = document.getElementById('popupText');
+    const closeButton = document.getElementById('closePopupButton');
+    popupText.textContent = text;
+    popup.style.display = 'flex';
+    const closePopup = () => {
         popup.style.display = 'none';
         document.getElementById('nextButton').classList.remove('hidden');
         if (currentRoulette === "キャラルーレット" || currentRoulette === "キャラ武器ルーレット" || currentRoulette === "weapon") {
             document.getElementById('notOwnedButton').classList.remove('hidden');
+            document.getElementById('notOwnedButton').disabled = false;
         } else {
             document.getElementById('notOwnedButton').classList.add('hidden');
+            document.getElementById('notOwnedButton').disabled = true;
         }
     };
-    setTimeout(() => {
-        popup.style.display = 'none';
-        document.getElementById('nextButton').classList.remove('hidden');
-        if (currentRoulette === "キャラルーレット" || currentRoulette === "キャラ武器ルーレット" || currentRoulette === "weapon") {
-            document.getElementById('notOwnedButton').classList.remove('hidden');
-        } else {
-            document.getElementById('notOwnedButton').classList.add('hidden');
-        }
-    }, 5000);
+    popup.onclick = closePopup;
+    closeButton.onclick = closePopup;
+    setTimeout(closePopup, 5000);
 }
 
-// 結果処理（修正）
+// 結果処理
 function processResult(result) {
     if (currentRoulette === 'boss') {
         results.boss = result;
@@ -301,10 +305,10 @@ function processResult(result) {
             items = subRoulettes[result].filter(i => !excludedChars.includes(i) && !(excludedWeapons[result] && excludedWeapons[result].includes(i)));
             if (result === "キャラルーレット" || result === "キャラ武器ルーレット") {
                 document.getElementById('notOwnedButton').classList.remove('hidden');
+                document.getElementById('notOwnedButton').disabled = true;
             }
         }
     } else if (currentRoulette === "キャラ武器ルーレット") {
-        // キャラ選択後、武器ルーレットへ
         let bindResult = results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット");
         if (!bindResult) {
             bindResult = { bind: "キャラ武器ルーレット", detail: { char: result, weapon: null } };
@@ -321,6 +325,7 @@ function processResult(result) {
             console.warn(`武器種が見つかりません: ${result}`);
         }
         document.getElementById('notOwnedButton').classList.remove('hidden');
+        document.getElementById('notOwnedButton').disabled = true;
     } else if (currentRoulette === "weapon") {
         const bindResult = results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット");
         if (bindResult && bindResult.detail) {
@@ -335,6 +340,7 @@ function processResult(result) {
             currentRoulette = "キャラ武器ルーレット";
             items = subRoulettes["キャラルーレット"].filter(i => !excludedChars.includes(i));
             document.getElementById('notOwnedButton').classList.remove('hidden');
+            document.getElementById('notOwnedButton').disabled = true;
         }
     } else {
         results.players[currentPlayer - 1].find(r => r.bind === currentRoulette).detail = result;
@@ -350,7 +356,7 @@ function processResult(result) {
     drawRoulette();
 }
 
-// 次のステップ（修正）
+// 次のステップ
 function nextStep() {
     if (!items || items.length === 0) {
         console.error("ルーレットアイテムがありません");
@@ -362,6 +368,7 @@ function nextStep() {
     processResult(result);
     document.getElementById('nextButton').classList.add('hidden');
     document.getElementById('notOwnedButton').classList.add('hidden');
+    document.getElementById('notOwnedButton').disabled = true;
 }
 
 // 次の縛り
@@ -378,40 +385,62 @@ function nextBind() {
     }
 }
 
-// 持っていない
+// 持っていない（1回制限を修正）
+let lastResult = null; // 最後のルーレット結果を保持
 function notOwned() {
+    if (spinning) return;
+    if (currentRoulette !== "キャラルーレット" && currentRoulette !== "キャラ武器ルーレット" && currentRoulette !== "weapon") return;
+    
+    const arc = 2 * Math.PI / items.length;
+    const index = Math.floor(((2 * Math.PI - angle % (2 * Math.PI)) % (2 * Math.PI)) / arc);
+    const currentResult = items[index];
+    
+    // すでに除外済みまたは異なる結果なら処理しない
+    if (lastResult === currentResult || excludedChars.includes(currentResult) || excludedWeapons[currentResult]?.includes(currentResult)) {
+        return;
+    }
+    
     if (currentRoulette === "キャラルーレット" || currentRoulette === "キャラ武器ルーレット") {
-        const lastResult = results.players[currentPlayer - 1].find(r => r.bind === currentRoulette)?.detail?.char || items[Math.floor(((2 * Math.PI - angle % (2 * Math.PI)) % (2 * Math.PI)) / (2 * Math.PI / items.length))];
-        excludedChars.push(lastResult);
-        results.players[currentPlayer - 1] = results.players[currentPlayer - 1].filter(r => r.detail?.char !== lastResult);
+        excludedChars.push(currentResult);
+        results.players[currentPlayer - 1] = results.players[currentPlayer - 1].filter(r => r.detail?.char !== currentResult);
         items = subRoulettes[currentRoulette === "キャラ武器ルーレット" ? "キャラルーレット" : currentRoulette].filter(i => !excludedChars.includes(i));
+        lastResult = currentResult;
     } else if (currentRoulette === "weapon") {
         const char = results.players[currentPlayer - 1].find(r => r.bind === "キャラ武器ルーレット").detail.char;
         if (!excludedWeapons[char]) excludedWeapons[char] = [];
-        excludedWeapons[char].push(items[Math.floor(((2 * Math.PI - angle % (2 * Math.PI)) % (2 * Math.PI)) / (2 * Math.PI / items.length))]);
+        excludedWeapons[char].push(currentResult);
         items = weapons[Object.keys(charWeaponMap).find(w => charWeaponMap[w].includes(char))].filter(w => !excludedWeapons[char]?.includes(w));
+        lastResult = currentResult;
     }
+    document.getElementById('notOwnedButton').disabled = true; // 1回押したら無効化
     drawRoulette();
 }
 
-// 結果表示
+// 結果表示（プレイヤー非表示を修正）
 function showResults() {
     showScreen('resultScreen');
     const resultsDiv = document.getElementById('results');
     let html = `<h2>ボス：${results.boss || "未選択"}</h2>`;
-    html += `<h3>共通の縛り：</h3><ul>`;
-    results.common.forEach(c => html += `<li>${c}</li>`);
-    html += `</ul>`;
-    for (let i = 0; i < playerCount; i++) {
-        html += `<h3>プレイヤー${i + 1}：</h3><ul>`;
-        results.players[i].forEach(r => {
-            if (r.bind === "キャラ武器ルーレット") {
-                html += `<li>キャラ武器ルーレット：${r.detail.char}：${r.detail.weapon}</li>`;
-            } else {
-                html += `<li>${r.bind}：${r.detail}</li>`;
-            }
-        });
+    if (results.common.length > 0) {
+        html += `<h3>共通の縛り：</h3><ul>`;
+        results.common.forEach(c => html += `<li>${c}</li>`);
         html += `</ul>`;
+    }
+    const hasPlayerBinds = results.players.some(player => player.length > 0);
+    if (hasPlayerBinds) {
+        for (let i = 0; i < playerCount; i++) {
+            if (results.players[i].length > 0) {
+                html += `<h3>プレイヤー${i + 1}：</h3><ul>`;
+                results.players[i].forEach(r => {
+                    if (r.bind === "キャラ武器ルーレット") {
+                        html += `<li>キャラ武器ルーレット：${r.detail.char}：${r.detail.weapon}</li>`;
+                    } else {
+                        html += `<li>${r.bind}：${r.detail}</li>`;
+                    }
+                });
+                html += `</ul>`;
+            }
+        }
     }
     resultsDiv.innerHTML = html;
 }
