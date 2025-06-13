@@ -24,9 +24,11 @@ select, button {
     margin: 5px;
     border-radius: 5px;
     cursor: pointer;
+    width: 150px;
 }
-button#spinButton, button#stopButton, button#notOwnedButton, button#nextButton {
-    width: 120px;
+button.large-button {
+    width: 200px;
+    font-size: 20px;
 }
 button:disabled {
     cursor: not-allowed;
@@ -37,10 +39,19 @@ button#backToStartButton {
     top: 10px;
     right: 10px;
 }
+.settings, .buttons, .roulette-buttons, #bindButtons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
 #rouletteCanvas {
     border: 2px solid #fff;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.5);
+    margin: 20px auto;
+    display: block;
 }
 #popup {
     position: fixed;
@@ -68,13 +79,9 @@ button#backToStartButton {
 .hidden {
     display: none;
 }
-#bindButtons button {
-    display: block;
-    margin: 5px auto;
-}
 #results {
     font-size: 18px;
     text-align: left;
     max-width: 600px;
-    margin: 0 auto;
+    margin: 20px auto;
 }
