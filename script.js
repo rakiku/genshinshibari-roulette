@@ -92,7 +92,7 @@ const version = {
 };
 
 // 状態管理
-let playerCount, bindCount, mode, currentRoulette, items, angle = 0, spinning = false, spinSpeed = 0;
+let playerCount, bindCount, mode, currentRoulette, items = [], angle = 0, spinning = false, spinSpeed = 0;
 let selectedBinds = [], results = {}, currentPlayer = 1, excludedChars = [], excludedWeapons = {}, currentBindIndex = 0;
 const canvas = document.getElementById('rouletteCanvas');
 const ctx = canvas.getContext('2d');
@@ -131,7 +131,7 @@ function resetGame() {
     document.getElementById('nextButton').classList.add('hidden');
     document.getElementById('popup').classList.add('hidden');
     showScreen('startScreen');
-    drawRoulette();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 // 縛り選択画面
@@ -155,7 +155,7 @@ function showBindSelection() {
                     currentBindIndex = 0;
                     currentPlayer = 1;
                     currentRoulette = selectedBinds[0];
-                    items = currentRoulette === 'キャラ武器ルーレット' ? subRoulettes['キャラルーレット'] : subRoulettes[currentRoulette] || [];
+                    items = currentRoulette === 'キャラ武器ルーレット' ? subRoulettes['キャラルーレット'].filter(i => !excludedChars.includes(i)) : subRoulettes[currentRoulette] || [];
                     showScreen('rouletteScreen');
                     drawRoulette();
                 }
@@ -192,6 +192,10 @@ function startRoulette(type) {
 
 // ルーレット描画
 function drawRoulette() {
+    if (!items || items.length === 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const radius = canvas.width / 2 - 20;
     const validItems = items.filter(i => i !== 'x' && i !== ' ' && i !== '');
@@ -236,11 +240,12 @@ function drawRoulette() {
 function spinRoulette() {
     if (spinning || !items || items.length === 0) return;
     spinning = true;
-    spinSpeed = 0.2;
+    spinSpeed = 0.2; // easy-roulette.com の初速に近似
     document.getElementById('spinButton').disabled = true;
     document.getElementById('stopButton').disabled = false;
     document.getElementById('notOwnedButton').classList.add('hidden');
     document.getElementById('nextButton').classList.add('hidden');
+    document.getElementById('popup').classList.add('hidden');
     animate();
 }
 
@@ -260,7 +265,7 @@ function stopRoulette() {
     function slowDown() {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / stopDuration, 1);
-        spinSpeed = initialSpeed * (1 - progress);
+        spinSpeed = initialSpeed * (1 - progress); // 線形減速
         if (spinSpeed < 0) spinSpeed = 0;
         angle += spinSpeed;
         drawRoulette();
@@ -270,11 +275,11 @@ function stopRoulette() {
             spinning = false;
             const validItems = items.filter(i => i !== 'x' && i !== ' ' && i !== '');
             const arc = 2 * Math.PI / validItems.length;
-            let normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-            normalizedAngle = (2 * Math.PI - normalizedAngle) % (2 * Math.PI);
+            const normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const index = Math.floor(normalizedAngle / arc);
             const result = validItems[index];
-            angle = index * arc;
+            // 角度を結果セクションの中央に調整
+            angle = index * arc + arc / 2;
             drawRoulette();
             showPopup(result);
         }
@@ -310,8 +315,7 @@ function notOwned() {
     if (spinning || !['キャラルーレット', 'キャラ武器ルーレット', 'weapon'].includes(currentRoulette)) return;
     const validItems = items.filter(i => i !== 'x' && i !== ' ' && i !== '');
     const arc = 2 * Math.PI / validItems.length;
-    let normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-    normalizedAngle = (2 * Math.PI - normalizedAngle) % (2 * Math.PI);
+    const normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
     const index = Math.floor(normalizedAngle / arc);
     const currentResult = validItems[index];
     if (currentRoulette === 'キャラルーレット' || currentRoulette === 'キャラ武器ルーレット') {
@@ -363,7 +367,7 @@ function processResult(result) {
         } else {
             results.players[currentPlayer - 1].push({ bind: result, detail: null });
             currentRoulette = result;
-            items = result === 'キャラ武器ルーレット' ? subRoulettes['キャラルーレット'] : subRoulettes[result];
+            items = result === 'キャラ武器ルーレット' ? subRoulettes['キャラルーレット'].filter(i => !excludedChars.includes(i)) : subRoulettes[result];
         }
     } else if (currentRoulette === 'キャラ武器ルーレット') {
         let bindResult = results.players[currentPlayer - 1].find(r => r.bind === 'キャラ武器ルーレット');
@@ -413,8 +417,7 @@ function nextStep() {
     if (spinning || !items || items.length === 0) return;
     const validItems = items.filter(i => i !== 'x' && i !== ' ' && i !== '');
     const arc = 2 * Math.PI / validItems.length;
-    let normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-    normalizedAngle = (2 * Math.PI - normalizedAngle) % (2 * Math.PI);
+    const normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
     const index = Math.floor(normalizedAngle / arc);
     const result = validItems[index];
     processResult(result);
@@ -428,7 +431,7 @@ function nextBind() {
         showResults();
     } else if (mode === 'selected') {
         currentRoulette = selectedBinds[currentBindIndex];
-        items = currentRoulette === 'キャラ武器ルーレット' ? subRoulettes['キャラルーレット'] : subRoulettes[currentRoulette];
+        items = currentRoulette === 'キャラ武器ルーレット' ? subRoulettes['キャラルーレット'].filter(i => !excludedChars.includes(i)) : subRoulettes[currentRoulette];
         document.getElementById('nextButton').classList.add('hidden');
         drawRoulette();
         document.getElementById('spinButton').disabled = false;
@@ -473,6 +476,3 @@ function showResults() {
     }
     resultsDiv.innerHTML = html;
 }
-
-// 初期描画
-drawRoulette();
