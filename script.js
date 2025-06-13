@@ -253,12 +253,10 @@ function stopRoulette() {
             spinning = false;
             const validItems = items.filter(i => i !== "x" && i !== " " && i !== "");
             const arc = 2 * Math.PI / validItems.length;
-            const targetAngle = Math.PI / 2;
-            const currentAngle = angle % (2 * Math.PI);
-            const offset = ((targetAngle - currentAngle + 2 * Math.PI) % (2 * Math.PI)) / arc;
-            const index = Math.round(validItems.length - offset) % validItems.length;
+            const normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            const index = Math.floor((normalizedAngle + arc / 2) / arc) % validItems.length;
             const result = validItems[index];
-            angle = targetAngle - index * arc;
+            angle = -index * arc;
             drawRoulette();
             showPopup(result);
         }
@@ -387,8 +385,9 @@ function nextStep() {
     }
     const validItems = items.filter(i => i !== "x" && i !== " " && i !== "");
     const arc = 2 * Math.PI / validItems.length;
-    const index = Math.floor(((2 * Math.PI - angle) % (2 * Math.PI)) / arc);
-    const result = validItems[index < 0 ? index + validItems.length : index];
+    const normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    const index = Math.floor((normalizedAngle + arc / 2) / arc) % validItems.length;
+    const result = validItems[index];
     spinning = false;
     processResult(result);
     document.getElementById('nextButton').classList.add('hidden');
@@ -423,7 +422,8 @@ function notOwned() {
     if (spinning || !['キャラルーレット', 'キャラ武器ルーレット', 'weapon'].includes(currentRoulette)) return;
     const validItems = items.filter(i => i !== "x" && i !== " " && i !== "");
     const arc = 2 * Math.PI / validItems.length;
-    const index = Math.floor(((2 * Math.PI - angle) % (2 * Math.PI)) / arc);
+    const normalizedAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    const index = Math.floor((normalizedAngle + arc / 2) / arc) % validItems.length;
     const currentResult = validItems[index];
     if (lastResult === currentResult || excludedChars.includes(currentResult) || excludedWeapons[currentResult]?.includes(currentResult)) {
         return;
