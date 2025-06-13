@@ -9,32 +9,36 @@
 <body>
     <div id="startScreen">
         <h1>原神縛りルーレット</h1>
-        <label>プレイ人数:
-            <select id="playerCount">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-            </select>
-        </label><br>
-        <label>縛りの数:
-            <select id="bindCount">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-            </select>
-        </label><br>
-        <button onclick="startRoulette('all')">一括ルーレット</button><br>
-        <button onclick="startRoulette('boss')">ボスルーレット</button>
-        <button onclick="startRoulette('bind')">縛りルーレット</button>
-        <button onclick="showBindSelection()">縛りを選ぶ</button>
+        <div class="settings">
+            <label>プレイ人数:
+                <select id="playerCount">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </label>
+            <label>縛りの数:
+                <select id="bindCount">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </label>
+        </div>
+        <div class="buttons">
+            <button class="large-button" onclick="startRoulette('all')">一括ルーレット</button>
+            <button onclick="startRoulette('boss')">ボスルーレット</button>
+            <button onclick="startRoulette('bind')">縛りルーレット</button>
+            <button onclick="showBindSelection()">縛りを選ぶ</button>
+        </div>
     </div>
     <div id="bindSelection" class="hidden">
         <h2>縛りを選んでください</h2>
@@ -42,11 +46,13 @@
         <button id="backToStartButton" onclick="resetGame()">最初に戻る</button>
     </div>
     <div id="rouletteScreen" class="hidden">
-        <canvas id="rouletteCanvas" width="400" height="400"></canvas><br>
-        <button id="spinButton" onclick="spinRoulette()">回転する</button>
-        <button id="stopButton" onclick="stopRoulette()" disabled>止める</button>
-        <button id="notOwnedButton" class="hidden" onclick="notOwned()">持っていない</button>
-        <button id="nextButton" class="hidden" onclick="nextStep()">次へ</button>
+        <canvas id="rouletteCanvas" width="400" height="400"></canvas>
+        <div class="roulette-buttons">
+            <button id="spinButton" onclick="spinRoulette()">回転する</button>
+            <button id="stopButton" onclick="stopRoulette()" disabled>止める</button>
+            <button id="notOwnedButton" class="hidden" onclick="notOwned()">持っていない</button>
+            <button id="nextButton" class="hidden" onclick="nextStep()">次へ</button>
+        </div>
         <div id="popup" class="hidden">
             <div id="popupContent">
                 <span id="popupText"></span>
