@@ -1,17 +1,7 @@
 body {
   margin: 0;
   font-family: "Arial", sans-serif;
-  background-image: url('background.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  color: #fff;
-}
-
-body {
-  margin: 0;
-  font-family: "Arial", sans-serif;
-  background-image: url('background.jpg'); /* ここを assets から修正済み！ */
+  background-image: url('background.jpg'); /* ✅ ルートの画像を読み込む */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
