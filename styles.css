@@ -1,9 +1,10 @@
 body {
   margin: 0;
   font-family: "Arial", sans-serif;
-  background-image: url("assets/background.jpg");
+  background-image: url('background.jpg'); /* ここを assets から修正済み！ */
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   color: #fff;
 }
 
@@ -11,6 +12,8 @@ body {
   text-align: center;
   padding: 20px;
   background: rgba(0, 0, 0, 0.6);
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 h1 {
