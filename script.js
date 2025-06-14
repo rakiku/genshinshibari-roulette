@@ -10,17 +10,14 @@ document.getElementById("startAll").addEventListener("click", () => {
   const players = parseInt(document.getElementById("playerCount").value);
   const constraints = parseInt(document.getElementById("constraintCount").value);
 
-  // 仮のデモ結果出力
   let output = `<h2>🎲 ルーレット結果</h2><ul>`;
-  output += `<li><strong>ボス:</strong> 無相の炎</li>`;
+  output += `<li><strong>ボス:</strong> 無相の炎（仮）</li>`;
   for (let i = 1; i <= constraints; i++) {
-    output += `<li>縛り ${i}: ☆4キャラ武器</li>`;
+    output += `<li>縛り ${i}: ☆4キャラ武器（仮）</li>`;
   }
   for (let p = 1; p <= players; p++) {
-    output += `<li>プレイヤー${p}: キャラルーレット → ノエル</li>`;
+    output += `<li>プレイヤー${p}: キャラルーレット → ノエル（仮）</li>`;
   }
   output += `</ul>`;
   document.getElementById("resultArea").innerHTML = output;
 });
-
-// TODO: 縛り別ルーレットなど追加予定
