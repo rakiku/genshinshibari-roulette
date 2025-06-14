@@ -1,44 +1,50 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>原神縛りルーレット</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>原神縛りルーレット</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div id="startScreen">
-        <h1>原神縛りルーレット</h1>
-        <div>
-            <label for="playerCount">プレイヤー数:</label>
-            <input type="number" id="playerCount" value="1" min="1" max="4">
-        </div>
-        <div>
-            <label for="bindCount">縛りの数:</label>
-            <input type="number" id="bindCount" value="1" min="1" max="10">
-        </div>
-        <button onclick="startRoulette('all')">一括ルーレット</button>
-        <button onclick="startRoulette('boss')">ボスルーレット</button>
-        <button onclick="startRoulette('bind')">縛りルーレット</button>
-        <button onclick="showBindSelection()">縛りを選ぶ</button>
+  <div class="app">
+    <h1>原神縛りルーレット</h1>
+
+    <div class="settings">
+      <label>プレイヤー人数：</label>
+      <select id="playerCount">
+        <option value="1">1人</option>
+        <option value="2">2人</option>
+        <option value="3">3人</option>
+        <option value="4">4人</option>
+      </select>
+
+      <label>縛りの数：</label>
+      <select id="constraintCount">
+        <option value="1">1つ</option>
+        <option value="2">2つ</option>
+        <option value="3">3つ</option>
+        <option value="4">4つ</option>
+      </select>
+
+      <button id="startAll">一括ルーレット</button>
     </div>
-    <div id="bindSelection" class="hidden">
-        <h2>縛りを選んでください</h2>
-        <div id="bindButtons"></div>
+
+    <div class="buttons">
+      <button id="bossOnly">ボスルーレット</button>
+      <button id="constraintsOnly">縛りルーレット</button>
+      <button id="manualConstraint">縛りを選ぶ</button>
+      <button id="aboutButton">このルーレットについて</button>
     </div>
-    <div id="rouletteScreen" class="hidden">
-        <canvas id="rouletteCanvas" width="400" height="400"></canvas>
-        <button onclick="spinRoulette()">ルーレットを回す</button>
-        <button id="stopButton" onclick="stopRoulette()" disabled>ストップ</button>
-        <button id="notOwnedButton" onclick="notOwned()" class="hidden">持っていない</button>
-        <button id="nextButton" onclick="nextStep()" class="hidden">次へ</button>
-        <div id="popup" style="display: none;"></div>
-    </div>
-    <div id="resultScreen" class="hidden">
-        <h2>結果</h2>
-        <div id="results"></div>
-        <button onclick="backToStart()">最初に戻る</button>
-    </div>
-    <script src="script.js"></script>
+
+    <div id="rouletteArea"></div>
+    <div id="resultArea"></div>
+
+    <footer>
+      <button id="reset">最初に戻る</button>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
