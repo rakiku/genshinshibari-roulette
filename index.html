@@ -4,48 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>原神縛りルーレット</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="container">
-        <div id="initial-screen">
+    <div class="container">
+        <!-- 初期画面 -->
+        <div id="home-screen">
             <h1>原神縛りルーレット</h1>
-            <div id="settings">
-                <label for="players">プレイヤー人数:</label>
-                <select id="players">
-                    <option value="1">1人</option>
-                    <option value="2">2人</option>
-                    <option value="3">3人</option>
-                    <option value="4">4人</option>
+            <div class="settings">
+                <label>プレイヤー人数（1～4）:</label>
+                <select id="player-count">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
                 </select>
-                <label for="constraints">縛りの数:</label>
-                <select id="constraints">
-                    <option value="1">1個</option>
-                    <option value="2">2個</option>
-                    <option value="3">3個</option>
-                    <option value="4">4個</option>
+                <label>縛りの数（1～4）:</label>
+                <select id="restriction-count">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
                 </select>
             </div>
-            <button id="all-roulette">一括ルーレット</button>
-            <div id="sub-buttons">
-                <button id="boss-roulette">ボスルーレット</button>
-                <button id="constraint-roulette">縛りルーレット</button>
-                <button id="select-constraint">縛りを選ぶ</button>
-                <button id="about">このルーレットについて</button>
+            <div class="buttons">
+                <button onclick="startAllRoulette()">一括ルーレット</button>
+                <button onclick="startBossRoulette()">ボスルーレット</button>
+                <button onclick="startRestrictionRoulette()">縛りルーレット</button>
+                <button onclick="selectRestriction()">縛りを選ぶ</button>
+                <button onclick="showAbout()">このルーレットについて</button>
             </div>
         </div>
+
+        <!-- ルーレット画面 -->
         <div id="roulette-screen" style="display: none;">
-            <div id="roulette"></div>
-            <button id="spin">回転する</button>
-            <button id="stop" style="display: none;">止める</button>
-            <button id="not-owned" style="display: none;">持っていない</button>
+            <h2 id="roulette-title"></h2>
+            <div id="roulette-container">
+                <div id="roulette"></div>
+                <div class="pointer">▼</div>
+            </div>
+            <div class="roulette-buttons">
+                <button onclick="spinRoulette()">回転する</button>
+                <button onclick="stopRoulette()" disabled>止める</button>
+            </div>
         </div>
-        <div id="popup" style="display: none;"></div>
-        <button id="next" style="display: none;">次へ</button>
-        <button id="show-result" style="display: none;">結果を表示</button>
-        <div id="result-screen" style="display: none;"></div>
-        <div id="about-screen" style="display: none;"></div>
-        <button id="back">最初に戻る</button>
+
+        <!-- ポップアップ -->
+        <div id="popup" style="display: none;">
+            <p id="popup-text"></p>
+            <button onclick="closePopup()">閉じる</button>
+        </div>
+
+        <!-- リザルト画面 -->
+        <div id="result-screen" style="display: none;">
+            <h2>ルーレット結果</h2>
+            <div id="result-content"></div>
+            <button onclick="resetToHome()">最初に戻る</button>
+        </div>
+
+        <!-- このルーレットについて -->
+        <div id="about-screen" style="display: none;">
+            <h2>このルーレットについて</h2>
+            <div class="about-content">
+                <h3>このルーレットとは</h3>
+                <p>このルーレットは普段遊んでいるサーバーでやっている縛りのルーレットをやりやすくしたいという目的のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。</p>
+                <h3>使用される情報について</h3>
+                <p>このルーレットにおけるデータなどは作者が一人で追加しています。そのため、ミスなどがあるかもしれませんが発見した場合作者Twitter（<a href="https://x.com/rakiku_genshin">@rakiku_genshin</a>）に報告をお願いします。また、このルーレットを作成するにあたってAIを活用していますが、外部データ・推察・自動取得などは使用していません。</p>
+                <h3>FAQ</h3>
+                <p><strong>Q: 所持していない武器が出たら？</strong><br>A: 「持っていない」ボタンで項目を削除し再抽選。</p>
+                <p><strong>Q: キャラルーレットで被ったら？</strong><br>A: 重複しないよう設計。</p>
+                <p><strong>Q: 縛りの重複はどう処理？</strong><br>A: 重複しないよう設計。</p>
+                <p><strong>Q: 条件の矛盾が出た場合は？</strong><br>A: 後に出た縛りを再抽選。</p>
+                <h3>注意事項</h3>
+                <p>これは非公式のファンメイドとなっています。データミスを見つけた場合はTwitter（<a href="https://x.com/rakiku_genshin">@rakiku_genshin</a>）のDMにご報告ください。アップデート等は作者がやりたいときに頑張ります。</p>
+            </div>
+            <button onclick="resetToHome()">最初に戻る</button>
+        </div>
+
+        <!-- フッター -->
+        <footer>
+            <button onclick="resetToHome()">最初に戻る</button>
+        </footer>
     </div>
     <script src="script.js"></script>
 </body>
