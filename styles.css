@@ -1,54 +1,55 @@
 body {
   margin: 0;
-  font-family: "Arial", sans-serif;
-  background-image: url('background.jpg'); /* ✅ ルートの画像を読み込む */
+  font-family: "Segoe UI", "Meiryo", sans-serif;
+  background-image: url('background.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  color: #fff;
+  color: #ffffff;
 }
 
 .app {
   text-align: center;
   padding: 20px;
-  background: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
   min-height: 100vh;
   box-sizing: border-box;
 }
 
 h1 {
   font-size: 2.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
-.settings,
-.buttons {
+.settings, .buttons {
   margin: 20px 0;
 }
 
-select,
-button {
-  font-size: 1.1rem;
-  margin: 0.5rem;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
+select, button {
+  font-size: 1rem;
+  padding: 10px 20px;
+  margin: 10px;
+  border-radius: 6px;
   border: none;
 }
 
 button {
-  background-color: #5199d6;
-  color: white;
+  background: linear-gradient(to right, #4e9ddc, #357ab8);
+  color: #fff;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 button:hover {
-  background-color: #3a7fb4;
+  background: linear-gradient(to right, #3b7fbb, #2e6193);
 }
 
-#rouletteArea,
-#resultArea {
+#rouletteArea, #resultArea {
   margin-top: 30px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 10px;
 }
 
 footer {
@@ -56,4 +57,15 @@ footer {
   bottom: 10px;
   width: 100%;
   text-align: center;
+}
+
+@media (max-width: 600px) {
+  select, button {
+    width: 80%;
+    font-size: 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
 }
