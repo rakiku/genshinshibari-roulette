@@ -1,44 +1,36 @@
 // データ定義
 const bosses = [
-    "無相の炎", "無相の水", "無相の風", "無相の雷", "無相の草", "無相の氷", "無相の岩",
-    "純水精霊", "雷音権現", "水形タルパ", "深罪の浸礼者", "黄金王獣", "深淵なるミミック・パピラ",
-    "遺跡サーペント", "恒常からくり陣形", "兆載永劫ドレイク", "半永久統制マトリックス",
-    "氷風組曲コペリウス", "氷風組曲コッペリア", "秘源機兵・機構デバイス", "魔偶剣鬼",
-    "実験用フィールド生成装置", "迷える霊覚の修権者", "爆炎樹", "迅電樹", "急凍樹",
-    "エンシェントヴィシャップ・岩", "アビサルヴィシャップ", "マッシュラプトル", "風食ウェネト",
-    "鉄甲熔炎帝王", "千年真珠の海駿", "山隠れの猊獣", "魔像レガトゥス", "暴君・金焔のクク竜",
-    "山の王・貪食のユムカ竜", "輝ける溶岩の龍像", "秘源機兵・統御デバイス", "アンドリアス",
-    "公子", "若陀龍王", "淑女", "禍津御建鳴神命", "正機の神", "アペプ", "吞星の鯨", "召使",
-    "グーシートース", "キング＆クイーン", "ヴィヴィアン", "ニニアン", "イゾルト", "リアム",
-    "ロッキー", "ディアンナラ", "赤璋巡岳府君", "シネアス", "異色三連星", "バラチコ", "コシーホ",
-    "ジャプー", "リライ", "銅の掟", "ピーク", "戦羊・鉄爪", "微末"
+    "無相の炎", "無相の水", "無相の風", "無相の雷", "無相の草", "無相の氷", "無相の岩", "純水精霊", "雷音権現", "水形タルパ",
+    "深罪の浸礼者", "黄金王獣", "深淵なるミミック・パピラ", "遺跡サーペント", "恒常からくり陣形", "兆載永劫ドレイク", "半永久統制マトリックス",
+    "氷風組曲コペリウス", "氷風組曲コッペリア", "秘源機兵・機構デバイス", "魔偶剣鬼", "実験用フィールド生成装置", "迷える霊覚の修権者",
+    "爆炎樹", "迅電樹", "急凍樹", "エンシェントヴィシャップ・岩", "アビサルヴィシャップ", "マッシュラプトル", "風食ウェネト",
+    "鉄甲熔炎帝王", "千年真珠の海駿", "山隠れの猊獣", "魔像レガトゥス", "暴君・金焔のクク竜", "山の王・貪食のユムカ竜", "輝ける溶岩の龍像",
+    "秘源機兵・統御デバイス", "アンドリアス", "公子", "若陀龍王", "淑女", "禍津御建鳴神命", "正機の神", "アペプ", "吞星の鯨", "召使",
+    "グーシートース", "キング＆クイーン", "ヴィヴィアン", "ニニアン", "イゾルト", "リアム", "ロッキー", "ディアンナラ", "赤璋巡岳府君",
+    "シネアス", "異色三連星", "バラチコ", "コシーホ", "ジャプー", "リライ", "銅の掟", "ピーク", "戦羊・鉄爪", "微末"
 ];
 
-const constraints = [
-    "☆4キャラ武器", "回復禁止", "恒常☆5縛り", "所持率100％縛り", "国縛り", "初期キャラのみ",
-    "UI非表示＋リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット",
-    "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止＋リロール", "旅人縛り",
-    "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆1、聖遺物なし"
+const restrictions = [
+    "☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示＋リロール",
+    "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止",
+    "爆発禁止＋リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし"
 ];
 
 const countries = ["モンド", "璃月", "稲妻", "スメール", "フォンテーヌ", "ナタ", "スネージナヤ", "例外"];
 const initialCharacters = [
-    "旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗",
-    "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック",
-    "七七", "モナ", "刻晴", "ウェンティ", "クレー"
+    "旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光",
+    "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー"
 ];
-const characters = [
-    "旅人", "ジン", "アンバー", "リサ", "ガイア", "バーバラ", "ディルック", "レザー", "ウェンティ",
-    "クレー", "ベネット", "ノエル", "フィッシュル", "スクロース", "モナ", "ディオナ", "アルベド",
-    "ロサリア", "エウルア", "ミカ", "魈", "北斗", "凝光", "香菱", "行秋", "重雲", "七七", "刻晴",
-    "タルタリヤ", "鍾離", "辛炎", "甘雨", "胡桃", "煙緋", "申鶴", "雲菫", "夜蘭", "ヨォーヨ", "白朮",
-    "閑雲", "嘉明", "藍硯", "神里綾華", "神里綾人", "楓原万葉", "宵宮", "早柚", "雷電将軍", "九条裟羅",
-    "珊瑚宮心海", "トーマ", "荒瀧一斗", "ゴロー", "八重神子", "久岐忍", "鹿野院平蔵", "綺良々",
-    "夢見月瑞希", "ティナリ", "コレイ", "ドリー", "セノ", "キャンディス", "ニィロウ", "ナヒーダ",
-    "レイラ", "放浪者", "ファルザン", "アルハイゼン", "ディシア", "カーヴェ", "セトス", "リネ",
-    "リネット", "フレミネ", "ヌヴィレット", "リオセスリ", "シャルロット", "フリーナ", "ナヴィア",
-    "シュヴルーズ", "千織", "アルレッキーノ", "クロリンデ", "シグウィン", "エミリエ", "エスコフィエ",
-    "ムアラニ", "カチーナ", "キィニチ", "シロネン", "チャスカ", "オロルン", "シトラリ", "マーヴィカ",
+const allCharacters = [
+    "旅人", "ジン", "アンバー", "リサ", "ガイア", "バーバラ", "ディルック", "レザー", "ウェンティ", "クレー", "ベネット",
+    "ノエル", "フィッシュル", "スクロース", "モナ", "ディオナ", "アルベド", "ロサリア", "エウルア", "ミカ", "魈", "北斗",
+    "凝光", "香菱", "行秋", "重雲", "七七", "刻晴", "タルタリヤ", "鍾離", "辛炎", "甘雨", "胡桃", "煙緋", "申鶴", "雲菫",
+    "夜蘭", "ヨォーヨ", "白朮", "閑雲", "嘉明", "藍硯", "神里綾華", "神里綾人", "楓原万葉", "宵宮", "早柚", "雷電将軍",
+    "九条裟羅", "珊瑚宮心海", "トーマ", "荒瀧一斗", "ゴロー", "八重神子", "久岐忍", "鹿野院平蔵", "綺良々", "夢見月瑞希",
+    "ティナリ", "コレイ", "ドリー", "セノ", "キャンディス", "ニィロウ", "ナヒーダ", "レイラ", "放浪者", "ファルザン",
+    "アルハイゼン", "ディシア", "カーヴェ", "セトス", "リネ", "リネット", "フレミネ", "ヌヴィレット", "リオセスリ",
+    "シャルロット", "フリーナ", "ナヴィア", "シュヴルーズ", "千織", "アルレッキーノ", "クロリンデ", "シグウィン", "エミリエ",
+    "エスコフィエ", "ムアラニ", "カチーナ", "キィニチ", "シロネン", "チャスカ", "オロルン", "シトラリ", "マーヴィカ",
     "ヴァレサ", "イファ", "イアンサ", "スカーク", "ダリア", "アーロイ"
 ];
 const weaponTypes = ["片手剣", "両手剣", "長柄武器", "法器", "弓"];
@@ -47,12 +39,12 @@ const versions = ["n.0", "n.1", "n.2", "n.3", "n.4", "n.5", "n.6", "n.7", "n.8"]
 const months = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
 const alphabets = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z"];
 
-const characterWeaponTypes = {
+const weaponTypeCharacters = {
     "長柄武器": ["エスコフィエ", "イアンサ", "カチーナ", "エミリエ", "アルレッキーノ", "シュヴルーズ", "ミカ", "ヨォーヨ", "キャンディス", "セノ", "魈", "香菱", "雷電将軍", "鍾離", "胡桃", "ロサリア", "申鶴", "トーマ", "雲菫"],
     "法器": ["イファ", "ヴァレサ", "夢見月瑞希", "藍硯", "シトラリ", "ムアラニ", "閑雲", "シャルロット", "ヌヴィレット", "リオセスリ", "白朮", "放浪者", "ナヒーダ", "鹿野院平蔵", "モナ", "バーバラ", "スクロース", "珊瑚宮心海", "煙緋", "クレー", "凝光", "八重神子", "リサ"],
-    "弓": ["チャスカ", "オロルン", "セトス", "シグウィン", "リネ", "ファルザン", "コレイ", "ティナリ", "夜蘭", "ディオナ", "タルタリヤ", "フィッシュル", "甘雨", "ウェンティ", "宵宮", "アンバー", "ゴロー", "九条裟羅"],
+    "弓": ["チャスカ", "オロルン", "セトス", "シグウィン", "リネ", "ファルザン", "コレイ", "ティナリ", "夜蘭", "ディオナ", "タルタリヤ", "フィッシュル", "甘雨", "ウェンティ", "宵宮", "アンバー", "ゴロー", "九条裟羅", "アーロイ"],
     "両手剣": ["マーヴィカ", "キィニチ", "嘉明", "ナヴィア", "フレミネ", "カーヴェ", "ディシア", "ドリー", "レザー", "重雲", "ディルック", "辛炎", "ノエル", "荒瀧一斗", "早柚", "北斗", "エウルア"],
-    "片手剣": ["旅人", "シロネン", "クロリンデ", "千織", "フリーナ", "リネット", "綺良々", "アルハイゼン", "レイラ", "ニィロウ", "久岐忍", "アルベド", "行秋", "神里綾華", "神里綾人", "ジン", "ベネット", "楓原万葉", "刻晴", "ガイア", "七七", "スカーク", "ダリア", "アーロイ"]
+    "片手剣": ["旅人", "シロネン", "クロリンデ", "千織", "フリーナ", "リネット", "綺良々", "アルハイゼン", "レイラ", "ニィロウ", "久岐忍", "アルベド", "行秋", "神里綾華", "神里綾人", "ジン", "ベネット", "楓原万葉", "刻晴", "ガイア", "七七", "スカーク", "ダリア"]
 };
 
 const weapons = {
@@ -65,7 +57,7 @@ const weapons = {
 
 const birthMonths = {
     "1月": ["放浪者", "藍硯", "トーマ", "シュヴルーズ", "ディオナ", "シトラリ", "綺良々", "ロサリア"],
-    "2月": ["リネ", "リネット", "アルハイゼン", "北斗", "珊瑚宮心海", "ベネット"],
+    "2月": ["リネ", "リネット", "アルハイゼン", "北斗", " Coral Palace Kokomi", "ベネット"],
     "3月": ["七七", "ヨォーヨ", "申鶴", "シロネン", "ジン", "夢見月瑞希", "ノエル", "神里綾人", "シグウィン", "イファ"],
     "4月": ["ディシア", "シャルロット", "閑雲", "魈", "夜蘭", "カチーナ", "白朮", "ディルック", "アーロイ"],
     "5月": ["キャンディス", "コレイ", "ゴロー", "雲菫", "ダリア", "フィッシュル", "セトス"],
@@ -106,9 +98,9 @@ const alphabetsData = {
 };
 
 const versionData = {
-    "n.0": ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー", "神里綾華", "宵宮", "早柚", "ティナリ", "コレイ", "ドリー", "リネ", "リネット", "フレミネ", "ムアラニ", "キィニチ", "カチーナ"],
+    "n.0": ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー", "神里綾華", "宵宮", "早柚", "ティナリ", "コレイ", "ドリー", "リネ", "リネット", "フレミネ", "ムアラニ", "キィニチ", "カチーナ", "アーロイ"],
     "n.1": ["タルタリヤ", "鍾離", "ディオナ", "辛炎", "雷電将軍", "珊瑚宮心海", "九条裟羅", "セノ", "ニィロウ", "キャンディス", "ヌヴィレット", "リオセスリ", "シロネン"],
-    "n.2": ["甘雨", "アルベド", "トーマ", "ナヒーダ", "レイラ", "フリーナ", "シャルロット", "チャスカ", "オロルン", "アーロイ"],
+    "n.2": ["甘雨", "アルベド", "トーマ", "ナヒーダ", "レイラ", "フリーナ", "シャルロット", "チャスカ", "オロルン"],
     "n.3": ["胡桃", "魈", "荒瀧一斗", "ゴロー", "放浪者", "ファルザン", "ナヴィア", "シュヴルーズ", "マーヴィカ", "シトラリ", "藍硯"],
     "n.4": ["ロサリア", "申鶴", "雲菫", "アルハイゼン", "ヨォーヨ", "閑雲", "嘉明", "夢見月瑞希"],
     "n.5": ["エウルア", "煙緋", "八重神子", "ディシア", "ミカ", "千織", "ヴァレサ", "イアンサ"],
@@ -117,7 +109,7 @@ const versionData = {
     "n.8": ["鹿野院平蔵", "エミリエ"]
 };
 
-const elementData = {
+const elementCharacters = {
     "炎": ["マーヴィカ", "アルレッキーノ", "嘉明", "シュヴルーズ", "リネ", "ディシア", "香菱", "ディルック", "辛炎", "胡桃", "ベネット", "煙緋", "トーマ", "宵宮", "アンバー", "クレー"],
     "水": ["ダリア", "ムアラニ", "シグウィン", "フリーナ", "ヌヴィレット", "キャンディス", "ニィロウ", "夜蘭", "タルタリヤ", "行秋", "モナ", "バーバラ", "神里綾人", "珊瑚宮心海"],
     "草": ["キィニチ", "エミリエ", "綺良々", "白朮", "カーヴェ", "アルハイゼン", "ヨォーヨ", "ナヒーダ", "コレイ", "ティナリ"],
@@ -127,7 +119,7 @@ const elementData = {
     "岩": ["シロネン", "カチーナ", "鍾離", "千織", "ナヴィア", "アルベド", "荒瀧一斗", "ノエル", "凝光", "ゴロー", "雲菫"]
 };
 
-const countryData = {
+const countryCharacters = {
     "モンド": ["ミカ", "レザー", "アルベド", "ディオナ", "ディルック", "ノエル", "フィッシュル", "モナ", "バーバラ", "ロサリア", "スクロース", "ジン", "ベネット", "ウェンティ", "アンバー", "クレー", "ガイア", "エウルア", "リサ"],
     "璃月": ["藍硯", "嘉明", "閑雲", "白朮", "ヨォーヨ", "夜蘭", "魈", "香菱", "鍾離", "重雲", "辛炎", "行秋", "胡桃", "申鶴", "甘雨", "煙緋", "北斗", "刻晴", "凝光", "雲菫", "七七"],
     "稲妻": ["夢見月瑞希", "千織", "綺良々", "鹿野院平蔵", "久岐忍", "雷電将軍", "荒瀧一斗", "神里綾華", "神里綾人", "珊瑚宮心海", "楓原万葉", "早柚", "トーマ", "宵宮", "八重神子", "ゴロー", "九条裟羅"],
@@ -138,349 +130,347 @@ const countryData = {
     "例外": ["旅人", "アーロイ", "スカーク"]
 };
 
+const constantFiveStars = ["ティナリ", "ディシア", "ディルック", "刻晴", "七七", "ジン", "夢見月瑞希"];
+const owned100 = ["旅人", "ガイア", "リサ", "アンバー", "香菱", "コレイ", "ノエル", "バーバラ"];
+
 const elementColors = {
-    "水": "#00c0fe", "炎": "#fe6640", "雷": "#cc85ff", "氷": "#74E4E2",
-    "風": "#36d6a0", "岩": "#F3AC11", "草": "#8dcc06"
+    "水": "#00c0fe", "炎": "#fe6640", "雷": "#cc85ff", "氷": "#74E4E2", "風": "#36d6a0", "岩": "#F3AC11", "草": "#8dcc06"
 };
 
 // グローバル変数
-let players = 1;
-let numConstraints = 1;
-let currentStep = 0;
-let results = [];
-let rouletteItems = [];
-let spinning = false;
-let selectedBoss = "";
-let selectedConstraints = [];
-let currentPlayer = 0;
-let notOwnedItems = [];
+let playerCount, restrictionCount, currentStep, currentPlayer, selectedBoss, selectedRestrictions = [], restrictionDetails = [], spinning = false;
 
 // 画面切り替え
 function showScreen(screenId) {
-    document.getElementById('initial-screen').style.display = 'none';
-    document.getElementById('roulette-screen').style.display = 'none';
-    document.getElementById('result-screen').style.display = 'none';
-    document.getElementById('about-screen').style.display = 'none';
+    document.querySelectorAll('.container > div').forEach(div => div.style.display = 'none');
     document.getElementById(screenId).style.display = 'block';
-    document.getElementById('next').style.display = 'none';
-    document.getElementById('show-result').style.display = 'none';
 }
 
-// ルーレット生成
-function createRoulette(items) {
+function resetToHome() {
+    showScreen('home-screen');
+    selectedBoss = null;
+    selectedRestrictions = [];
+    restrictionDetails = [];
+    currentStep = null;
+    currentPlayer = 0;
+}
+
+// ルーレット開始
+function startAllRoulette() {
+    playerCount = parseInt(document.getElementById('player-count').value);
+    restrictionCount = parseInt(document.getElementById('restriction-count').value);
+    currentStep = 'boss';
+    currentPlayer = 0;
+    showScreen('roulette-screen');
+    setupRoulette(bosses, 'ボス選択');
+}
+
+function startBossRoulette() {
+    playerCount = parseInt(document.getElementById('player-count').value);
+    restrictionCount = 0;
+    currentStep = 'boss';
+    currentPlayer = 0;
+    showScreen('roulette-screen');
+    setupRoulette(bosses, 'ボス選択');
+}
+
+function startRestrictionRoulette() {
+    playerCount = parseInt(document.getElementById('player-count').value);
+    restrictionCount = parseInt(document.getElementById('restriction-count').value);
+    currentStep = 'restriction';
+    currentPlayer = 0;
+    selectedRestrictions = [];
+    showScreen('roulette-screen');
+    setupRoulette(restrictions, '縛り選択');
+}
+
+function selectRestriction() {
+    // 未実装：手動選択UI
+    alert('手動選択は未実装です。一括ルーレットを使用してください。');
+}
+
+// ルーレット設定
+function setupRoulette(items, title) {
+    document.getElementById('roulette-title').textContent = title;
     const roulette = document.getElementById('roulette');
     roulette.innerHTML = '';
-    rouletteItems = items.sort(() => Math.random() - 0.5);
-    const angleStep = 360 / items.length;
-    items.forEach((item, index) => {
+    const shuffledItems = items.sort(() => Math.random() - 0.5);
+    shuffledItems.forEach(item => {
         const div = document.createElement('div');
-        div.className = 'roulette-item';
         div.textContent = item;
-        const angle = angleStep * index;
-        div.style.transform = `rotate(${angle}deg) translateY(-130px) rotate(-${angle}deg)`;
         roulette.appendChild(div);
     });
+    document.querySelector('button[onclick="spinRoulette()"]').disabled = false;
+    document.querySelector('button[onclick="stopRoulette()"]').disabled = true;
 }
 
 // ルーレット回転
 function spinRoulette() {
     if (spinning) return;
     spinning = true;
-    document.getElementById('spin').style.display = 'none';
-    document.getElementById('stop').style.display = 'inline-block';
-    let angle = 0;
-    const fastSpin = setInterval(() => {
-        angle += 20;
-        document.getElementById('roulette').style.transform = `rotate(${angle}deg)`;
-    }, 50);
+    const roulette = document.getElementById('roulette');
+    roulette.style.transition = 'none';
+    roulette.style.top = '0px';
     setTimeout(() => {
-        clearInterval(fastSpin);
-    }, 3000);
+        roulette.style.transition = 'top 5s ease-out';
+        document.querySelector('button[onclick="spinRoulette()"]').disabled = true;
+        document.querySelector('button[onclick="stopRoulette()"]').disabled = false;
+    }, 50);
 }
 
-// ルーレット停止
 function stopRoulette() {
     if (!spinning) return;
     spinning = false;
-    document.getElementById('stop').style.display = 'none';
-    let angle = parseFloat(document.getElementById('roulette').style.transform.replace('rotate(', '').replace('deg)', '')) || 0;
-    const slowSpin = setInterval(() => {
-        angle += 5;
-        document.getElementById('roulette').style.transform = `rotate(${angle}deg)`;
-    }, 50);
+    const roulette = document.getElementById('roulette');
+    const itemHeight = 30;
+    const totalHeight = roulette.children.length * itemHeight;
+    const randomOffset = Math.floor(Math.random() * totalHeight);
+    roulette.style.top = `-${randomOffset}px`;
     setTimeout(() => {
-        clearInterval(slowSpin);
-        const totalAngle = angle % 360;
-        const itemAngle = 360 / rouletteItems.length;
-        const selectedIndex = Math.floor((360 - totalAngle) / itemAngle) % rouletteItems.length;
-        const result = rouletteItems[selectedIndex];
-        showPopup(result);
-        handleResult(result);
-    }, 5000);
+        const topPosition = Math.abs(parseInt(roulette.style.top));
+        const selectedIndex = Math.floor(topPosition / itemHeight) % roulette.children.length;
+        const selectedItem = roulette.children[selectedIndex].textContent;
+        showPopup(selectedItem);
+    }, 5100);
 }
 
 // ポップアップ表示
 function showPopup(result) {
     const popup = document.getElementById('popup');
-    let color = '#FFFFFF';
-    if (currentStep === 1 || (selectedConstraints[currentStep - 2] === "キャラルーレット") || 
-        (selectedConstraints[currentStep - 2] === "キャラ武器ルーレット" && currentStep % 2 === 1)) {
-        const charElement = Object.keys(elementData).find(e => elementData[e].includes(result));
-        color = charElement ? elementColors[charElement] : '#FFFFFF';
-    }
-    popup.innerHTML = `結果: <span style="color: ${color}">${result}</span>`;
+    const popupText = document.getElementById('popup-text');
+    popupText.textContent = `結果: ${result}`;
     popup.style.display = 'block';
     setTimeout(() => {
-        popup.style.display = 'none';
-        document.getElementById('next').style.display = 'inline-block';
-        if (currentStep === 1 || selectedConstraints[currentStep - 2] === "キャラルーレット" || 
-            selectedConstraints[currentStep - 2] === "キャラ武器ルーレット") {
-            document.getElementById('not-owned').style.display = 'inline-block';
-        }
+        if (popup.style.display === 'block') closePopup();
     }, 5000);
+
+    if (currentStep === 'boss') {
+        selectedBoss = result;
+    } else if (currentStep === 'restriction') {
+        if (!selectedRestrictions.includes(result)) {
+            selectedRestrictions.push(result);
+        }
+    } else if (currentStep.startsWith('detail-')) {
+        restrictionDetails[currentPlayer][currentStep.split('-')[1]] = result;
+    }
 }
 
-// 結果処理
-function handleResult(result) {
-    if (currentStep === 0) {
-        selectedBoss = result;
-    } else {
-        const constraint = selectedConstraints[currentStep - 2];
-        if (currentStep === 1) {
-            selectedConstraints.push(result);
-        } else if (["国縛り", "キャラルーレット", "武器種縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り"].includes(constraint)) {
-            results[currentPlayer].constraints[constraint] = result;
-        } else if (constraint === "キャラ武器ルーレット") {
-            if (currentStep % 2 === 0) {
-                results[currentPlayer].constraints[constraint] = { character: results[currentPlayer].constraints[constraint], weapon: result };
-            } else {
-                results[currentPlayer].constraints[constraint] = result;
-            }
-        }
-    }
+function closePopup() {
+    document.getElementById('popup').style.display = 'none';
+    proceedNextStep();
 }
 
 // 次のステップへ
-function nextStep() {
-    document.getElementById('not-owned').style.display = 'none';
-    currentStep++;
-    const totalSteps = 1 + numConstraints * players + selectedConstraints.filter(c => c === "キャラ武器ルーレット").length * players;
-    if (currentStep >= totalSteps) {
-        checkContradictions();
-        document.getElementById('next').style.display = 'none';
-        document.getElementById('show-result').style.display = 'inline-block';
-        return;
-    }
-    if (currentStep === 1 && currentPlayer === 0) {
-        createRoulette(constraints.filter(c => !selectedConstraints.includes(c)));
-    } else if (currentStep > 1) {
-        const constraint = selectedConstraints[currentStep - 2];
-        let items = [];
-        switch (constraint) {
-            case "国縛り": items = countries; break;
-            case "初期キャラのみ": items = initialCharacters; break;
-            case "キャラルーレット": items = characters.filter(c => !notOwnedItems.includes(c)); break;
-            case "武器種縛り": items = weaponTypes; break;
-            case "キャラ武器ルーレット":
-                if (currentStep % 2 === 0) {
-                    const char = results[currentPlayer].constraints[constraint];
-                    const weaponType = Object.keys(characterWeaponTypes).find(type => characterWeaponTypes[type].includes(char));
-                    items = weapons[weaponType].filter(w => !notOwnedItems.includes(w));
-                } else {
-                    items = characters.filter(c => !notOwnedItems.includes(c));
-                }
-                break;
-            case "モノ元素縛り": items = elements; break;
-            case "各1.1縛り": items = versions; break;
-            case "誕生月": items = months; break;
-            case "アルファベット縛り": items = alphabets; break;
-            case "UI非表示＋リロール":
-            case "爆発禁止＋リロール":
-                selectedConstraints.pop();
-                currentStep--;
-                createRoulette(constraints.filter(c => !selectedConstraints.includes(c)));
-                return;
+function proceedNextStep() {
+    if (currentStep === 'boss' && restrictionCount > 0) {
+        currentStep = 'restriction';
+        setupRoulette(restrictions.filter(r => !selectedRestrictions.includes(r)), '縛り選択');
+    } else if (currentStep === 'restriction' && selectedRestrictions.length < restrictionCount) {
+        setupRoulette(restrictions.filter(r => !selectedRestrictions.includes(r)), '縛り選択');
+    } else if (currentStep === 'restriction' || (currentStep === 'boss' && restrictionCount === 0)) {
+        if (currentPlayer < playerCount) {
+            restrictionDetails[currentPlayer] = {};
+            processRestrictionDetails();
+        } else {
+            checkContradictionsAndShowResult();
         }
-        createRoulette(items);
+    } else if (currentStep.startsWith('detail-')) {
+        processRestrictionDetails();
     }
-    if ((currentStep - 1) % (numConstraints + (selectedConstraints.filter(c => c === "キャラ武器ルーレット").length)) === 0 && currentStep > 1) {
-        currentPlayer++;
-    }
-    showScreen('roulette-screen');
 }
 
-// 矛盾チェック
-function checkContradictions() {
-    for (let p = 0; p < players; p++) {
-        let availableChars = characters.slice();
-        const playerConstraints = results[p].constraints;
-        Object.keys(playerConstraints).forEach(constraint => {
-            const value = playerConstraints[constraint];
-            let filteredChars = [];
-            switch (constraint) {
-                case "☆4キャラ武器":
-                    filteredChars = characters.filter(c => !["エスコフィエ", "ヴァレサ", "夢見月瑞希", "シトラリ", "マーヴィカ", "チャスカ", "シロネン", "ムアラニ", "キィニチ", "エミリエ", "シグウィン", "クロリンデ", "アルレッキーノ", "千織", "閑雲", "ナヴィア", "フリーナ", "ヌヴィレット", "リオセスリ", "リネ", "白朮", "ディシア", "アルハイゼン", "放浪者", "ナヒーダ", "セノ", "ニィロウ", "ティナリ", "夜蘭", "魈", "雷電将軍", "アルベド", "鍾離", "ディルック", "タルタリヤ", "モナ", "荒瀧一斗", "胡桃", "神里綾華", "神里綾人", "申鶴", "甘雨", "ジン", "珊瑚宮心海", "ウェンティ", "楓原万葉", "宵宮", "アーロイ", "クレー", "刻晴", "八重神子", "エウルア", "七七", "旅人"].includes(c));
+function processRestrictionDetails() {
+    const playerRestrictions = selectedRestrictions;
+    const currentDetailIndex = Object.keys(restrictionDetails[currentPlayer]).length;
+    if (currentDetailIndex < playerRestrictions.length) {
+        const restriction = playerRestrictions[currentDetailIndex];
+        currentStep = `detail-${currentDetailIndex}`;
+        switch (restriction) {
+            case "国縛り":
+                setupRoulette(countries, `${restriction} - 国選択`);
+                break;
+            case "初期キャラのみ":
+                setupRoulette(initialCharacters, `${restriction} - キャラ選択`);
+                break;
+            case "キャラルーレット":
+                setupRoulette(allCharacters, `${restriction} - キャラ選択`);
+                break;
+            case "武器種縛り":
+                setupRoulette(weaponTypes, `${restriction} - 武器種選択`);
+                break;
+            case "キャラ武器ルーレット":
+                setupRoulette(allCharacters, `${restriction} - キャラ選択`);
+                break;
+            case "モノ元素縛り":
+                setupRoulette(elements, `${restriction} - 元素選択`);
+                break;
+            case "各1.1縛り":
+                setupRoulette(versions, `${restriction} - バージョン選択`);
+                break;
+            case "誕生月":
+                setupRoulette(months, `${restriction} - 月選択`);
+                break;
+            case "アルファベット縛り":
+                setupRoulette(alphabets, `${restriction} - アルファベット選択`);
+                break;
+            case "UI非表示＋リロール":
+            case "爆発禁止＋リロール":
+                currentStep = 'restriction';
+                selectedRestrictions = selectedRestrictions.filter(r => r !== restriction);
+                setupRoulette(restrictions.filter(r => !selectedRestrictions.includes(r)), '縛り選択');
+                break;
+            default:
+                restrictionDetails[currentPlayer][currentDetailIndex] = null;
+                processRestrictionDetails();
+                break;
+        }
+    } else if (currentPlayer < playerCount - 1) {
+        currentPlayer++;
+        restrictionDetails[currentPlayer] = {};
+        processRestrictionDetails();
+    } else {
+        checkContradictionsAndShowResult();
+    }
+}
+
+// 矛盾チェックと結果表示
+function checkContradictionsAndShowResult() {
+    let allValid = true;
+    for (let i = 0; i < playerCount; i++) {
+        const details = restrictionDetails[i];
+        let availableCharacters = allCharacters.slice();
+        Object.values(details).forEach((detail, index) => {
+            const restriction = selectedRestrictions[index];
+            let filtered = [];
+            switch (restriction) {
+                case "☆４キャラ武器":
+                    filtered = allCharacters.filter(c => !["エスコフィエ", "ヴァレサ", "夢見月瑞希", "シトラリ", "マーヴィカ", "チャスカ", "シロネン", "ムアラニ", "キィニチ", "エミリエ", "シグウィン", "クロリンデ", "アルレッキーノ", "千織", "閑雲", "ナヴィア", "フリーナ", "ヌヴィレット", "リオセスリ", "リネ", "白朮", "ディシア", "アルハイゼン", "放浪者", "ナヒーダ", "セノ", "ニィロウ", "ティナリ", "夜蘭", "魈", "雷電将軍", "アルベド", "鍾離", "ディルック", "タルタリヤ", "モナ", "荒瀧一斗", "胡桃", "神里綾華", "神里綾人", "申鶴", "甘雨", "ジン", "珊瑚宮心海", "ウェンティ", "楓原万葉", "宵宮", "クレー", "刻晴", "八重神子", "エウルア", "七七", "旅人"].includes(c));
                     break;
-                case "恒常☆5縛り":
-                    filteredChars = ["ティナリ", "ディシア", "ディルック", "刻晴", "七七", "ジン", "夢見月瑞希"];
+                case "恒常☆５縛り":
+                    filtered = constantFiveStars;
                     break;
                 case "所持率100％縛り":
-                    filteredChars = ["旅人", "ガイア", "リサ", "アンバー", "香菱", "コレイ", "ノエル", "バーバラ"];
+                    filtered = owned100;
                     break;
                 case "国縛り":
-                    filteredChars = countryData[value];
+                    filtered = countryCharacters[detail] || [];
                     break;
                 case "初期キャラのみ":
-                    filteredChars = initialCharacters;
+                    filtered = [detail];
                     break;
                 case "キャラルーレット":
-                    filteredChars = [value];
+                    filtered = [detail];
                     break;
                 case "武器種縛り":
-                    filteredChars = characterWeaponTypes[value];
+                    filtered = weaponTypeCharacters[detail] || [];
                     break;
                 case "キャラ武器ルーレット":
-                    filteredChars = [value.character];
+                    filtered = [detail];
                     break;
                 case "旅人縛り":
-                    filteredChars = ["旅人"];
+                    filtered = ["旅人"];
                     break;
                 case "モノ元素縛り":
-                    filteredChars = elementData[value];
+                    filtered = elementCharacters[detail] || [];
                     break;
                 case "各1.1縛り":
-                    filteredChars = versionData[value];
+                    filtered = versionData[detail] || [];
                     break;
                 case "誕生月":
-                    filteredChars = birthMonths[value];
+                    filtered = birthMonths[detail] || [];
                     break;
                 case "アルファベット縛り":
-                    filteredChars = alphabetsData[value];
+                    filtered = alphabetsData[detail] || [];
                     break;
+                default:
+                    filtered = availableCharacters;
             }
-            availableChars = availableChars.filter(c => filteredChars.includes(c));
+            availableCharacters = availableCharacters.filter(c => filtered.includes(c));
         });
-        if (availableChars.length === 0) {
-            const lastConstraint = selectedConstraints.pop();
-            results[p].constraints = {};
-            currentStep = 1 + p * numConstraints;
-            currentPlayer = p;
-            createRoulette(constraints.filter(c => !selectedConstraints.includes(c)));
-            showScreen('roulette-screen');
-            document.getElementById('next').style.display = 'none';
-            alert("この縛りではキャラが選択できません。リロールします");
+        if (availableCharacters.length === 0) {
+            allValid = false;
+            currentPlayer = i;
+            currentStep = `detail-${selectedRestrictions.length - 1}`;
+            selectedRestrictions.pop();
+            restrictionDetails[i] = Object.fromEntries(Object.entries(restrictionDetails[i]).slice(0, -1));
+            setupRoulette(getNextOptions(selectedRestrictions[selectedRestrictions.length - 1]), '矛盾解消のための再抽選');
             return;
         }
     }
+    if (allValid) showResult();
 }
 
-// リザルト表示
+function getNextOptions(lastRestriction) {
+    switch (lastRestriction) {
+        case "国縛り": return countries;
+        case "初期キャラのみ": return initialCharacters;
+        case "キャラルーレット": return allCharacters;
+        case "武器種縛り": return weaponTypes;
+        case "キャラ武器ルーレット": return weapons[weaponTypeCharacters[restrictionDetails[currentPlayer][Object.keys(restrictionDetails[currentPlayer]).length - 1]] ? weaponTypeCharacters[restrictionDetails[currentPlayer][Object.keys(restrictionDetails[currentPlayer]).length - 1]][0] : "片手剣"];
+        case "モノ元素縛り": return elements;
+        case "各1.1縛り": return versions;
+        case "誕生月": return months;
+        case "アルファベット縛り": return alphabets;
+        default: return restrictions.filter(r => !selectedRestrictions.includes(r));
+    }
+}
+
 function showResult() {
-    const resultScreen = document.getElementById('result-screen');
-    let html = `<h2>ルーレット結果</h2><p>ボス: ${selectedBoss}</p>`;
-    for (let p = 0; p < players; p++) {
-        html += `<h3>プレイヤー${p + 1}</h3>`;
-        const playerConstraints = results[p].constraints;
-        Object.keys(playerConstraints).forEach(constraint => {
-            let value = playerConstraints[constraint];
-            let details = "";
-            if (constraint === "キャラ武器ルーレット") {
-                details = `${value.character}: ${value.weapon}`;
-            } else if (["所持率100％縛り"].includes(constraint)) {
-                details = value + "（旅人、ガイア、リサ、アンバー、香菱、コレイ、ノエル、バーバラ）";
-            } else if (["国縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り"].includes(constraint)) {
-                const charList = constraint === "国縛り" ? countryData[value] :
-                                constraint === "モノ元素縛り" ? elementData[value] :
-                                constraint === "各1.1縛り" ? versionData[value] :
-                                constraint === "誕生月" ? birthMonths[value] :
-                                alphabetsData[value];
-                details = `${value}（${charList.join(", ")}）`;
-            } else {
-                details = value;
-            }
-            html += `<p>${constraint}: ${details}</p>`;
+    showScreen('result-screen');
+    const resultContent = document.getElementById('result-content');
+    resultContent.innerHTML = `<h3>ボス: ${selectedBoss}</h3>`;
+    const commonRestrictions = selectedRestrictions.filter(r => !["キャラルーレット", "キャラ武器ルーレット", "初期キャラのみ"].includes(r));
+    if (commonRestrictions.length > 0) {
+        resultContent.innerHTML += `<h3>共通の縛り:</h3>`;
+        commonRestrictions.forEach((r, i) => {
+            let detail = restrictionDetails[0][i];
+            let chars = getCharactersForRestriction(r, detail);
+            resultContent.innerHTML += `<p>${r}${detail ? `: ${detail}` : ''} (${chars.join(', ')})</p>`;
         });
     }
-    resultScreen.innerHTML = html;
-    showScreen('result-screen');
+    for (let i = 0; i < playerCount; i++) {
+        resultContent.innerHTML += `<h3>Player ${i + 1}の縛り:</h3>`;
+        selectedRestrictions.forEach((r, j) => {
+            let detail = restrictionDetails[i][j];
+            let chars = getCharactersForRestriction(r, detail);
+            if (["キャラルーレット", "キャラ武器ルーレット", "初期キャラのみ"].includes(r)) {
+                if (r === "キャラ武器ルーレット") {
+                    let weapon = restrictionDetails[i][`${j}-weapon`] || weapons[weaponTypeCharacters[detail] ? weaponTypeCharacters[detail][0] : "片手剣"][0];
+                    resultContent.innerHTML += `<p>${r}: ${detail}: ${weapon}</p>`;
+                } else {
+                    resultContent.innerHTML += `<p>${r}${detail ? `: ${detail}` : ''} (${chars.join(', ')})</p>`;
+                }
+            }
+        });
+    }
 }
 
-// 「このルーレットについて」ページ
+function getCharactersForRestriction(restriction, detail) {
+    switch (restriction) {
+        case "☆４キャラ武器": return allCharacters.filter(c => !["エスコフィエ", "ヴァレサ", "夢見月瑞希", "シトラリ", "マーヴィカ", "チャスカ", "シロネン", "ムアラニ", "キィニチ", "エミリエ", "シグウィン", "クロリンデ", "アルレッキーノ", "千織", "閑雲", "ナヴィア", "フリーナ", "ヌヴィレット", "リオセスリ", "リネ", "白朮", "ディシア", "アルハイゼン", "放浪者", "ナヒーダ", "セノ", "ニィロウ", "ティナリ", "夜蘭", "魈", "雷電将軍", "アルベド", "鍾離", "ディルック", "タルタリヤ", "モナ", "荒瀧一斗", "胡桃", "神里綾華", "神里綾人", "申鶴", "甘雨", "ジン", "珊瑚宮心海", "ウェンティ", "楓原万葉", "宵宮", "クレー", "刻晴", "八重神子", "エウルア", "七七", "旅人"].includes(c));
+        case "回復禁止": return [];
+        case "恒常☆５縛り": return constantFiveStars;
+        case "所持率100％縛り": return owned100;
+        case "国縛り": return countryCharacters[detail] || [];
+        case "初期キャラのみ": return [detail];
+        case "UI非表示＋リロール": return [];
+        case "誰か一人が倒れたら負け縛り": return [];
+        case "無凸縛り": return [];
+        case "キャラルーレット": return [detail];
+        case "武器種縛り": return weaponTypeCharacters[detail] || [];
+        case "キャラ武器ルーレット": return [detail];
+        case "聖遺物禁止": return [];
+        case "爆発禁止＋リロール": return [];
+        case "旅人縛り": return ["旅人"];
+        case "モノ元素縛り": return elementCharacters[detail] || [];
+        case "各1.1縛り": return versionData[detail] || [];
+        case "誕生月": return birthMonths[detail] || [];
+        case "アルファベット縛り": return alphabetsData[detail] || [];
+        case "☆１、聖遺物なし": return [];
+        default: return [];
+    }
+}
+
 function showAbout() {
-    const aboutScreen = document.getElementById('about-screen');
-    aboutScreen.innerHTML = `
-        <h2>このルーレットについて</h2>
-        <p>このルーレットは、普段遊んでいるサーバーでやっている縛りのルーレットをやりやすくしたいという目的のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。</p>
-        <p>このルーレットにおけるデータなどは作者が一人で追加しています。そのため、ミスなどがあるかもしれませんが発見した場合作者Twitter(<a href="https://x.com/rakiku_genshin">@rakiku_genshin</a>)に報告をお願いします。また、このルーレットを作成するにあたってAIを活用していますが、外部データ・推察・自動取得などは使用していません。</p>
-        <h3>FAQ</h3>
-        <p>Q: 所持していない武器が出たら？<br>A: 「持っていない」ボタンで項目を削除し再抽選。</p>
-        <p>Q: キャラルーレットで被ったら？<br>A: 重複しないよう設計。</p>
-        <p>Q: 縛りの重複はどう処理？<br>A: 重複しないよう設計。</p>
-        <p>Q: 条件の矛盾が出た場合は？<br>A: 後に出た縛りを再抽選。詳しくは<a href="https://x.com/raku_genshin">@rakiku_genshin</a>まで。</p>
-        <p>これは非公式のファンメイドとなっています。アップデート等は作者がやりたいときに頑張ります。</p>
-    `;
     showScreen('about-screen');
 }
-
-// イベントリスナー
-document.getElementById('all-roulette').addEventListener('click', () => {
-    players = parseInt(document.getElementById('players').value);
-    numConstraints = parseInt(document.getElementById('constraints').value);
-    results = Array(players).fill().map(() => ({ constraints: {} }));
-    currentStep = 0;
-    currentPlayer = 0;
-    selectedBoss = "";
-    selectedConstraints = [];
-    notOwnedItems = [];
-    createRoulette(bosses);
-    showScreen('roulette-screen');
-});
-
-document.getElementById('boss-roulette').addEventListener('click', () => {
-    players = 1;
-    numConstraints = 0;
-    results = [{ constraints: {} }];
-    currentStep = 0;
-    currentPlayer = 0;
-    createRoulette(bosses);
-    showScreen('roulette-screen');
-});
-
-document.getElementById('constraint-roulette').addEventListener('click', () => {
-    players = parseInt(document.getElementById('players').value);
-    numConstraints = parseInt(document.getElementById('constraints').value);
-    results = Array(players).fill().map(() => ({ constraints: {} }));
-    currentStep = 1;
-    currentPlayer = 0;
-    selectedConstraints = [];
-    createRoulette(constraints);
-    showScreen('roulette-screen');
-});
-
-document.getElementById('select-constraint').addEventListener('click', () => {
-    // 手動選択の実装は省略（要望があれば追加）
-    alert("この機能は未実装です。");
-});
-
-document.getElementById('about').addEventListener('click', showAbout);
-document.getElementById('spin').addEventListener('click', spinRoulette);
-document.getElementById('stop').addEventListener('click', stopRoulette);
-document.getElementById('next').addEventListener('click', nextStep);
-document.getElementById('show-result').addEventListener('click', showResult);
-document.getElementById('back').addEventListener('click', () => showScreen('initial-screen'));
-
-document.getElementById('not-owned').addEventListener('click', () => {
-    const lastResult = currentStep === 1 ? selectedConstraints[selectedConstraints.length - 1] : 
-                      selectedConstraints[currentStep - 2] === "キャラ武器ルーレット" && currentStep % 2 === 0 ? 
-                      results[currentPlayer].constraints["キャラ武器ルーレット"].weapon : 
-                      results[currentPlayer].constraints[selectedConstraints[currentStep - 2]];
-    notOwnedItems.push(lastResult);
-    if (currentStep === 1) {
-        selectedConstraints.pop();
-        createRoulette(constraints.filter(c => !selectedConstraints.includes(c)));
-    } else {
-        delete results[currentPlayer].constraints[selectedConstraints[currentStep - 2]];
-        nextStep();
-    }
-    showScreen('roulette-screen');
-});
