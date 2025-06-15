@@ -3,60 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Genshin Impact 縛りルーレット</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        label, select, input {
-            margin: 0 10px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        #rouletteResult {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            display: inline-block;
-            text-align: left;
-        }
-    </style>
+    <title>原神縛りルーレット</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Genshin Impact 縛りルーレット</h1>
-    <form id="rouletteForm">
-        <label for="playerCount">プレイヤー数 (1-4):</label>
-        <select id="playerCount">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-        </select>
-        <label for="bindCount">縛りの数 (1-10):</label>
-        <select id="bindCount">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-        </select>
-        <button type="submit">ルーレットを回す</button>
-    </form>
-    <div id="rouletteResult"></div>
-
+    <div id="container">
+        <div id="initial-screen">
+            <h1>原神縛りルーレット</h1>
+            <div id="settings">
+                <label for="players">プレイヤー人数:</label>
+                <select id="players">
+                    <option value="1">1人</option>
+                    <option value="2">2人</option>
+                    <option value="3">3人</option>
+                    <option value="4">4人</option>
+                </select>
+                <label for="constraints">縛りの数:</label>
+                <select id="constraints">
+                    <option value="1">1個</option>
+                    <option value="2">2個</option>
+                    <option value="3">3個</option>
+                    <option value="4">4個</option>
+                </select>
+            </div>
+            <button id="all-roulette">一括ルーレット</button>
+            <div id="sub-buttons">
+                <button id="boss-roulette">ボスルーレット</button>
+                <button id="constraint-roulette">縛りルーレット</button>
+                <button id="select-constraint">縛りを選ぶ</button>
+                <button id="about">このルーレットについて</button>
+            </div>
+        </div>
+        <div id="roulette-screen" style="display: none;">
+            <div id="roulette"></div>
+            <button id="spin">回転する</button>
+            <button id="stop" style="display: none;">止める</button>
+            <button id="not-owned" style="display: none;">持っていない</button>
+        </div>
+        <div id="popup" style="display: none;"></div>
+        <button id="next" style="display: none;">次へ</button>
+        <button id="show-result" style="display: none;">結果を表示</button>
+        <div id="result-screen" style="display: none;"></div>
+        <div id="about-screen" style="display: none;"></div>
+        <button id="back">最初に戻る</button>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
