@@ -1,44 +1,52 @@
 body {
-    background-image: url('background.jpg');
-    background-size: cover;
-    font-family: Arial, sans-serif;
-    color: white;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
+    background: url('background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #FFFFFF;
+    overflow-y: auto;
+}
+
+.container {
     min-height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-}
-
-#container {
-    text-align: center;
     padding: 20px;
-    position: relative;
-    width: 100%;
-    max-width: 800px;
 }
 
-h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
+h1, h2, h3 {
+    text-align: center;
+    color: #FFD700;
 }
 
-#settings {
+.settings {
     margin: 20px 0;
 }
 
+.settings label {
+    margin-right: 10px;
+}
+
 select {
-    margin: 0 10px;
     padding: 5px;
+    background: #4B0082;
+    color: #FFFFFF;
+    border: 2px solid #FFD700;
+    border-radius: 5px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 button {
-    margin: 10px;
     padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4B0082;
-    color: white;
+    background: #4B0082;
+    color: #FFFFFF;
     border: 2px solid #FFD700;
     border-radius: 5px;
     cursor: pointer;
@@ -50,43 +58,42 @@ button:hover {
     box-shadow: 0 0 10px #FFD700;
 }
 
-#all-roulette {
-    font-size: 20px;
-    padding: 15px 30px;
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-#sub-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-#roulette {
+#roulette-container {
+    position: relative;
     width: 300px;
     height: 300px;
     margin: 20px auto;
-    position: relative;
-    background: linear-gradient(90deg, #0000FF, #800080);
-    border-radius: 50%;
     overflow: hidden;
 }
 
-#roulette::before {
-    content: '▼';
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 20px;
-    color: white;
-}
-
-.roulette-item {
+#roulette {
     position: absolute;
     width: 100%;
+    top: 0;
+    transition: top 5s ease-out;
+}
+
+#roulette div {
+    height: 30px;
+    line-height: 30px;
     text-align: center;
-    color: white;
-    font-size: 16px;
+    background: linear-gradient(to right, #0000FF, #800080);
+    color: #FFFFFF;
+    border-bottom: 1px solid #FFD700;
+}
+
+.pointer {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FFD700;
+    font-size: 24px;
 }
 
 #popup {
@@ -94,33 +101,28 @@ button:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
+    background: rgba(75, 0, 130, 0.8);
     padding: 20px;
+    border: 2px solid #FFD700;
     border-radius: 10px;
-    font-size: 16px;
-    display: none;
+    text-align: center;
 }
 
-#result-screen, #about-screen {
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 20px;
+#result-content {
+    margin: 20px 0;
+    text-align: left;
 }
 
-#back {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+footer {
+    margin-top: auto;
+    padding: 10px;
 }
 
-@media (max-width: 600px) {
-    #sub-buttons {
-        flex-direction: column;
-    }
-    #roulette {
-        width: 250px;
-        height: 250px;
-    }
+.about-content {
+    text-align: left;
+    max-width: 600px;
+}
+
+.about-content a {
+    color: #FFD700;
 }
