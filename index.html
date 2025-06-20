@@ -9,18 +9,18 @@
 <body>
     <div class="container">
         <!-- 初期画面 -->
-        <div id="home-screen">
+        <div id="home-screen" class="screen">
             <h1>原神縛りルーレット</h1>
             <div class="settings">
-                <label>プレイヤー人数（1～4）:</label>
+                <label>プレイヤー人数:</label>
                 <select id="player-count">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
+                    <option value="1">1人</option>
+                    <option value="2">2人</option>
+                    <option value="3">3人</option>
+                    <option value="4">4人</option>
                 </select>
-                <label>縛りの数（1～4）:</label>
-                <select id="restriction-count">
+                <label>縛りの数:</label>
+                <select id="bind-count">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -28,63 +28,80 @@
                 </select>
             </div>
             <div class="buttons">
-                <button onclick="startAllRoulette()">一括ルーレット</button>
+                <button onclick="startOneShotRoulette()">一括ルーレット</button>
                 <button onclick="startBossRoulette()">ボスルーレット</button>
-                <button onclick="startRestrictionRoulette()">縛りルーレット</button>
-                <button onclick="selectRestriction()">縛りを選ぶ</button>
-                <button onclick="showAbout()">このルーレットについて</button>
+                <button onclick="startBindRoulette()">縛りルーレット</button>
+                <button onclick="selectBindManually()">縛りを選ぶ</button>
+                <button onclick="showAboutPage()">このルーレットについて</button>
             </div>
+        </div>
+
+        <!-- 縛り選択画面 -->
+        <div id="bind-select-screen" class="screen hidden">
+            <h2>縛りを選択</h2>
+            <select id="manual-bind-select" multiple size="10"></select>
+            <button onclick="confirmManualBind()">確定</button>
+            <button onclick="backToHome()">最初に戻る</button>
         </div>
 
         <!-- ルーレット画面 -->
-        <div id="roulette-screen" style="display: none;">
+        <div id="roulette-screen" class="screen hidden">
             <h2 id="roulette-title"></h2>
             <div id="roulette-container">
-                <div id="roulette"></div>
-                <div class="pointer">▼</div>
+                <canvas id="roulette-canvas" width="300" height="300"></canvas>
+                <div class="triangle"></div>
             </div>
             <div class="roulette-buttons">
-                <button onclick="spinRoulette()">回転する</button>
-                <button onclick="stopRoulette()" disabled>止める</button>
+                <button id="spin-button" onclick="spinRoulette()">回転</button>
+                <button id="stop-button" onclick="stopRoulette()" disabled>停止</button>
+                <button id="not-owned-button" onclick="removeAndReroll()" disabled>持っていない</button>
             </div>
+            <button id="next-button" class="hidden" onclick="nextRoulette()">次へ</button>
+            <button id="result-button" class="hidden" onclick="showResult()">結果を表示</button>
+            <button onclick="backToHome()">最初に戻る</button>
         </div>
 
         <!-- ポップアップ -->
-        <div id="popup" style="display: none;">
+        <div id="popup" class="hidden">
             <p id="popup-text"></p>
             <button onclick="closePopup()">閉じる</button>
         </div>
 
-        <!-- リザルト画面 -->
-        <div id="result-screen" style="display: none;">
-            <h2>ルーレット結果</h2>
+        <!-- 結果画面 -->
+        <div id="result-screen" class="screen hidden">
+            <h2>結果</h2>
             <div id="result-content"></div>
-            <button onclick="resetToHome()">最初に戻る</button>
+            <button onclick="backToHome()">最初に戻る</button>
         </div>
 
         <!-- このルーレットについて -->
-        <div id="about-screen" style="display: none;">
+        <div id="about-screen" class="screen hidden">
             <h2>このルーレットについて</h2>
             <div class="about-content">
-                <h3>このルーレットとは</h3>
-                <p>このルーレットは普段遊んでいるサーバーでやっている縛りのルーレットをやりやすくしたいという目的のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。</p>
+                <h3>目的・コンセプト</h3>
+                <p>このルーレットは、普段遊んでいるサーバーでやっている縛りのルーレットをやりやすくしたいという目的のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。</p>
                 <h3>使用される情報について</h3>
-                <p>このルーレットにおけるデータなどは作者が一人で追加しています。そのため、ミスなどがあるかもしれませんが発見した場合作者Twitter（<a href="https://x.com/rakiku_genshin">@rakiku_genshin</a>）に報告をお願いします。また、このルーレットを作成するにあたってAIを活用していますが、外部データ・推察・自動取得などは使用していません。</p>
+                <p>ルーレットに使用されるキャラ、武器、縛り条件などの情報はすべて制作者が提供した公式情報のみを使用しています。外部サイトや未確認のデータは一切使用しておりません。データミスを見つけた場合は、<a href="https://x.com/rakiku_genshin" target="_blank">@rakiku_genshin</a> にDMでご報告ください。</p>
                 <h3>FAQ</h3>
-                <p><strong>Q: 所持していない武器が出たら？</strong><br>A: 「持っていない」ボタンで項目を削除し再抽選。</p>
-                <p><strong>Q: キャラルーレットで被ったら？</strong><br>A: 重複しないよう設計。</p>
-                <p><strong>Q: 縛りの重複はどう処理？</strong><br>A: 重複しないよう設計。</p>
-                <p><strong>Q: 条件の矛盾が出た場合は？</strong><br>A: 後に出た縛りを再抽選。</p>
+                <ul>
+                    <li><strong>Q: 所持していない武器が出たら？</strong><br>A: 「持っていない」ボタンで項目を削除し再抽選。</li>
+                    <li><strong>Q: キャラルーレットで被ったら？</strong><br>A: 重複しないよう設計。</li>
+                    <li><strong>Q: 縛りの重複はどう処理？</strong><br>A: 重複しないよう設計。</li>
+                    <li><strong>Q: 条件の矛盾が出た場合は？</strong><br>A: 後に出た縛りを再抽選。</li>
+                    <li><strong>Q: ルーレットの結果を保存できますか？</strong><br>A: 現在は保存機能なし。リザルト画面をスクリーンショットしてください。</li>
+                    <li><strong>Q: モバイルでも使えますか？</strong><br>A: はい、スマホ対応の縦長デザインです。</li>
+                    <li><strong>Q: 縛り数が4つに制限されているのはなぜ？</strong><br>A: 現実的に可能な縛り数として最大4つに設定。</li>
+                    <li><strong>Q: ボスや縛りを自分で選べますか？</strong><br>A: 「縛りを選ぶ」モードで縛りを手動選択可能。ボスはランダムのみ。</li>
+                    <li><strong>Q: アーロイや旅人の扱いは？</strong><br>A: 例外キャラとして特定の縛り（例：所持率100％、恒常☆5）で除外。</li>
+                    <li><strong>Q: データミスを見つけたらどうすればいい？</strong><br>A: <a href="https://x.com/rakiku_genshin" target="_blank">@rakiku_genshin</a> にDMでご報告ください。</li>
+                    <li><strong>Q: ルーレットの結果が気に入らない場合は？</strong><br>A: 「持っていない」ボタンでキャラ/武器を再抽選、または「最初に戻る」でリセット。</li>
+                    <li><strong>Q: マルチプレイでの縛りは全員同じ？</strong><br>A: 共通縛り（例：回復禁止）は全員同じ、個別縛り（例：キャラルーレット）はプレイヤーごと。</li>
+                </ul>
                 <h3>注意事項</h3>
-                <p>これは非公式のファンメイドとなっています。データミスを見つけた場合はTwitter（<a href="https://x.com/rakiku_genshin">@rakiku_genshin</a>）のDMにご報告ください。アップデート等は作者がやりたいときに頑張ります。</p>
+                <p>これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。データミスやバグは <a href="https://x.com/rakiku_genshin" target="_blank">@rakiku_genshin</a> にDMでご報告ください。</p>
             </div>
-            <button onclick="resetToHome()">最初に戻る</button>
+            <button onclick="backToHome()">最初に戻る</button>
         </div>
-
-        <!-- フッター -->
-        <footer>
-            <button onclick="resetToHome()">最初に戻る</button>
-        </footer>
     </div>
     <script src="script.js"></script>
 </body>
