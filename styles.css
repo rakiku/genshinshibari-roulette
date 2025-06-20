@@ -1,24 +1,40 @@
 body {
+    background-image: url('background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Yu Gothic', Arial, sans-serif;
+    color: #FFFFFF;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
-    background: url('background.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #FFFFFF;
-    overflow-y: auto;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
     padding: 20px;
 }
 
+.screen {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px 0;
+}
+
+.hidden {
+    display: none;
+}
+
 h1, h2, h3 {
-    text-align: center;
-    color: #FFD700;
+    font-weight: bold;
+    margin: 10px 0;
 }
 
 .settings {
@@ -31,9 +47,10 @@ h1, h2, h3 {
 
 select {
     padding: 5px;
-    background: #4B0082;
+    font-size: 16px;
+    background: #2e2e4e;
     color: #FFFFFF;
-    border: 2px solid #FFD700;
+    border: 1px solid #FFD700;
     border-radius: 5px;
 }
 
@@ -44,11 +61,12 @@ select {
 }
 
 button {
-    padding: 10px 20px;
-    background: #4B0082;
+    background: #2e2e4e;
     color: #FFFFFF;
     border: 2px solid #FFD700;
     border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -58,42 +76,33 @@ button:hover {
     box-shadow: 0 0 10px #FFD700;
 }
 
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
 #roulette-container {
     position: relative;
-    width: 300px;
-    height: 300px;
     margin: 20px auto;
-    overflow: hidden;
 }
 
-#roulette {
+#roulette-canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+.triangle {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid #FFD700;
     position: absolute;
-    width: 100%;
-    top: 0;
-    transition: top 5s ease-out;
-}
-
-#roulette div {
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    background: linear-gradient(to right, #0000FF, #800080);
-    color: #FFFFFF;
-    border-bottom: 1px solid #FFD700;
-}
-
-.pointer {
-    position: absolute;
-    top: 0;
+    top: -20px;
     left: 50%;
     transform: translateX(-50%);
-    color: #FFD700;
-    font-size: 24px;
+}
+
+.roulette-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
 }
 
 #popup {
@@ -101,28 +110,34 @@ button:disabled {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(75, 0, 130, 0.8);
-    padding: 20px;
+    background: rgba(0, 0, 0, 0.9);
     border: 2px solid #FFD700;
     border-radius: 10px;
+    padding: 20px;
     text-align: center;
 }
 
+#popup-text {
+    margin: 0;
+    font-size: 16px;
+}
+
 #result-content {
-    margin: 20px 0;
     text-align: left;
+    white-space: pre-wrap;
 }
 
-footer {
-    margin-top: auto;
-    padding: 10px;
-}
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
 
-.about-content {
-    text-align: left;
-    max-width: 600px;
-}
+    button {
+        width: 100%;
+    }
 
-.about-content a {
-    color: #FFD700;
+    select {
+        width: 100%;
+        margin: 10px 0;
+    }
 }
