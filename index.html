@@ -57,20 +57,20 @@
     <div id="select-constraint-screen" style="display: none;">
         <h1>縛りを選んでルーレット</h1>
         <select id="constraint-select">
-            <option value="5">国縛り</option>
-            <option value="10">キャラルーレット</option>
-            <option value="11">武器種縛り</option>
-            <option value="12">キャラ武器ルーレット</option>
-            <option value="16">モノ元素縛り</option>
-            <option value="17">各1.1縛り</option>
-            <option value="18">誕生月</option>
-            <option value="19">アルファベット縛り</option>
+            <option value="国縛り">国縛り</option>
+            <option value="キャラルーレット">キャラルーレット</option>
+            <option value="武器種縛り">武器種縛り</option>
+            <option value="キャラ武器ルーレット">キャラ武器ルーレット</option>
+            <option value="モノ元素縛り">モノ元素縛り</option>
+            <option value="各1.1♂">各1.1♂</option>
+            <option value="誕生月">誕生月</option>
+            <option value="アルファベット縛り">アルファベット縛り</option>
         </select>
         <button onclick="startSelectedConstraint()">開始</button>
         <button onclick="goToMain()">最初に戻る</button>
     </div>
 
-    <!-- 詳細ルーレット画面（国、キャラ、武器など） -->
+    <!-- 詳細ルーレット画面 -->
     <div id="detail-roulette-screen" style="display: none;">
         <h1 id="detail-roulette-title">詳細ルーレット</h1>
         <div id="detail-roulette" class="roulette"></div>
@@ -104,14 +104,13 @@
                 <li><b>Q: ルーレットの結果を保存できますか？</b><br>A: 現在は保存機能なし。リザルト画面をスクリーンショットしてください。</li>
                 <li><b>Q: モバイルでも使えますか？</b><br>A: はい、スマホ対応の縦長デザインです。</li>
                 <li><b>Q: 縛り数が4つに制限されているのはなぜ？</b><br>A: 現実的に可能な縛り数として最大4つに設定。</li>
-                <li><b>Q: ボスや縛りを自分で選べますか？</b><br>A: 「縛りを選ぶ」モードで縛りを手動選択可能。ボスはランダムのみ。</li>
+                <li><b>Q: ボスや縛りを自分で選べますか？</b><br>A: 「縛りを選ぶ」モード lắm縛りを手動選択可能。ボスはランダムのみ。</li>
                 <li><b>Q: アーロイや旅人の扱いは？</b><br>A: 例外キャラとして特定の縛り（例：所持率100％、恒常☆5）で除外。</li>
                 <li><b>Q: データミスを見つけたらどうすればいい？</b><br>A: @rakiku_genshin にDMでご報告ください。</li>
                 <li><b>Q: ルーレットの結果が気に入らない場合は？</b><br>A: 「持っていない」ボタンでキャラ/武器を再抽選、または「最初に戻る」でリセット。</li>
-                <li><b>Q: マルチプレイでの縛りは全員同じ？</b><br>A: 共通縛り（例：回復禁止）は全員同じ、個別縛り（例：キャラルーレット）はプレイヤーごと。</li>
             </ul>
             <h2>注意事項</h2>
-            <p>これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。データミスやバグは @rakiku_genshin にDMでご報告ください。</p>
+            <p>非公式のファンメイドツールです。バグ報告は @rakiku_genshin まで。</p>
         </div>
     </div>
 
