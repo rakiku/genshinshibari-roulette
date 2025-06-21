@@ -24,8 +24,13 @@ button {
     border-radius: 5px;
 }
 
-button:hover {
+button:hover:not(:disabled) {
     background-color: #45a049;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 .settings {
@@ -51,18 +56,20 @@ select {
 
 .roulette-item {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: 50%;
+    height: 50%;
     text-align: center;
-    line-height: 300px;
-    font-size: 12px;
+    font-size: 10px;
     color: #fff;
     background-color: rgba(0, 0, 0, 0.7);
-    transform-origin: center;
+    transform-origin: 100% 100%;
     pointer-events: none;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 30px;
+    top: 50%;
+    left: 50%;
 }
 
 .modal {
@@ -111,8 +118,8 @@ select {
         height: 250px;
     }
     .roulette-item {
-        line-height: 250px;
-        font-size: 10px;
+        font-size: 8px;
+        line-height: 25px;
     }
     button {
         padding: 8px 16px;
