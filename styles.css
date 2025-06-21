@@ -72,7 +72,6 @@ button:disabled {
         #e74c3c 0% 12.5%, #3498db 12.5% 25%, #2ecc71 25% 37.5%, #f1c40f 37.5% 50%,
         #9b59b6 50% 62.5%, #e67e22 62.5% 75%, #1abc9c 75% 87.5%, #ecf0f1 87.5% 100%
     );
-    transition: transform 6s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .roulette-wheel span {
