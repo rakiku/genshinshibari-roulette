@@ -3,127 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>原神 縛りルーレット</title>
+    <title>原神縛りルーレット</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ホーム画面 -->
-    <div id="home" class="screen active">
-        <h1>原神 縛りルーレット</h1>
-        <button onclick="showScreen('all-in-one')">一括で決める</button>
-        <button onclick="showScreen('boss-roulette')">ボスルーレット</button>
-        <button onclick="showScreen('shibari-roulette')">縛りルーレット</button>
-        <button onclick="showScreen('select-shibari')">縛りを選んでルーレット</button>
-        <button onclick="showScreen('about')">このルーレットについて</button>
-    </div>
-
-    <!-- ボスルーレット画面 -->
-    <div id="boss-roulette" class="screen">
-        <h2>ボスルーレット</h2>
-        <div id="boss-roulette-wheel" class="roulette-wheel"></div>
-        <button id="start-boss" onclick="startRoulette('boss')">スタート</button>
-        <button id="stop-boss" onclick="stopRoulette('boss')" disabled>ストップ</button>
-        <button class="back-btn" onclick="showScreen('home')">最初に戻る</button>
-    </div>
-
-    <!-- 縛りルーレット画面 -->
-    <div id="shibari-roulette" class="screen">
-        <h2>縛りルーレット</h2>
-        <div id="shibari-roulette-wheel" class="roulette-wheel"></div>
-        <button id="start-shibari" onclick="startRoulette('shibari')">スタート</button>
-        <button id="stop-shibari" onclick="stopRoulette('shibari')" disabled>ストップ</button>
-        <button class="back-btn" onclick="showScreen('home')">最初に戻る</button>
-    </div>
-
-    <!-- 縛りを選んでルーレット画面 -->
-    <div id="select-shibari" class="screen">
-        <h2>縛りを選んでルーレット</h2>
-        <select id="shibari-select">
-            <option value="5">国縛り</option>
-            <option value="10">キャラルーレット</option>
-            <option value="11">武器種縛り</option>
-            <option value="12">キャラ武器ルーレット</option>
-            <option value="16">モノ元素縛り</option>
-            <option value="17">各1.1縛り</option>
-            <option value="18">誕生月</option>
-            <option value="19">アルファベット縛り</option>
-        </select>
-        <button onclick="startSelectedShibari()">ルーレットを回す</button>
-        <div id="select-roulette-wheel" class="roulette-wheel"></div>
-        <button id="start-select" onclick="startRoulette('select')" style="display:none;">スタート</button>
-        <button id="stop-select" onclick="stopRoulette('select')" disabled style="display:none;">ストップ</button>
-        <button class="back-btn" onclick="showScreen('home')">最初に戻る</button>
-    </div>
-
-    <!-- 一括ルーレット画面 -->
-    <div id="all-in-one" class="screen">
-        <h2>一括ルーレット</h2>
-        <label>プレイヤー数: </label>
-        <select id="player-count">
-            <option value="1">1人</option>
-            <option value="2">2人</option>
-            <option value="3">3人</option>
-            <option value="4">4人</option>
-        </select>
-        <label>縛りの数: </label>
-        <select id="shibari-count">
-            <option value="1">1つ</option>
-            <option value="2">2つ</option>
-            <option value="3">3つ</option>
-            <option value="4">4つ</option>
-        </select>
-        <button onclick="startAllInOne()">スタート</button>
-        <div id="all-roulette-wheel" class="roulette-wheel"></div>
-        <button class="back-btn" onclick="showScreen('home')">最初に戻る</button>
-    </div>
-
-    <!-- このルーレットについて画面 -->
-    <div id="about" class="screen">
-        <h2>このルーレットについて</h2>
-        <h3>目的・コンセプト</h3>
-        <p>このルーレットは、普段遊んでいるサーバーでやっている縛りのルーレットをやりやすくしたいという目的のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。</p>
-        <h3>使用される情報について</h3>
-        <p>ルーレットに使用されるキャラ、武器、縛り条件などの情報はすべて制作者が選定した公式情報のみを使用しています。データミスを見つけた場合は、@rakiku_genshin にDMでご報告ください。</p>
-        <h3>FAQ</h3>
-        <ul>
-            <li><strong>Q: 所持していない武器が出たら？</strong> A: 「持っていない」ボタンで項目を削除し再抽選。</li>
-            <li><strong>Q: キャラルーレットで被ったら？</strong> A: 重複しないよう設計。</li>
-            <li><strong>Q: 縛りの重複はどう処理？</strong> A: 重複しないよう設計。</li>
-            <li><strong>Q: 条件の矛盾が出た場合は？</strong> A: 後に出た縛りを再抽選。</li>
-            <li><strong>Q: ルーレットの結果を保存できますか？</strong> A: 現在は保存機能なし。リザルト画面をスクリーンショットしてください。</li>
-            <li><strong>Q: モバイルでも使えますか？</strong> A: はい、スマホ対応の縦長デザインです。</li>
-            <li><strong>Q: 縛り数が4つに制限されているのはなぜ？</strong> A: 現実的に可能な縛り数として最大4つに設定。</li>
-            <li><strong>Q: ボスや縛りを自分で選べますか？</strong> A: 「縛りを選ぶ」モードで縛りを手動選択可能。ボスはランダムのみ。</li>
-            <li><strong>Q: アーロイや旅人の扱いは？</strong> A: 例外キャラとして特定の縛り（例：所持率100％、恒常☆5）で除外。</li>
-            <li><strong>Q: データミスを見つけたらどうすればいい？</strong> A: @rakiku_genshin にDMでご報告ください。</li>
-            <li><strong>Q: ルーレットの結果が気に入らない場合は？</strong> A: 「持っていない」ボタンでキャラ/武器を再抽選、または「最初に戻る」でリセット。</li>
-            <li><strong>Q: マルチプレイでの縛りは全員同じ？</strong> A: 共通縛り（例：回復禁止）は全員同じ、個別縛り（例：キャラルーレット）はプレイヤーごと。</li>
-        </ul>
-        <h3>注意事項</h3>
-        <p>これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。データミスやバグは @rakiku_genshin にDMでご報告ください。</p>
-        <button class="back-btn" onclick="showScreen('home')">最初に戻る</button>
-    </div>
-
-    <!-- ポップアップ -->
-    <div id="popup" class="popup">
-        <div class="popup-content">
-            <h3>結果</h3>
-            <p id="popup-result"></p>
-            <button onclick="nextStep()">次へ</button>
-            <button onclick="excludeAndRedraw()">持っていない</button>
-            <button onclick="closePopup()">閉じる</button>
+    <div class="container">
+        <h1>原神縛りルーレット</h1>
+        <div id="startScreen">
+            <div class="input-group">
+                <label>プレイヤーの人数 (1-4):</label>
+                <input type="number" id="playerCount" min="1" max="4" value="1">
+            </div>
+            <div class="input-group">
+                <label>縛りの数 (1-10):</label>
+                <input type="number" id="bindCount" min="1" max="10" value="1">
+            </div>
+            <div class="buttons">
+                <button onclick="startRoulette('all')">一括ルーレット</button>
+                <button onclick="startRoulette('boss')">ボスルーレット</button>
+                <button onclick="startRoulette('bind')">縛りルーレット</button>
+                <button onclick="showBindSelection()">縛りを選ぶ</button>
+            </div>
         </div>
-    </div>
-
-    <!-- 結果ポップアップ -->
-    <div id="result-popup" class="popup">
-        <div class="popup-content">
-            <h3>最終結果</h3>
-            <div id="result-content"></div>
-            <button onclick="closeResultPopup()">閉じる</button>
+        <div id="bindSelection" class="hidden">
+            <div class="buttons" id="bindButtons"></div>
+            <button onclick="startSelectedBinds()">次へ</button>
+            <button onclick="backToStart()">最初に戻る</button>
         </div>
+        <div id="rouletteScreen" class="hidden">
+            <canvas id="rouletteCanvas" width="400" height="400"></canvas>
+            <div class="buttons">
+                <button onclick="spinRoulette()">回転する</button>
+                <button onclick="stopRoulette()" id="stopButton" disabled>止める</button>
+                <button onclick="notOwned()" id="notOwnedButton" class="hidden">持っていない</button>
+            </div>
+            <button onclick="backToStart()" id="backButton">最初に戻る</button>
+        </div>
+        <div id="resultScreen" class="hidden">
+            <div id="results" class="result"></div>
+            <button onclick="backToStart()">最初に戻る</button>
+        </div>
+        <div id="popup" class="popup"></div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
