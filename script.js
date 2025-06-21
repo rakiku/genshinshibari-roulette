@@ -230,6 +230,13 @@ function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
     resetRoulette();
+
+    // 画面に応じて初期化
+    if (screenId === 'boss-roulette') {
+        initRoulette('boss', bosses);
+    } else if (screenId === 'shibari-roulette') {
+        initRoulette('shibari', shibariList);
+    }
 }
 
 // ルーレットのリセット
@@ -367,7 +374,7 @@ function excludeAndRedraw() {
 // 縛りの結果を処理
 function handleShibariResult(shibari) {
     const shibariIndex = shibariList.indexOf(shibari) + 1;
-    const detailedShibari = ["5", "10", "11", "12", "16", "17", "18", "19"];
+    const detailedShibari = ["5", "10", "11", "12", "16", "17", "18", "18"];
     if (detailedShibari.includes(shibariIndex.toString())) {
         let items = [];
         switch (shibariIndex) {
@@ -379,7 +386,7 @@ function handleShibariResult(shibari) {
                 break;
             case 11:
                 items = weaponTypes;
-                break;
+            break;
             case 12:
                 items = applyCharacterConstraints(characterRoulette);
                 break;
@@ -413,10 +420,10 @@ function handleShibariResult(shibari) {
 function applyCharacterConstraints(items) {
     let filtered = [...items];
     const player = allResults.players[currentPlayer];
-    if (player && player.shibari.some(s => s.name === "恒常☆５縛り")) {
+    if (player && player.shibari.some(s => s.name === "恒常☆5")) {
         filtered = filtered.filter(item => standard5Stars.includes(item));
     }
-    if (player && player.shibari.some(s => s.name === "所持率100％縛り")) {
+    if (player && player.shibari.some(s => s.name === "所持率100％")) {
         filtered = filtered.filter(item => owned100.includes(item));
     }
     if (player && player.shibari.some(s => s.name === "国縛り" && s.detail)) {
@@ -448,7 +455,7 @@ function applyCharacterConstraints(items) {
 function applyWeaponConstraints(items) {
     let filtered = [...items];
     const player = allResults.players[currentPlayer];
-    if (player && player.shibari.some(s => s.name === "恒常☆５縛り")) {
+    if (player && player.shibari.some(s => s.name === "恒常☆5")) {
         filtered = filtered.filter(item => standard5StarWeapons.includes(item));
     }
     filtered = filtered.filter(item => !excludedItems.has(item));
@@ -505,7 +512,7 @@ function startAllInOne() {
     currentShibariIndex = 0;
     excludedItems.clear();
     currentType = "all";
-    runNextAllStep();
+    runNextAll();
 }
 
 // 一括ルーレットのステップ数
@@ -531,7 +538,7 @@ function runNextAllStep() {
     currentStep++;
     if (currentStep === 1) {
         // ボスルーレット
-        initRoulette("all", bosses);
+        initRoulette("all-in-one", bosses);
         startRoulette("all");
     } else if (currentShibariIndex < allResults.shibariCount) {
         // 縛りルーレット
