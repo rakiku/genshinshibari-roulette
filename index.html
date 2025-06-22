@@ -9,6 +9,20 @@
 <body>
   <div id="main">
     <h1>原神縛りプレイルーレット</h1>
+    <label for="player-count">プレイヤー数:</label>
+    <select id="player-count">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </select>
+    <label for="restriction-count">縛り数:</label>
+    <select id="restriction-count">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </select>
     <button onclick="batchRoulette()">一括で決める</button>
     <button onclick="bossRoulette()">ボスルーレット</button>
     <button onclick="restrictionRoulette()">縛りルーレット</button>
@@ -16,11 +30,12 @@
     <button onclick="showAbout()">このルーレットについて</button>
   </div>
   <div id="roulette"></div>
-  <button id="start">スタート</button>
+  <button id="start" style="display:none;">スタート</button>
   <button id="stop">ストップ</button>
   <div id="popup" style="display:none;">
     <p id="popup-message"></p>
-    <button onclick="closePopup()">閉じる</button>
+    <button id="next">次へ</button>
+    <button id="not-owned">持っていない</button>
   </div>
   <button id="back" onclick="location.reload()">最初に戻る</button>
   <script src="data.js"></script>
