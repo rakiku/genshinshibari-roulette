@@ -1,23 +1,43 @@
 function batchRoulette() {
-  // ボスルーレット
+  playerCount = parseInt(document.getElementById("player-count").value);
+  restrictionCount = parseInt(document.getElementById("restriction-count").value);
+  playerResults = Array.from({ length: playerCount }, () => ({ boss: "", restrictions: [] }));
+  currentPlayer = 0;
+  selectedRestrictions = [];
+
+  // ボスルーレット（全プレイヤー共通）
   startRoulette(bosses, (boss) => {
-    showPopup(`選ばれたボス: ${boss}`);
-    setTimeout(() => {
-      // 縛りルーレット
-      startRoulette(restrictions, (restriction) => {
-        showPopup(`選ばれた縛り: ${restriction}`);
-        setTimeout(() => {
-          // 詳細ルーレット
-          if (["国縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り"].includes(restriction)) {
-            handleDetailRoulette(restriction);
-          }
-        }, 1000); // ポップアップが表示された後、少し待機してから次のルーレット
-      });
-    }, 1000);
+    showPopup(`選ばれたボス: ${boss}`, () => {
+      playerResults.forEach(player => player.boss = boss);
+      restrictionRouletteForPlayer();
+    });
   });
 }
 
-// 「このルーレットについて」ページを表示
+function restrictionRouletteForPlayer() {
+  if (selectedRestrictions.length < restrictionCount) {
+    restrictionRoulette();
+  } else {
+    currentPlayer++;
+    if (currentPlayer < playerCount) {
+      selectedRestrictions = [];
+      restrictionRouletteForPlayer();
+    } else {
+      showResults();
+    }
+  }
+}
+
+function showResults() {
+  let resultHTML = "<h2>結果</h2>";
+  playerResults.forEach((player, index) => {
+    resultHTML += `<h3>プレイヤー ${index + 1}</h3>`;
+    resultHTML += `<p>ボス: ${player.boss}</p>`;
+    resultHTML += `<p>縛り: ${player.restrictions.join(", ")}</p>`;
+  });
+  document.getElementById("main").innerHTML = resultHTML;
+}
+
 function showAbout() {
   window.location.href = "about.html";
 }
