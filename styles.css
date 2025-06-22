@@ -1,63 +1,36 @@
 body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background: linear-gradient(135deg, #74E4E2, #36d6a0);
-    color: #fff;
-    overflow: auto;
+  font-family: Arial, sans-serif;
+  text-align: center;
 }
-#startScreen, #bindSelection, #rouletteScreen, #resultScreen {
-    text-align: center;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 10px;
-    max-height: 90vh;
-    overflow-y: auto;
+
+#main {
+  margin: 50px;
 }
-.hidden { display: none; }
-button {
-    background: #2ca880;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    margin: 5px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
+
+#roulette {
+  font-size: 24px;
+  margin: 20px;
 }
-button:disabled { background: #555; cursor: not-allowed; }
-button:hover:not(:disabled) { background: #238f6a; }
-input {
-    padding: 5px;
-    margin: 5px;
-    border-radius: 5px;
-    border: none;
-    font-size: 16px;
-}
-#rouletteCanvas { margin: 20px 0; }
+
 #popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
-    color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 1000;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border: 1px solid black;
 }
-#bindButtons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+
+#back {
+  position: fixed;
+  top: 10px;
+  right: 10px;
 }
-#bindButtons button {
-    flex: 1 1 150px;
-    margin: 5px;
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
 }
-#results { text-align: left; }
