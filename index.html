@@ -1,44 +1,30 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>原神縛りルーレット</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>原神縛りプレイルーレット</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="startScreen">
-        <h1>原神縛りルーレット</h1>
-        <div>
-            <label for="playerCount">プレイヤー数:</label>
-            <input type="number" id="playerCount" value="1" min="1" max="4">
-        </div>
-        <div>
-            <label for="bindCount">縛りの数:</label>
-            <input type="number" id="bindCount" value="1" min="1" max="10">
-        </div>
-        <button onclick="startRoulette('all')">一括ルーレット</button>
-        <button onclick="startRoulette('boss')">ボスルーレット</button>
-        <button onclick="startRoulette('bind')">縛りルーレット</button>
-        <button onclick="showBindSelection()">縛りを選ぶ</button>
-    </div>
-    <div id="bindSelection" class="hidden">
-        <h2>縛りを選んでください</h2>
-        <div id="bindButtons"></div>
-    </div>
-    <div id="rouletteScreen" class="hidden">
-        <canvas id="rouletteCanvas" width="400" height="400"></canvas>
-        <button onclick="spinRoulette()">ルーレットを回す</button>
-        <button id="stopButton" onclick="stopRoulette()" disabled>ストップ</button>
-        <button id="notOwnedButton" onclick="notOwned()" class="hidden">持っていない</button>
-        <button id="nextButton" onclick="nextStep()" class="hidden">次へ</button>
-        <div id="popup" style="display: none;"></div>
-    </div>
-    <div id="resultScreen" class="hidden">
-        <h2>結果</h2>
-        <div id="results"></div>
-        <button onclick="backToStart()">最初に戻る</button>
-    </div>
-    <script src="script.js"></script>
+  <div id="main">
+    <h1>原神縛りプレイルーレット</h1>
+    <button onclick="batchRoulette()">一括で決める</button>
+    <button onclick="bossRoulette()">ボスルーレット</button>
+    <button onclick="restrictionRoulette()">縛りルーレット</button>
+    <button onclick="selectRestriction()">縛りを選んでルーレット</button>
+    <button onclick="showAbout()">このルーレットについて</button>
+  </div>
+  <div id="roulette"></div>
+  <button id="start">スタート</button>
+  <button id="stop">ストップ</button>
+  <div id="popup" style="display:none;">
+    <p id="popup-message"></p>
+    <button onclick="closePopup()">閉じる</button>
+  </div>
+  <button id="back" onclick="location.reload()">最初に戻る</button>
+  <script src="data.js"></script>
+  <script src="roulette.js"></script>
+  <script src="batchRoulette.js"></script>
 </body>
 </html>
