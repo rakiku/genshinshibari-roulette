@@ -4,24 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>原神縛りルーレット</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="main-screen">
+    <div id="startScreen">
         <h1>原神縛りルーレット</h1>
-        <label for="player-count">プレイヤー数 (1-4):</label>
-        <input type="number" id="player-count" min="1" max="4" value="1"><br>
-        <label for="constraint-count">縛りの数 (1-4):</label>
-        <input type="number" id="constraint-count" min="1" max="4" value="1"><br>
-        <button onclick="goToAllInOne()">一括で決める</button>
-        <button onclick="goToBossRoulette()">ボスルーレット</button>
-        <button onclick="goToConstraintRoulette()">縛りルーレット</button>
-        <button onclick="goToSelectConstraint()">縛りを選んでルーレット</button>
-        <button onclick="goToAbout()">このルーレットについて</button>
+        <div>
+            <label for="playerCount">プレイヤー数:</label>
+            <input type="number" id="playerCount" value="1" min="1" max="4">
+        </div>
+        <div>
+            <label for="bindCount">縛りの数:</label>
+            <input type="number" id="bindCount" value="1" min="1" max="10">
+        </div>
+        <button onclick="startRoulette('all')">一括ルーレット</button>
+        <button onclick="startRoulette('boss')">ボスルーレット</button>
+        <button onclick="startRoulette('bind')">縛りルーレット</button>
+        <button onclick="showBindSelection()">縛りを選ぶ</button>
     </div>
-    <div id="content" style="display: none;"></div>
-    <button id="back-to-main" onclick="backToMain()">最初に戻る</button>
-    <script src="data.js"></script>
+    <div id="bindSelection" class="hidden">
+        <h2>縛りを選んでください</h2>
+        <div id="bindButtons"></div>
+    </div>
+    <div id="rouletteScreen" class="hidden">
+        <canvas id="rouletteCanvas" width="400" height="400"></canvas>
+        <button onclick="spinRoulette()">ルーレットを回す</button>
+        <button id="stopButton" onclick="stopRoulette()" disabled>ストップ</button>
+        <button id="notOwnedButton" onclick="notOwned()" class="hidden">持っていない</button>
+        <button id="nextButton" onclick="nextStep()" class="hidden">次へ</button>
+        <div id="popup" style="display: none;"></div>
+    </div>
+    <div id="resultScreen" class="hidden">
+        <h2>結果</h2>
+        <div id="results"></div>
+        <button onclick="backToStart()">最初に戻る</button>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
