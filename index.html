@@ -9,6 +9,10 @@
 <body>
     <div id="main-screen">
         <h1>原神縛りルーレット</h1>
+        <label for="player-count">プレイヤー数 (1-4):</label>
+        <input type="number" id="player-count" min="1" max="4" value="1"><br>
+        <label for="constraint-count">縛りの数 (1-4):</label>
+        <input type="number" id="constraint-count" min="1" max="4" value="1"><br>
         <button onclick="goToAllInOne()">一括で決める</button>
         <button onclick="goToBossRoulette()">ボスルーレット</button>
         <button onclick="goToConstraintRoulette()">縛りルーレット</button>
