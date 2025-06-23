@@ -1,23 +1,48 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     text-align: center;
     padding: 20px;
+    background-image: url('background.jpg'); /* 原神風背景画像を想定 */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #ffffff; /* 文字色を白に */
+    min-height: 100vh;
 }
 
 h1, h2, h3 {
     margin: 10px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 文字に影を追加 */
+}
+
+input[type="number"] {
+    margin: 10px;
+    padding: 5px;
+    font-size: 16px;
+    width: 60px;
 }
 
 button {
     margin: 5px;
-    padding: 10px;
+    padding: 10px 20px;
     font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
 }
 
 select {
     margin: 10px;
     padding: 5px;
     font-size: 16px;
+    border-radius: 5px;
 }
 
 .popup {
@@ -25,23 +50,72 @@ select {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
+    background: rgba(0, 0, 0, 0.9);
     padding: 20px;
-    border: 2px solid black;
+    border: 2px solid #FFD700;
+    color: #FFD700; /* 金色で結果を強調 */
     z-index: 1000;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 #back-to-main {
     position: fixed;
     top: 10px;
     right: 10px;
+    background-color: #ff4444;
+}
+
+#back-to-main:hover {
+    background-color: #cc0000;
+}
+
+.roulette-container {
+    margin: 20px auto;
+    width: 300px;
+    height: 300px;
+    position: relative;
+    border: 5px solid #FFD700;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.roulette {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    width: 280px;
+    text-align: center;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.roulette.spinning {
+    animation: spin 0.5s linear infinite;
 }
 
 @media (max-width: 600px) {
     body {
         font-size: 14px;
+        padding: 10px;
     }
-    button, select {
+    .roulette-container {
+        width: 200px;
+        height: 200px;
+    }
+    .roulette {
+        font-size: 18px;
+        width: 180px;
+    }
+    button, select, input[type="number"] {
         width: 100%;
         margin: 5px 0;
     }
