@@ -1,15 +1,21 @@
 // script.js
 let activeConstraints = [];
 let selectedItems = [];
-let playerCount = 1; // デフォルト1人、実際はユーザー入力で設定
+let playerCount = 1;
+let constraintCount = 1;
 let rouletteInterval;
+let currentPlayer = 0;
+let currentConstraintIndex = 0;
 
+// 画面遷移関数
 function goToAllInOne() {
+    playerCount = parseInt(document.getElementById('player-count').value);
+    constraintCount = parseInt(document.getElementById('constraint-count').value);
     activeConstraints = [];
-    selectedItems = [];
-    // プレイヤー数入力や縛り数入力が必要だが、簡略化のため省略
+    selectedItems = Array(playerCount).fill().map(() => []);
+    currentPlayer = 0;
+    currentConstraintIndex = 0;
     goToBossRoulette();
-    // 実際には非同期処理やユーザー操作を待つ必要があるが、簡略化
 }
 
 function goToBossRoulette() {
@@ -18,7 +24,9 @@ function goToBossRoulette() {
     content.style.display = 'block';
     content.innerHTML = `
         <h2>ボスルーレット</h2>
-        <div id="boss-roulette"></div>
+        <div class="roulette-container">
+            <div id="boss-roulette" class="roulette"></div>
+        </div>
         <button onclick="startRoulette('boss')">スタート</button>
         <button onclick="stopRoulette('boss')">ストップ</button>
     `;
@@ -29,8 +37,10 @@ function goToConstraintRoulette() {
     const content = document.getElementById('content');
     content.style.display = 'block';
     content.innerHTML = `
-        <h2>縛りルーレット</h2>
-        <div id="constraint-roulette"></div>
+        <h2>縛りルーレット (プレイヤー${currentPlayer + 1}/${playerCount}, 縛り${currentConstraintIndex + 1}/${constraintCount})</h2>
+        <div class="roulette-container">
+            <div id="constraint-roulette" class="roulette"></div>
+        </div>
         <button onclick="startRoulette('constraint')">スタート</button>
         <button onclick="stopConstraintRoulette()">ストップ</button>
     `;
@@ -73,14 +83,17 @@ function goToAbout() {
         <p>Q: データミスを見つけたらどうすればいい？<br>A: @rakiku_genshin にDMでご報告ください。</p>
         <p>Q: ルーレットの結果が気に入らない場合は？<br>A: 「持っていない」ボタンでキャラ/武器を再抽選、または「最初に戻る」でリセット。</p>
         <p>Q: マルチプレイでの縛りは全員同じ？<br>A: 共通縛り（例：回復禁止）は全員同じ、個別縛り（例：キャラルーレット）はプレイヤーごと。</p>
+        <p>Q: 武器ルーレットはどうやって使う？<br>A: 「縛りを選んでルーレット」から「武器ルーレット」を選択し、武器種を選んでルーレットを回してください。</p>
         <h3>注意事項</h3>
         <p>これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。データミスやバグは @rakiku_genshin にDMでご報告ください。</p>
     `;
 }
 
+// ルーレット操作
 function startRoulette(type) {
     const rouletteDiv = document.getElementById(`${type}-roulette`);
-    const items = type === 'boss' ? bosses : constraints;
+    rouletteDiv.classList.add('spinning');
+    const items = type === 'boss' ? bosses : type === 'constraint' ? constraints : getItemsForConstraint(type);
     let index = 0;
     rouletteInterval = setInterval(() => {
         rouletteDiv.textContent = items[index];
@@ -91,21 +104,32 @@ function startRoulette(type) {
 function stopRoulette(type) {
     clearInterval(rouletteInterval);
     const rouletteDiv = document.getElementById(`${type}-roulette`);
+    rouletteDiv.classList.remove('spinning');
     const selectedItem = rouletteDiv.textContent;
     setTimeout(() => {
-        showPopup(`選ばれた${type === 'boss' ? 'ボス' : '縛り'}: ${selectedItem}`);
-        selectedItems.push({ type: type, value: selectedItem });
+        showPopup(`選ばれた${type === 'boss' ? 'ボス' : '項目'}: ${selectedItem}`, () => {
+            selectedItems[currentPlayer].push({ type: type, value: selectedItem });
+            if (type === 'boss') {
+                if (currentConstraintIndex < constraintCount) {
+                    goToConstraintRoulette();
+                } else {
+                    showResult();
+                }
+            }
+        });
     }, 1000); // 徐々に停止
 }
 
 function stopConstraintRoulette() {
     clearInterval(rouletteInterval);
     const rouletteDiv = document.getElementById('constraint-roulette');
+    rouletteDiv.classList.remove('spinning');
     const selectedConstraint = rouletteDiv.textContent;
     setTimeout(() => {
-        showPopup(`選ばれた縛り: ${selectedConstraint}`);
-        activeConstraints.push(selectedConstraint);
-        handleDetailedRoulette(selectedConstraint);
+        showPopup(`選ばれた縛り: ${selectedConstraint}`, () => {
+            activeConstraints.push(selectedConstraint);
+            handleDetailedRoulette(selectedConstraint);
+        });
     }, 1000);
 }
 
@@ -117,15 +141,26 @@ function handleDetailedRoulette(constraint) {
     if (detailedConstraints.includes(constraint)) {
         showDetailedRoulette(constraint);
     } else {
-        showResult();
+        currentConstraintIndex++;
+        if (currentConstraintIndex < constraintCount) {
+            goToConstraintRoulette();
+        } else if (currentPlayer < playerCount - 1) {
+            currentPlayer++;
+            currentConstraintIndex = 0;
+            goToConstraintRoulette();
+        } else {
+            showResult();
+        }
     }
 }
 
 function showDetailedRoulette(constraint) {
     const content = document.getElementById('content');
     content.innerHTML = `
-        <h2>${constraint}ルーレット</h2>
-        <div id="detailed-roulette"></div>
+        <h2>${constraint}ルーレット (プレイヤー${currentPlayer + 1})</h2>
+        <div class="roulette-container">
+            <div id="detailed-roulette" class="roulette"></div>
+        </div>
         <button onclick="startDetailedRoulette('${constraint}')">スタート</button>
         <button onclick="stopDetailedRoulette('${constraint}')">ストップ</button>
         <button onclick="nextStep('${constraint}')">次へ</button>
@@ -135,6 +170,7 @@ function showDetailedRoulette(constraint) {
 
 function startDetailedRoulette(constraint) {
     const rouletteDiv = document.getElementById('detailed-roulette');
+    rouletteDiv.classList.add('spinning');
     let items = getItemsForConstraint(constraint);
     let index = 0;
     rouletteInterval = setInterval(() => {
@@ -146,24 +182,28 @@ function startDetailedRoulette(constraint) {
 function stopDetailedRoulette(constraint) {
     clearInterval(rouletteInterval);
     const rouletteDiv = document.getElementById('detailed-roulette');
+    rouletteDiv.classList.remove('spinning');
     const selectedItem = rouletteDiv.textContent;
     setTimeout(() => {
-        showPopup(`選ばれた結果: ${selectedItem}`);
-        selectedItems.push({ type: constraint, value: selectedItem });
-        if (constraint === "キャラルーレット" && activeConstraints.includes("キャラ武器ルーレット")) {
-            showWeaponRouletteForCharacter(selectedItem);
-        } else {
-            showResult();
-        }
+        showPopup(`選ばれた結果: ${selectedItem}`, () => {
+            selectedItems[currentPlayer].push({ type: constraint, value: selectedItem });
+            if (constraint === "キャラルーレット" && activeConstraints.includes("キャラ武器ルーレット")) {
+                showWeaponRouletteForCharacter(selectedItem);
+            } else {
+                nextStep(constraint);
+            }
+        });
     }, 1000);
 }
 
 function showWeaponRouletteForCharacter(character) {
-    const weaponType = characterWeaponMap[character] || "片手剣"; // デフォルトは片手剣
+    const weaponType = characterWeaponMap[character] || "片手剣";
     const content = document.getElementById('content');
     content.innerHTML = `
-        <h2>武器ルーレット (${character})</h2>
-        <div id="weapon-roulette"></div>
+        <h2>武器ルーレット (${character}, プレイヤー${currentPlayer + 1})</h2>
+        <div class="roulette-container">
+            <div id="weapon-roulette" class="roulette"></div>
+        </div>
         <button onclick="startWeaponRouletteForChar('${weaponType}')">スタート</button>
         <button onclick="stopWeaponRoulette()">ストップ</button>
         <button onclick="nextStep('weapon')">次へ</button>
@@ -173,7 +213,8 @@ function showWeaponRouletteForCharacter(character) {
 
 function startWeaponRouletteForChar(type) {
     const rouletteDiv = document.getElementById('weapon-roulette');
-    let items = weapons[type].slice();
+    rouletteDiv.classList.add('spinning');
+    let items = getFilteredWeapons(type);
     let index = 0;
     rouletteInterval = setInterval(() => {
         rouletteDiv.textContent = items[index];
@@ -184,23 +225,54 @@ function startWeaponRouletteForChar(type) {
 function stopWeaponRoulette() {
     clearInterval(rouletteInterval);
     const rouletteDiv = document.getElementById('weapon-roulette');
+    rouletteDiv.classList.remove('spinning');
     const selectedWeapon = rouletteDiv.textContent;
     setTimeout(() => {
-        showPopup(`選ばれた武器: ${selectedWeapon}`);
-        selectedItems.push({ type: 'weapon', value: selectedWeapon });
-        showResult();
+        showPopup(`選ばれた武器: ${selectedWeapon}`, () => {
+            selectedItems[currentPlayer].push({ type: 'weapon', value: selectedWeapon });
+            nextStep('weapon');
+        });
     }, 1000);
+}
+
+function showWeaponTypeSelect() {
+    const content = document.getElementById('content');
+    content.innerHTML = `
+        <h2>武器ルーレット (プレイヤー${currentPlayer + 1})</h2>
+        <select id="weapon-type-select">
+            ${weaponTypes.map(type => `<option value="${type}">${type}</option>`).join('')}
+        </select>
+        <div class="roulette-container">
+            <div id="weapon-roulette" class="roulette"></div>
+        </div>
+        <button onclick="startWeaponRoulette()">スタート</button>
+        <button onclick="stopWeaponRoulette()">ストップ</button>
+        <button onclick="nextStep('weapon')">次へ</button>
+        <button onclick="reroll('weapon')">持っていない</button>
+    `;
+}
+
+function startWeaponRoulette() {
+    const type = document.getElementById('weapon-type-select').value;
+    const rouletteDiv = document.getElementById('weapon-roulette');
+    rouletteDiv.classList.add('spinning');
+    let items = getFilteredWeapons(type);
+    let index = 0;
+    rouletteInterval = setInterval(() => {
+        rouletteDiv.textContent = items[index];
+        index = (index + 1) % items.length;
+    }, 100);
 }
 
 function reroll(type) {
     const rouletteDiv = document.getElementById(`${type === 'weapon' ? 'weapon' : 'detailed'}-roulette`);
     const removedItem = rouletteDiv.textContent;
     if (type === 'weapon') {
-        const weaponType = characterWeaponMap[document.getElementById('detailed-roulette')?.textContent] || document.getElementById('weapon-type-select')?.value;
+        const weaponType = document.getElementById('weapon-type-select')?.value || characterWeaponMap[document.getElementById('detailed-roulette')?.textContent] || "片手剣";
         weapons[weaponType] = weapons[weaponType].filter(item => item !== removedItem);
         startWeaponRouletteForChar(weaponType);
     } else if (type === 'キャラルーレット') {
-        characters = characters.filter(char => char !== removedItem);
+        characters.splice(characters.indexOf(removedItem), 1);
         startDetailedRoulette(type);
     } else {
         startDetailedRoulette(type);
@@ -220,7 +292,7 @@ function getItemsForConstraint(constraint) {
         case "キャラ武器ルーレット": items = filterCharacters(); break;
         default: items = [];
     }
-    return items;
+    return items.length > 0 ? items : ["選択可能な項目がありません"];
 }
 
 function filterCharacters() {
@@ -231,25 +303,95 @@ function filterCharacters() {
     if (activeConstraints.includes("所持率100％縛り")) {
         filtered = filtered.filter(char => fullyOwned.includes(char));
     }
+    if (activeConstraints.includes("国縛り")) {
+        const selectedCountry = selectedItems[currentPlayer].find(item => item.type === "国縛り")?.value;
+        if (selectedCountry) {
+            filtered = filtered.filter(char => countryCharacters[selectedCountry]?.includes(char));
+        }
+    }
+    if (activeConstraints.includes("モノ元素縛り")) {
+        const selectedElement = selectedItems[currentPlayer].find(item => item.type === "モノ元素縛り")?.value;
+        if (selectedElement) {
+            filtered = filtered.filter(char => elementCharacters[selectedElement]?.includes(char));
+        }
+    }
+    if (activeConstraints.includes("各1.1縛り")) {
+        const selectedVersion = selectedItems[currentPlayer].find(item => item.type === "各1.1縛り")?.value;
+        if (selectedVersion) {
+            filtered = filtered.filter(char => versionCharacters[selectedVersion]?.includes(char));
+        }
+    }
+    if (activeConstraints.includes("誕生月")) {
+        const selectedMonth = selectedItems[currentPlayer].find(item => item.type === "誕生月")?.value;
+        if (selectedMonth) {
+            filtered = filtered.filter(char => monthCharacters[selectedMonth]?.includes(char));
+        }
+    }
+    if (activeConstraints.includes("アルファベット縛り")) {
+        const selectedAlphabet = selectedItems[currentPlayer].find(item => item.type === "アルファベット縛り")?.value;
+        if (selectedAlphabet) {
+            filtered = filtered.filter(char => alphabetCharacters[selectedAlphabet]?.includes(char));
+        }
+    }
+    if (activeConstraints.includes("☆４キャラ武器")) {
+        filtered = filtered.filter(char => star4Characters.includes(char));
+    }
+    if (activeConstraints.includes("初期キャラのみ")) {
+        filtered = filtered.filter(char => fullyOwned.includes(char));
+    }
+    if (activeConstraints.includes("無凸縛り")) {
+        filtered = filtered.filter(char => star4Characters.includes(char) || star5Characters.includes(char));
+    }
+    if (activeConstraints.includes("旅人縛り")) {
+        filtered = filtered.filter(char => char === "旅人");
+    }
     return filtered.length > 0 ? filtered : characters;
 }
 
-function showPopup(message) {
+function getFilteredWeapons(type) {
+    let filtered = weapons[type].slice();
+    if (activeConstraints.includes("恒常☆５縛り")) {
+        filtered = filtered.filter(weapon => permanent5StarWeapons.includes(weapon));
+    }
+    if (activeConstraints.includes("☆４キャラ武器")) {
+        filtered = filtered.filter(weapon => !permanent5StarWeapons.includes(weapon));
+    }
+    return filtered.length > 0 ? filtered : weapons[type];
+}
+
+function showPopup(message, callback) {
     const popup = document.createElement('div');
     popup.className = 'popup';
-    popup.innerHTML = `${message}<br><button onclick="this.parentElement.remove()">閉じる</button>`;
+    popup.innerHTML = `${message}<br><button onclick="this.parentElement.remove(); ${callback ? 'callback()' : ''}">閉じる</button>`;
     document.body.appendChild(popup);
 }
 
 function nextStep(type) {
-    showResult();
+    currentConstraintIndex++;
+    if (currentConstraintIndex < constraintCount) {
+        goToConstraintRoulette();
+    } else if (currentPlayer < playerCount - 1) {
+        currentPlayer++;
+        currentConstraintIndex = 0;
+        goToConstraintRoulette();
+    } else {
+        showResult();
+    }
 }
 
 function showResult() {
     const content = document.getElementById('content');
     let resultHtml = '<h2>結果</h2>';
-    selectedItems.forEach(item => {
-        resultHtml += `<p>${item.type}: ${item.value}</p>`;
+    const commonConstraints = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "UI非表示＋リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "聖遺物禁止", "爆発禁止＋リロール", "旅人縛り", "☆１、聖遺物なし"];
+    const common = activeConstraints.filter(c => commonConstraints.includes(c));
+    if (common.length > 0) {
+        resultHtml += `<h3>全体共通の縛り</h3><p>${common.join(', ')}</p>`;
+    }
+    selectedItems.forEach((playerItems, index) => {
+        resultHtml += `<h3>プレイヤー${index + 1}</h3>`;
+        playerItems.forEach(item => {
+            resultHtml += `<p>${item.type}: ${item.value}</p>`;
+        });
     });
     content.innerHTML = resultHtml;
 }
@@ -259,6 +401,8 @@ function backToMain() {
     document.getElementById('main-screen').style.display = 'block';
     activeConstraints = [];
     selectedItems = [];
+    currentPlayer = 0;
+    currentConstraintIndex = 0;
 }
 
 function startSelectedConstraint() {
@@ -269,30 +413,4 @@ function startSelectedConstraint() {
     } else {
         showDetailedRoulette(selectedConstraint);
     }
-}
-
-function showWeaponTypeSelect() {
-    const content = document.getElementById('content');
-    content.innerHTML = `
-        <h2>武器ルーレット</h2>
-        <select id="weapon-type-select">
-            ${weaponTypes.map(type => `<option value="${type}">${type}</option>`).join('')}
-        </select>
-        <div id="weapon-roulette"></div>
-        <button onclick="startWeaponRoulette()">スタート</button>
-        <button onclick="stopWeaponRoulette()">ストップ</button>
-        <button onclick="nextStep('weapon')">次へ</button>
-        <button onclick="reroll('weapon')">持っていない</button>
-    `;
-}
-
-function startWeaponRoulette() {
-    const type = document.getElementById('weapon-type-select').value;
-    const rouletteDiv = document.getElementById('weapon-roulette');
-    let items = weapons[type].slice();
-    let index = 0;
-    rouletteInterval = setInterval(() => {
-        rouletteDiv.textContent = items[index];
-        index = (index + 1) % items.length;
-    }, 100);
 }
