@@ -12,7 +12,7 @@ const bosses = [
 ];
 const binds = [
     "☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示＋リロール",
-    "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止",
+    "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器L種縛り", "キャラ武器ルーレット", "聖遺物禁止",
     "爆発禁止＋リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし"
 ];
 const subRoulettes = {
@@ -348,6 +348,10 @@ function processResult(result) {
         }
     }
     drawRoulette();
+    // --- 以下、追加コード ---
+    if (items.length === 0) {
+        showResults();
+    }
 }
 
 // 次のステップ（修正）
@@ -362,6 +366,10 @@ function nextStep() {
     processResult(result);
     document.getElementById('nextButton').classList.add('hidden');
     document.getElementById('notOwnedButton').classList.add('hidden');
+    // --- 以下、追加コード ---
+    if (items.length === 0) {
+        showResults();
+    }
 }
 
 // 次の縛り
@@ -412,6 +420,26 @@ function showResults() {
             }
         });
         html += `</ul>`;
+    }
+    // --- 以下、追加コード ---
+    html += `<h3>キャラクターのリスト：</h3>`;
+    for (let i = 0; i < playerCount; i++) {
+        results.players[i].forEach(r => {
+            if (r.bind === "誕生月") {
+                const month = r.detail;
+                const chars = birthMonth[month];
+                if (chars) {
+                    html += `<p>誕生月 ${month}：${chars.join('、')}</p>`;
+                }
+            } else if (r.bind === "アルファベット縛り") {
+                const letter = r.detail;
+                const chars = alphabet[letter];
+                if (chars) {
+                    html += `<p>アルファベット ${letter}：${chars.join('、')}</p>`;
+                }
+            }
+            // 他の縛りについても同様に追加可能
+        });
     }
     resultsDiv.innerHTML = html;
 }
