@@ -1,5 +1,5 @@
 // data.js
-// 原神 縛りルーレット用 総合データファイル (バージョン表記修正版)
+// 原神 縛りルーレット用 総合データファイル (キャラクターリスト完全修正版)
 
 const GENSHIN_DATA = {
     // =====================================================================
@@ -69,9 +69,10 @@ const GENSHIN_DATA = {
     kouchou_g5_weapons: ["天空の巻", "天空の翼", "天空の脊", "天空の傲", "天空の刃", "和璞鳶", "アモスの弓", "狼の末路", "四風原典", "風鷹剣"],
 
     // =====================================================================
-    // 6. 総合キャラクターデータ (バージョン表記を'n.'に統一)
+    // 6. 総合キャラクターデータ (全キャラクターを網羅した完全版)
     // =====================================================================
     characters: [
+        // モンド
         { name: "ミカ", rarity: 4, nation: "モンド", element: "氷", weapon_type: "長柄武器", version: "n.5", birthday: "8月", alphabet: "M" },
         { name: "レザー", rarity: 4, nation: "モンド", element: "雷", weapon_type: "両手剣", version: "n.0", birthday: "9月", alphabet: "R" },
         { name: "アルベド", rarity: 5, nation: "モンド", element: "岩", weapon_type: "片手剣", version: "n.2", birthday: "9月", alphabet: "A" },
@@ -92,6 +93,7 @@ const GENSHIN_DATA = {
         { name: "エウルア", rarity: 5, nation: "モンド", element: "氷", weapon_type: "両手剣", version: "n.5", birthday: "10月", alphabet: "E" },
         { name: "リサ", rarity: 4, nation: "モンド", element: "雷", weapon_type: "法器", version: "n.0", birthday: "6月", alphabet: "L" },
         { name: "ダリア", rarity: 4, nation: "モンド", element: "水", weapon_type: "片手剣", version: "n.7", birthday: "5月", alphabet: "D" },
+        // 璃月
         { name: "藍硯", rarity: 4, nation: "璃月", element: "風", weapon_type: "法器", version: "n.3", birthday: "1月", alphabet: "L" },
         { name: "嘉明", rarity: 4, nation: "璃月", element: "炎", weapon_type: "両手剣", version: "n.4", birthday: "12月", alphabet: "G" },
         { name: "閑雲", rarity: 5, nation: "璃月", element: "風", weapon_type: "法器", version: "n.4", birthday: "4月", alphabet: "X" },
@@ -113,6 +115,7 @@ const GENSHIN_DATA = {
         { name: "凝光", rarity: 4, nation: "璃月", element: "岩", weapon_type: "法器", version: "n.0", birthday: "8月", alphabet: "N" },
         { name: "雲菫", rarity: 4, nation: "璃月", element: "岩", weapon_type: "長柄武器", version: "n.4", birthday: "5月", alphabet: "Y" },
         { name: "七七", rarity: 5, nation: "璃月", element: "氷", weapon_type: "片手剣", version: "n.0", birthday: "3月", alphabet: "Q" },
+        // 稲妻
         { name: "夢見月瑞希", rarity: 5, nation: "稲妻", element: "風", weapon_type: "法器", version: "n.4", birthday: "3月", alphabet: "M" },
         { name: "千織", rarity: 5, nation: "稲妻", element: "岩", weapon_type: "片手剣", version: "n.5", birthday: "8月", alphabet: "C" },
         { name: "綺良々", rarity: 4, nation: "稲妻", element: "草", weapon_type: "片手剣", version: "n.7", birthday: "1月", alphabet: "K" },
@@ -130,8 +133,10 @@ const GENSHIN_DATA = {
         { name: "八重神子", rarity: 5, nation: "稲妻", element: "雷", weapon_type: "法器", version: "n.5", birthday: "6月", alphabet: "Y" },
         { name: "ゴロー", rarity: 4, nation: "稲妻", element: "岩", weapon_type: "弓", version: "n.3", birthday: "5月", alphabet: "G" },
         { name: "九条裟羅", rarity: 4, nation: "稲妻", element: "雷", weapon_type: "弓", version: "n.1", birthday: "7月", alphabet: "K" },
+        // スネージナヤ
         { name: "アルレッキーノ", rarity: 5, nation: "スネージナヤ", element: "炎", weapon_type: "長柄武器", version: "n.6", birthday: "8月", alphabet: "A" },
         { name: "タルタリヤ", rarity: 5, nation: "スネージナヤ", element: "水", weapon_type: "弓", version: "n.1", birthday: "7月", alphabet: "T" },
+        // スメール
         { name: "セトス", rarity: 4, nation: "スメール", element: "雷", weapon_type: "弓", version: "n.7", birthday: "5月", alphabet: "S" },
         { name: "カーヴェ", rarity: 4, nation: "スメール", element: "草", weapon_type: "両手剣", version: "n.6", birthday: "7月", alphabet: "K" },
         { name: "ディシア", rarity: 5, nation: "スメール", element: "炎", weapon_type: "両手剣", version: "n.5", birthday: "4月", alphabet: "D" },
@@ -146,6 +151,7 @@ const GENSHIN_DATA = {
         { name: "ドリー", rarity: 4, nation: "スメール", element: "雷", weapon_type: "両手剣", version: "n.0", birthday: "12月", alphabet: "D" },
         { name: "コレイ", rarity: 4, nation: "スメール", element: "草", weapon_type: "弓", version: "n.0", birthday: "5月", alphabet: "C" },
         { name: "ティナリ", rarity: 5, nation: "スメール", element: "草", weapon_type: "弓", version: "n.0", birthday: "12月", alphabet: "T" },
+        // フォンテーヌ
         { name: "エスコフィエ", rarity: 5, nation: "フォンテーヌ", element: "氷", weapon_type: "長柄武器", version: "n.6", birthday: "6月", alphabet: "E" },
         { name: "エミリエ", rarity: 5, nation: "フォンテーヌ", element: "草", weapon_type: "長柄武器", version: "n.8", birthday: "9月", alphabet: "E" },
         { name: "シグウィン", rarity: 5, nation: "フォンテーヌ", element: "水", weapon_type: "弓", version: "n.7", birthday: "3月", alphabet: "S" },
@@ -159,6 +165,7 @@ const GENSHIN_DATA = {
         { name: "フレミネ", rarity: 4, nation: "フォンテーヌ", element: "氷", weapon_type: "両手剣", version: "n.0", birthday: "9月", alphabet: "F" },
         { name: "リネ", rarity: 5, nation: "フォンテーヌ", element: "炎", weapon_type: "弓", version: "n.0", birthday: "2月", alphabet: "L" },
         { name: "リネット", rarity: 4, nation: "フォンテーヌ", element: "風", weapon_type: "片手剣", version: "n.0", birthday: "2月", alphabet: "L" },
+        // ナタ
         { name: "イファ", rarity: 4, nation: "ナタ", element: "風", weapon_type: "法器", version: "n.6", birthday: "3月", alphabet: "I" },
         { name: "イアンサ", rarity: 4, nation: "ナタ", element: "雷", weapon_type: "長柄武器", version: "n.5", birthday: "8月", alphabet: "I" },
         { name: "ヴァレサ", rarity: 4, nation: "ナタ", element: "雷", weapon_type: "法器", version: "n.5", birthday: "11月", alphabet: "V" },
@@ -170,6 +177,7 @@ const GENSHIN_DATA = {
         { name: "ムアラニ", rarity: 5, nation: "ナタ", element: "水", weapon_type: "法器", version: "n.0", birthday: "8月", alphabet: "M" },
         { name: "カチーナ", rarity: 4, nation: "ナタ", element: "岩", weapon_type: "長柄武器", version: "n.0", birthday: "4月", alphabet: "K" },
         { name: "キィニチ", rarity: 5, nation: "ナタ", element: "草", weapon_type: "両手剣", version: "n.0", birthday: "11月", alphabet: "K" },
+        // 例外
         { name: "旅人", rarity: 5, nation: "例外", element: null, weapon_type: "片手剣", version: "n.0", birthday: null, alphabet: "T" },
         { name: "アーロイ", rarity: 5, nation: "例外", element: "氷", weapon_type: "弓", version: null, birthday: "4月", alphabet: "A" },
         { name: "スカーク", rarity: 5, nation: "例外", element: "氷", weapon_type: "片手剣", version: "n.7", birthday: "11月", alphabet: "S" }
