@@ -3,42 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>原神縛りルーレット</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>原神 縛りプレイルーレット</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="startScreen">
-        <h1>原神縛りルーレット</h1>
-        <div>
-            <label for="playerCount">プレイヤー数:</label>
-            <input type="number" id="playerCount" value="1" min="1" max="4">
+    <div id="app">
+        <header>
+            <button id="back-to-main-btn" class="header-btn hidden">最初に戻る</button>
+        </header>
+
+        <main>
+            <!-- メインメニュー画面 -->
+            <div id="main-menu" class="screen active">
+                <h1>原神 縛りプレイルーレット</h1>
+                <div class="menu-buttons">
+                    <button class="menu-btn" data-target="batch-settings-screen">一括で決める</button>
+                    <button class="menu-btn" data-target="boss-roulette-screen">ボスルーレット</button>
+                    <button class="menu-btn" data-target="shibari-roulette-screen">縛りルーレット</button>
+                    <button class="menu-btn" data-target="select-shibari-screen">縛りを選んでルーレット</button>
+                    <button id="about-btn">このルーレットについて</button>
+                </div>
+            </div>
+
+            <!-- 一括ルーレット設定画面 -->
+            <div id="batch-settings-screen" class="screen">
+                <h2>一括ルーレット設定</h2>
+                <div class="settings-grid">
+                    <div class="settings-group">
+                        <label for="player-count">プレイヤー数:</label>
+                        <select id="player-count">
+                            <option value="1">1人</option>
+                            <option value="2">2人</option>
+                            <option value="3">3人</option>
+                            <option value="4">4人</option>
+                        </select>
+                    </div>
+                    <div class="settings-group">
+                        <label for="shibari-count">縛りの数:</label>
+                        <select id="shibari-count">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="start-batch-btn" class="action-btn">一括ルーレット開始</button>
+            </div>
+            
+            <!-- 縛りを選んでルーレット画面 -->
+            <div id="select-shibari-screen" class="screen">
+                <h2>縛りを選んでルーレット</h2>
+                <div id="selectable-shibari-list" class="menu-buttons">
+                    <!-- JSによってボタンが生成されます -->
+                </div>
+            </div>
+
+            <!-- 汎用ルーレット画面 -->
+            <div id="roulette-screen" class="screen">
+                <h2 id="roulette-title">ルーレット</h2>
+                <div class="roulette-container">
+                    <canvas id="roulette-canvas" width="500" height="500"></canvas>
+                    <div class="roulette-arrow"></div>
+                </div>
+                <div class="roulette-controls">
+                    <button id="spin-btn" class="action-btn">スタート</button>
+                    <button id="stop-btn" class="action-btn" disabled>ストップ</button>
+                </div>
+            </div>
+            
+            <!-- 結果表示画面 -->
+            <div id="result-screen" class="screen">
+                 <h2>抽選結果</h2>
+                 <div id="result-content" class="result-box"></div>
+                 <button id="copy-result-btn" class="action-btn">結果をコピー</button>
+            </div>
+        </main>
+        
+        <!-- このルーレットについて (モーダル) -->
+        <div id="about-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <button id="close-about-btn" class="close-btn">×</button>
+                <h2>このルーレットについて</h2>
+                <div class="about-content">
+                    <h3>目的・コンセプト</h3>
+                    <p>このルーレットは、普段遊んでいるサーバーでやっている縛りのルーレットをやりやすくしたいという目的のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。</p>
+                    <h3>使用される情報について</h3>
+                    <p>ルーレットに使用されるキャラ、武器、縛り条件などの情報はすべて制作者が選定した公式情報のみを使用しています。データミスを見つけた場合は、@rakiku_genshin にDMでご報告ください。</p>
+                    <h3>FAQ</h3>
+                    <dl>
+                        <dt>Q: 所持していないキャラや武器が出たら？</dt><dd>A: 「持っていない」ボタンで項目を削除し再抽選できます。</dd>
+                        <dt>Q: キャラルーレットで被ったら？</dt><dd>A: 一度の抽選内では重複しないよう設計されています。</dd>
+                        <dt>Q: 縛りの重複はどう処理されますか？</dt><dd>A: 同じ縛りは重複して選ばれないようになっています。</dd>
+                        <dt>Q: 条件の矛盾が出た場合は？</dt><dd>A: 矛盾が発生した場合（例：選択可能キャラが0人になる）、原因となった縛りが自動で再抽選されます。</dd>
+                        <dt>Q: ルーレットの結果を保存できますか？</dt><dd>A: 保存機能はありませんが、結果画面のスクリーンショットや「結果をコピー」ボタンをご利用ください。</dd>
+                        <dt>Q: モバイルでも使えますか？</dt><dd>A: はい、レスポンシブデザインに対応しており、スマートフォンでもご利用いただけます。</dd>
+                        <dt>Q: 縛り数が4つに制限されているのはなぜ？</dt><dd>A: ゲームプレイの現実性を考慮し、最大4つに設定しています。</dd>
+                        <dt>Q: ボスや縛りを自分で選べますか？</dt><dd>A: 「縛りを選んでルーレット」モードで特定の縛りルーレットを直接プレイできます。ボスの個別選択はできません。</dd>
+                        <dt>Q: データミスを見つけたらどうすればいい？</dt><dd>A: X(旧Twitter)の @rakiku_genshin にDMでご報告いただけると幸いです。</dd>
+                        <dt>Q: マルチプレイでの縛りは全員同じ？</dt><dd>A: 「回復禁止」のような共通縛りと、「国縛り」のようにプレイヤーごとに結果が変わる個別縛りがあります。結果画面で分かりやすく表示されます。</dd>
+                    </dl>
+                    <h3>注意事項</h3>
+                    <p>本ツールは非公式のファンメイドツールです。原神のアップデートに伴う情報の更新は、作者の裁量で行われます。データミスやバグにお気づきの際は、上記連絡先までご報告ください。</p>
+                </div>
+            </div>
         </div>
-        <div>
-            <label for="bindCount">縛りの数:</label>
-            <input type="number" id="bindCount" value="1" min="1" max="10">
+
+        <!-- ポップアップ (汎用) -->
+        <div id="popup-overlay" class="modal-overlay hidden">
+            <div id="popup" class="modal-content">
+                <h3 id="popup-title">抽選結果</h3>
+                <p id="popup-result"></p>
+                <div id="popup-buttons">
+                    <button id="popup-next-btn">次へ</button>
+                    <button id="popup-reject-btn" class="hidden reject-btn">持っていない</button>
+                    <button id="popup-close-btn" class="hidden">閉じる</button>
+                </div>
+            </div>
         </div>
-        <button onclick="startRoulette('all')">一括ルーレット</button>
-        <button onclick="startRoulette('boss')">ボスルーレット</button>
-        <button onclick="startRoulette('bind')">縛りルーレット</button>
-        <button onclick="showBindSelection()">縛りを選ぶ</button>
     </div>
-    <div id="bindSelection" class="hidden">
-        <h2>縛りを選んでください</h2>
-        <div id="bindButtons"></div>
-    </div>
-    <div id="rouletteScreen" class="hidden">
-        <canvas id="rouletteCanvas" width="400" height="400"></canvas>
-        <button onclick="spinRoulette()">ルーレットを回す</button>
-        <button id="stopButton" onclick="stopRoulette()" disabled>ストップ</button>
-        <button id="notOwnedButton" onclick="notOwned()" class="hidden">持っていない</button>
-        <button id="nextButton" onclick="nextStep()" class="hidden">次へ</button>
-        <div id="popup" style="display: none;"></div>
-    </div>
-    <div id="resultScreen" class="hidden">
-        <h2>結果</h2>
-        <div id="results"></div>
-        <button onclick="backToStart()">最初に戻る</button>
-    </div>
+
+    <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
