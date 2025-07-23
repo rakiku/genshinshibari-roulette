@@ -12,11 +12,20 @@
 
 body {
     font-family: 'Noto Sans JP', sans-serif;
-    background-color: var(--bg-dark);
     color: var(--text-primary);
     text-align: center;
     padding: 1rem;
     margin: 0;
+    min-height: 100vh; /* 画面の高さいっぱいに広げる */
+
+    /* --- 背景画像の設定 --- */
+    background: 
+        linear-gradient(rgba(26, 32, 44, 0.85), rgba(26, 32, 44, 0.85)), /* 文字を読みやすくするための85%不透明な黒いフィルター */
+        url('background.jpg'); /* 背景画像を指定 */
+    background-repeat: no-repeat;
+    background-size: cover; /* 画面全体を覆うように画像を調整 */
+    background-position: center center; /* 画像を中央に配置 */
+    background-attachment: fixed; /* スクロールしても背景を固定 */
 }
 
 #app {
@@ -32,25 +41,28 @@ header {
     margin-bottom: 1rem;
 }
 
+/* メインコンテンツの背景を少し透明にして、背景が透けるように調整 */
 main {
-    background-color: var(--bg-light);
+    background-color: rgba(45, 55, 72, 0.9); /* var(--bg-light)を半透明に */
     padding: 1.5rem 2rem;
     border-radius: 10px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
 }
 
 .screen { display: none; }
 .screen.active { display: block; animation: fadeIn 0.5s; }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 h1 {
     font-size: 2.2rem;
     color: var(--accent-blue);
     margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 h2 {
@@ -89,6 +101,7 @@ button:active {
 button:disabled {
     background-color: var(--border-color);
     cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .reject-btn {
@@ -155,6 +168,7 @@ button:disabled {
     border-top: 20px solid transparent;
     border-bottom: 20px solid transparent;
     border-left: 40px solid var(--accent-red);
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
 }
 
 .roulette-controls {
@@ -165,7 +179,7 @@ button:disabled {
 }
 
 .result-box {
-    background-color: var(--bg-dark);
+    background-color: rgba(26, 32, 44, 0.8); /* var(--bg-dark)を半透明に */
     border: 2px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
