@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function proceedToNext() {
         if (mode === 'all' && currentRoulette === 'boss') {
              currentRoulette = 'bind';
-             items = binds.slice().sort(() => Math.random() - 0.5);
+             items = getAvailableBinds();
              document.getElementById('spinButton').disabled = false;
              drawRoulette();
              return;
@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const totalPlayerBinds = Object.keys(results.players[0]).length;
             if (Object.keys(results.common).length + totalPlayerBinds < bindCount) {
                 currentRoulette = 'bind';
-                items = binds.filter(b => !results.common[b] && !results.players[0][b]).slice().sort(() => Math.random() - 0.5);
+                items = getAvailableBinds();
                 document.getElementById('spinButton').disabled = false;
                 drawRoulette();
             } else {
@@ -463,6 +463,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+
+    function getAvailableBinds() {
+        let available = [...binds];
+        const allSelectedBinds = [...Object.keys(results.common), ...Object.keys(results.players[0])];
+        
+        // すでに選ばれた縛りを除外
+        available = available.filter(b => !allSelectedBinds.includes(b));
+
+        // 矛盾する縛りを除外
+        if (allSelectedBinds.some(b => playerBindTypes.includes(b))) {
+            available = available.filter(b => !subRoulettes[b]);
+            available = available.filter(b => !playerBindTypes.includes(b));
+        }
+        if (results.common['☆１、聖遺物なし']) {
+            available = available.filter(b => b !== 'キャラ武器ルーレット');
+        }
+        if (results.common['恒常☆５縛り']) {
+            available = available.filter(b => b !== '☆４キャラ武器');
+        }
+        if (results.common['☆４キャラ武器']) {
+            available = available.filter(b => b !== '恒常☆５縛り');
+        }
+        
+        return available.slice().sort(() => Math.random() - 0.5);
+    }
+
 
     function notOwned() {
         if(currentRoulette === 'character') {
@@ -522,7 +548,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     let detailHtml = '';
                     if (bindName === "キャラ武器ルーレット") {
                         const char = resultDetail.char || "未選択";
-                        const weapon = resultDetail.weapon || "未選択";
+                        let weapon = resultDetail.weapon || "未選択";
+                        if (results.common['☆１、聖遺物なし']) {
+                            weapon = "☆１武器";
+                        }
                         detailHtml = `${char} - ${weapon}`;
                     } else {
                         detailHtml = resultDetail || "未選択";
