@@ -415,3 +415,4 @@ function backToStart() {
 
 // 初期描画
 drawRoulette();
+});
