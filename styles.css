@@ -1,267 +1,106 @@
-:root {
-    --bg-dark: #1a202c;
-    --bg-light: #2d3748;
-    --text-primary: #edf2f7;
-    --text-secondary: #a0aec0;
-    --accent-blue: #4299e1;
-    --accent-blue-hover: #2b6cb0;
-    --accent-red: #e53e3e;
-    --accent-red-hover: #c53030;
-    --border-color: #4a5568;
-}
-
+/* 基本的なスタイルとレイアウト */
 body {
-    font-family: 'Noto Sans JP', sans-serif;
-    color: var(--text-primary);
-    text-align: center;
-    padding: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
     margin: 0;
-    min-height: 100vh; /* 画面の高さいっぱいに広げる */
-
-    /* --- 背景画像の設定 --- */
-    background: 
-        linear-gradient(rgba(26, 32, 44, 0.85), rgba(26, 32, 44, 0.85)), /* 文字を読みやすくするための85%不透明な黒いフィルター */
-        url('background.jpg'); /* 背景画像を指定 */
-    background-repeat: no-repeat;
-    background-size: cover; /* 画面全体を覆うように画像を調整 */
-    background-position: center center; /* 画像を中央に配置 */
-    background-attachment: fixed; /* スクロールしても背景を固定 */
-}
-
-#app {
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-header {
-    height: 50px;
+    padding: 20px;
     display: flex;
+    justify-content: center;
     align-items: center;
-    padding: 0 1rem;
-    margin-bottom: 1rem;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
-/* メインコンテンツの背景を少し透明にして、背景が透けるように調整 */
-main {
-    background-color: rgba(45, 55, 72, 0.9); /* var(--bg-light)を半透明に */
-    padding: 1.5rem 2rem;
-    border-radius: 10px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--border-color);
-}
-
-.screen { display: none; }
-.screen.active { display: block; animation: fadeIn 0.5s; }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+#app-container {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    padding: 20px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+    text-align: center;
 }
 
 h1 {
-    font-size: 2.2rem;
-    color: var(--accent-blue);
-    margin-bottom: 2rem;
-    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    color: #1a3a6e;
 }
 
-h2 {
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-    color: var(--text-primary);
+.page {
+    display: none;
 }
 
-.header-btn, .menu-btn, .action-btn, .reject-btn {
+.page.active {
     display: block;
-    width: 100%;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: white;
-    background-color: var(--accent-blue);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-}
-.header-btn {
-    width: auto;
-    background-color: var(--border-color);
-}
-.menu-btn:hover, .action-btn:hover {
-    background-color: var(--accent-blue-hover);
-}
-.header-btn:hover {
-    background-color: #2d3748;
-}
-button:active {
-    transform: scale(0.98);
-}
-button:disabled {
-    background-color: var(--border-color);
-    cursor: not-allowed;
-    opacity: 0.7;
 }
 
-.reject-btn {
-    background-color: var(--accent-red);
-}
-.reject-btn:hover {
-    background-color: var(--accent-red-hover);
+.hidden {
+    display: none !important;
 }
 
+/* ボタンのデザイン */
 .menu-buttons {
-    display: grid;
-    gap: 1rem;
-}
-
-.settings-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-@media (min-width: 600px) {
-    .settings-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-.settings-group {
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
-.settings-group label {
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-}
-.settings-group select {
-    width: 100%;
-    padding: 0.8rem;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 2px solid var(--border-color);
-    background-color: var(--bg-dark);
-    color: var(--text-primary);
+    gap: 15px;
+    margin-top: 30px;
 }
 
-.roulette-container {
-    position: relative;
-    width: 90vw;
-    max-width: 450px;
-    aspect-ratio: 1 / 1;
-    margin: 2rem auto;
-}
-#roulette-canvas {
-    width: 100%;
-    height: 100%;
-    transform: rotate(0deg); /* JSで制御 */
-}
-.roulette-arrow {
-    position: absolute;
-    top: 50%;
-    right: -25px;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-    border-left: 40px solid var(--accent-red);
-    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
-}
-
-.roulette-controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.result-box {
-    background-color: rgba(26, 32, 44, 0.8); /* var(--bg-dark)を半透明に */
-    border: 2px solid var(--border-color);
+.menu-btn {
+    padding: 15px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
     border-radius: 8px;
-    padding: 1.5rem;
-    text-align: left;
-    white-space: pre-wrap;
-    margin-bottom: 1.5rem;
-    max-height: 60vh;
-    overflow-y: auto;
+    background: linear-gradient(145deg, #007bff, #0056b3);
+    color: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.modal-overlay {
+.menu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.home-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+}
+
+/* ポップアップ */
+.popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0,0,0,0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    padding: 1rem;
-}
-.modal-overlay.hidden { display: none; }
-.modal-content {
-    background-color: var(--bg-light);
-    padding: 2rem;
-    border-radius: 10px;
-    min-width: 300px;
-    max-width: 90vw;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    animation: zoomIn 0.3s;
 }
 
-@keyframes zoomIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+.popup-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
 }
 
-.modal-content .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 2rem;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    line-height: 1;
+/* ルーレットのCanvas */
+canvas {
+    max-width: 100%;
+    height: auto;
 }
-#popup-result {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--accent-blue);
-    margin: 1.5rem 0;
-}
-#popup-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-#popup-buttons button { margin-bottom: 0; }
-
-.about-content {
-    text-align: left;
-}
-.about-content h3 {
-    color: var(--accent-blue);
-    border-left: 4px solid var(--accent-blue);
-    padding-left: 0.8rem;
-    margin-top: 1.5rem;
-}
-.about-content dl dt {
-    font-weight: bold;
-    margin-top: 1rem;
-}
-.about-content dl dd {
-    margin-left: 1rem;
-    color: var(--text-secondary);
-}
-
-.hidden { display: none !important; }
