@@ -27,13 +27,6 @@
                 <button id="startBindButton">縛りルーレット</button>
                 <button id="showBindSelectionButton">縛り選択</button>
             </div>
-            <!-- ★★ ここに追加 ★★ -->
-            <div class="about-button-container">
-                <button id="aboutButton" class="about-button">このルーレットについて</button>
-            </div>
-        </div>
-
-        <!-- (他の画面は変更なし) -->
         <div id="bindSelection" class="hidden">
             <h2>縛りを選択してください</h2>
             <div id="bindButtons" class="button-group"></div>
