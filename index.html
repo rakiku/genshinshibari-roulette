@@ -3,42 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>原神縛りルーレット</title>
+    <title>Genshin Shibari Roulette</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="startScreen">
-        <h1>原神縛りルーレット</h1>
-        <div>
-            <label for="playerCount">プレイヤー数:</label>
-            <input type="number" id="playerCount" value="1" min="1" max="4">
+    <div class="container">
+        <!-- スタート画面 -->
+        <div id="startScreen">
+            <h1>原神縛りルーレット</h1>
+            <div class="input-group">
+                <label for="playerCount">プレイヤー数：</label>
+                <input type="number" id="playerCount" value="1" min="1">
+            </div>
+            <div class="input-group">
+                <label for="bindCount">縛りの数：</label>
+                <input type="number" id="bindCount" value="1" min="1">
+            </div>
+            <div class="button-group">
+                <button id="startAllButton">ボス＋縛りルーレット</button>
+                <button id="startBossButton">ボスルーレットのみ</button>
+                <button id="startBindButton">縛りルーレットのみ</button>
+                <button id="showBindSelectionButton">縛り選択ルーレット</button>
+            </div>
         </div>
-        <div>
-            <label for="bindCount">縛りの数:</label>
-            <input type="number" id="bindCount" value="1" min="1" max="10">
+
+        <!-- 縛り選択画面 -->
+        <div id="bindSelection" class="hidden">
+            <h2>縛りを選択してください</h2>
+            <div id="bindButtons" class="button-group"></div>
         </div>
-        <button onclick="startRoulette('all')">一括ルーレット</button>
-        <button onclick="startRoulette('boss')">ボスルーレット</button>
-        <button onclick="startRoulette('bind')">縛りルーレット</button>
-        <button onclick="showBindSelection()">縛りを選ぶ</button>
+
+        <!-- ルーレット画面 -->
+        <div id="rouletteScreen" class="hidden">
+            <div class="roulette-container">
+                <canvas id="rouletteCanvas" width="500" height="500"></canvas>
+            </div>
+            <div class="controls">
+                <button id="spinButton">スピン</button>
+                <button id="stopButton" disabled>ストップ</button>
+                <button id="nextButton" class="hidden">次へ</button>
+                <button id="notOwnedButton" class="hidden">持っていない（リロール）</button>
+            </div>
+            <div id="popup" class="popup"></div>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="resultScreen" class="hidden">
+            <h1>結果</h1>
+            <div id="results"></div>
+            <button id="backToStartButton">最初に戻る</button>
+        </div>
     </div>
-    <div id="bindSelection" class="hidden">
-        <h2>縛りを選んでください</h2>
-        <div id="bindButtons"></div>
-    </div>
-    <div id="rouletteScreen" class="hidden">
-        <canvas id="rouletteCanvas" width="400" height="400"></canvas>
-        <button onclick="spinRoulette()">ルーレットを回す</button>
-        <button id="stopButton" onclick="stopRoulette()" disabled>ストップ</button>
-        <button id="notOwnedButton" onclick="notOwned()" class="hidden">持っていない</button>
-        <button id="nextButton" onclick="nextStep()" class="hidden">次へ</button>
-        <div id="popup" style="display: none;"></div>
-    </div>
-    <div id="resultScreen" class="hidden">
-        <h2>結果</h2>
-        <div id="results"></div>
-        <button onclick="backToStart()">最初に戻る</button>
-    </div>
+
+    <!-- script.js は body の最後に読み込む -->
     <script src="script.js"></script>
 </body>
 </html>
