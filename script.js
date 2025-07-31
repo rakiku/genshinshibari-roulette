@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // =================================================================
-    // 【最終確定版】全データベース
-    // =================================================================
+    // (データベース部分は変更ないので省略)
     const characters = [
         // モンド
         { name: "ジン", country: "モンド", weapon: "片手剣", element: "風", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒常☆５'] },
@@ -32,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "香菱", country: "璃月", weapon: "長柄武器", element: "炎", birth_month: "１１月", version: "n.0", rarity: ['☆４'] },
         { name: "行秋", country: "璃月", weapon: "片手剣", element: "水", birth_month: "１０月", version: "n.0", rarity: ['☆４'] },
         { name: "重雲", country: "璃月", weapon: "両手剣", element: "氷", birth_month: "９月", version: "n.0", rarity: ['☆４'] },
-        { name: "七七", country: "璃月", weapon: "片手剣", element: "氷", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒постоянный☆５'] },
+        { name: "七七", country: "璃月", weapon: "片手剣", element: "氷", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒常☆５'] },
         { name: "刻晴", country: "璃月", weapon: "片手剣", element: "雷", birth_month: "１１月", version: "n.0", rarity: ['☆５', '恒常☆５'] },
         { name: "鍾離", country: "璃月", weapon: "長柄武器", element: "岩", birth_month: "１２月", version: "n.1", rarity: ['☆５'] },
         { name: "辛炎", country: "璃月", weapon: "両手剣", element: "炎", birth_month: "１０月", version: "n.1", rarity: ['☆４'] },
@@ -136,6 +134,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット"];
 
     let playerCount, bindCount, mode, currentRoulette, currentBindName, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, lastResult;
+    // ★★ 修正箇所: プレイヤーごとのリロール情報を管理 ★★
+    let rerolledChars, rerolledWeapons;
+
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
     const colors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
@@ -166,6 +167,9 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPlayer = 1;
         currentBindIndex = 0;
         lastResult = null;
+        // ★★ 修正箇所: プレイヤーごとのリロール情報を初期化 ★★
+        rerolledChars = Array(playerCount + 1).fill(0).map(() => []);
+        rerolledWeapons = Array(playerCount + 1).fill(0).map(() => ({}));
     }
 
     function showBindSelection() {
@@ -254,6 +258,10 @@ document.addEventListener('DOMContentLoaded', function() {
         let filtered = [...characters];
         const allFilters = {...results.common, ...results.players[currentPlayer - 1]};
 
+        // ★★ 修正箇所: プレイヤーごとのリロール情報を反映 ★★
+        const currentPlayerRerolledChars = rerolledChars[currentPlayer];
+        filtered = filtered.filter(c => !currentPlayerRerolledChars.includes(c.name));
+
         for (const bindName in allFilters) {
             const value = allFilters[bindName];
             if (!value) continue;
@@ -275,11 +283,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return filtered;
     }
 
-    function getFilteredWeapons(weaponType) {
+    function getFilteredWeapons(weaponType, charName) {
         let filtered = allWeapons[weaponType];
         if (results.common["☆４キャラ武器"]) {
             filtered = filtered.filter(w => !star5Weapons.includes(w));
         }
+        // ★★ 修正箇所: プレイヤーごとのリロール情報を反映 ★★
+        const currentPlayerRerolledWeapons = rerolledWeapons[currentPlayer][charName] || [];
+        filtered = filtered.filter(w => !currentPlayerRerolledWeapons.includes(w));
+
         return filtered.slice().sort(() => Math.random() - 0.5);
     }
     
@@ -410,8 +422,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: null };
                 currentRoulette = 'weapon';
                 const charData = characters.find(c => c.name === lastResult);
-                items = getFilteredWeapons(charData.weapon);
-                document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
+                items = getFilteredWeapons(charData.weapon, charData.name);
+                document.getElementById('spinButton').disabled = false;
                 drawRoulette();
             } else {
                 results.players[currentPlayer - 1][currentBindName] = lastResult;
@@ -438,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (mode === 'all' && currentRoulette === 'boss') {
              currentRoulette = 'bind';
              items = binds.slice().sort(() => Math.random() - 0.5);
-             document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
+             document.getElementById('spinButton').disabled = false;
              drawRoulette();
              return;
         }
@@ -451,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Object.keys(results.common).length + totalPlayerBinds < bindCount) {
                 currentRoulette = 'bind';
                 items = binds.filter(b => !results.common[b] && !results.players[0][b]).slice().sort(() => Math.random() - 0.5);
-                document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
+                document.getElementById('spinButton').disabled = false;
                 drawRoulette();
             } else {
                 showResults();
@@ -460,9 +472,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function notOwned() {
-        if(currentRoulette === 'character' || currentRoulette === 'weapon') {
-             items = items.filter(item => item !== lastResult);
+        // ★★ 修正箇所: プレイヤーごとにリロール情報を記録 ★★
+        if(currentRoulette === 'character') {
+            rerolledChars[currentPlayer].push(lastResult);
+            items = items.filter(item => item !== lastResult);
+        } else if (currentRoulette === 'weapon') {
+            const charName = results.players[currentPlayer - 1]['キャラ武器ルーレット'].char;
+            if (!rerolledWeapons[currentPlayer][charName]) {
+                rerolledWeapons[currentPlayer][charName] = [];
+            }
+            rerolledWeapons[currentPlayer][charName].push(lastResult);
+            items = items.filter(item => item !== lastResult);
         }
+        
         if (items.length === 0) {
             alert("候補がいなくなりました！");
             proceedToNext();
