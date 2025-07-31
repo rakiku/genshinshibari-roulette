@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // =================================================================
-    // 【最終確定版】全データベース
-    // =================================================================
+    // (データベース部分は変更ないので省略)
     const characters = [
         // モンド
         { name: "ジン", country: "モンド", weapon: "片手剣", element: "風", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒常☆５'] },
@@ -144,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
     document.getElementById('startBindButton').addEventListener('click', () => startRoulette('bind'));
     document.getElementById('showBindSelectionButton').addEventListener('click', () => showBindSelection());
+    document.getElementById('homeButton').addEventListener('click', backToStart); // ★★ 修正 ★★
 
     document.getElementById('spinButton').addEventListener('click', spinRoulette);
     document.getElementById('stopButton').addEventListener('click', stopRoulette);
@@ -224,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
             currentRoulette = 'bind';
             items = binds.slice().sort(() => Math.random() - 0.5);
         }
+        document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
         drawRoulette();
     }
     
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
             proceedToNext();
             return;
         }
-        document.getElementById('spinButton').disabled = false;
+        document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
         showScreen('rouletteScreen');
         drawRoulette();
     }
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.moveTo(arrowBaseX - 20, canvas.height / 2);
         ctx.lineTo(arrowBaseX, canvas.height / 2 - 10);
         ctx.lineTo(arrowBaseX, canvas.height / 2 + 10);
-        ctx.fillStyle = '#FFD700';
+        ctx.fillStyle = '#FF0000'; // ★★ 修正: 黄色 -> 赤 ★★
         ctx.fill();
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 2;
@@ -436,6 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
              currentRoulette = 'bind';
              items = binds.slice().sort(() => Math.random() - 0.5);
              drawRoulette();
+             document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
              return;
         }
 
@@ -448,6 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentRoulette = 'bind';
                 items = binds.filter(b => !results.common[b] && !results.players[0][b]).slice().sort(() => Math.random() - 0.5);
                 drawRoulette();
+                document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
             } else {
                 showResults();
             }
