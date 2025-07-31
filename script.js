@@ -132,9 +132,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "アルファベット縛り": Object.keys(alphabetData).sort()
     };
     
-    // プレイヤーごとの縛りか、全体共通の縛りかを定義
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット"];
-    const commonFilterBindTypes = ["国縛り", "モノ元素縛り", "各1.1縛り", "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "旅人縛り"];
+    const commonFilterBindTypes = ["国縛り", "モノ元素縛り", "各1.1縛り", "武器種縛り", "誕生月", "アルファベット縛り"];
+    const commonSimpleBindTypes = ["恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "旅人縛り"];
 
     let playerCount, bindCount, mode, currentRoulette, currentBindName, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, lastResult;
     const canvas = document.getElementById('rouletteCanvas');
@@ -176,11 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const bindButtons = document.getElementById('bindButtons');
         bindButtons.innerHTML = '';
         
-        let selectableBinds = binds;
-        if (isPlayerBind) {
-             selectableBinds = binds.filter(b => subRoulettes[b] || playerBindTypes.includes(b));
-        }
-
+        let selectableBinds = binds.filter(b => subRoulettes[b] || playerBindTypes.includes(b));
+        
         selectableBinds.forEach(bind => {
             const button = document.createElement('button');
             button.textContent = bind;
@@ -198,7 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function executeBinds() {
-        // 縛りを最適な順序に並び替え
         selectedBinds.sort((a, b) => {
             const aIsPlayerBind = playerBindTypes.includes(a);
             const bIsPlayerBind = playerBindTypes.includes(b);
@@ -224,10 +220,10 @@ document.addEventListener('DOMContentLoaded', function() {
         showScreen('rouletteScreen');
         if (type === 'all' || type === 'boss') {
             currentRoulette = 'boss';
-            items = bosses;
+            items = bosses.slice().sort(() => Math.random() - 0.5);
         } else if (type === 'bind') {
             currentRoulette = 'bind';
-            items = binds;
+            items = binds.slice().sort(() => Math.random() - 0.5);
         }
         drawRoulette();
     }
@@ -248,16 +244,14 @@ document.addEventListener('DOMContentLoaded', function() {
             proceedToNext();
             return;
         }
+        document.getElementById('spinButton').disabled = false;
         showScreen('rouletteScreen');
         drawRoulette();
     }
     
     function getFilteredCharacters() {
         let filtered = [...characters];
-        const commonFilters = results.common;
-        const playerBinds = results.players[currentPlayer - 1];
-
-        const allFilters = {...commonFilters, ...playerBinds};
+        const allFilters = {...results.common, ...results.players[currentPlayer - 1]};
 
         for (const bindName in allFilters) {
             const value = allFilters[bindName];
@@ -324,10 +318,12 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.restore();
         }
         
+        const arrowBaseX = canvas.width / 2 + radius;
+        const arrowTipX = arrowBaseX - 20;
         ctx.beginPath();
-        ctx.moveTo(canvas.width / 2 + radius + 20, canvas.height / 2);
-        ctx.lineTo(canvas.width / 2 + radius, canvas.height / 2 - 10);
-        ctx.lineTo(canvas.width / 2 + radius, canvas.height / 2 + 10);
+        ctx.moveTo(arrowTipX, canvas.height / 2);
+        ctx.lineTo(arrowBaseX, canvas.height / 2 - 10);
+        ctx.lineTo(arrowBaseX, canvas.height / 2 + 10);
         ctx.fillStyle = '#FFD700';
         ctx.fill();
         ctx.strokeStyle = '#000';
@@ -368,7 +364,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 20);
         document.getElementById('stopButton').disabled = true;
-        document.getElementById('spinButton').disabled = false;
     };
     function showPopup(text) {
         const popup = document.getElementById('popup');
@@ -438,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function proceedToNext() {
         if (mode === 'all' && currentRoulette === 'boss') {
              currentRoulette = 'bind';
-             items = binds;
+             items = binds.slice().sort(() => Math.random() - 0.5);
              drawRoulette();
              return;
         }
@@ -447,10 +442,10 @@ document.addEventListener('DOMContentLoaded', function() {
             currentBindIndex++;
             startNextSelectedBind();
         } else {
-            const totalBinds = Object.keys(results.common).length + Object.keys(results.players[0]).length;
-            if (totalBinds < bindCount) {
+            const totalPlayerBinds = Object.keys(results.players[0]).length;
+            if (Object.keys(results.common).length + totalPlayerBinds < bindCount) {
                 currentRoulette = 'bind';
-                items = binds.filter(b => !results.common[b] && !results.players[0][b]);
+                items = binds.filter(b => !results.common[b] && !results.players[0][b]).slice().sort(() => Math.random() - 0.5);
                 drawRoulette();
             } else {
                 showResults();
@@ -509,6 +504,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         detailHtml = `${char} - ${weapon}`;
                     } else {
                         detailHtml = resultDetail || "未選択";
+                        const chars = getCharactersForBind(bindName, resultDetail);
+                        if (chars.length > 0) {
+                             detailHtml += ` <span class="char-list">(${chars.join('、')})</span>`;
+                        }
                     }
                     html += `<li>${bindName}：${detailHtml}</li>`;
                 });
