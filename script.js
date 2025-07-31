@@ -143,12 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('startBindButton').addEventListener('click', () => startRoulette('bind'));
     document.getElementById('showBindSelectionButton').addEventListener('click', () => showBindSelection());
     document.getElementById('homeButton').addEventListener('click', backToStart);
-    document.getElementById('aboutButton').addEventListener('click', () => document.getElementById('aboutModal').classList.remove('hidden'));
-    document.querySelector('.modal-overlay').addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('close-button')) {
-            document.getElementById('aboutModal').classList.add('hidden');
-        }
-    });
 
     document.getElementById('spinButton').addEventListener('click', spinRoulette);
     document.getElementById('stopButton').addEventListener('click', stopRoulette);
@@ -416,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const charData = characters.find(c => c.name === lastResult);
                 items = getFilteredWeapons(charData.weapon);
                 drawRoulette();
-                document.getElementById('spinButton').disabled = false;
+                document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
             } else {
                 results.players[currentPlayer - 1][currentBindName] = lastResult;
                 proceedToNextPlayer();
@@ -442,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (mode === 'all' && currentRoulette === 'boss') {
              currentRoulette = 'bind';
              items = binds.slice().sort(() => Math.random() - 0.5);
-             document.getElementById('spinButton').disabled = false;
+             document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
              drawRoulette();
              return;
         }
@@ -455,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Object.keys(results.common).length + totalPlayerBinds < bindCount) {
                 currentRoulette = 'bind';
                 items = binds.filter(b => !results.common[b] && !results.players[0][b]).slice().sort(() => Math.random() - 0.5);
-                document.getElementById('spinButton').disabled = false;
+                document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
                 drawRoulette();
             } else {
                 showResults();
