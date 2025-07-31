@@ -3,73 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>原神 縛りプレイルーレット</title>
-    <link rel="stylesheet" href="style.css">  <!-- ←この行が style.css を読み込んでいます -->
+    <title>原神縛りルーレット</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app-container">
-        <!-- 最初に戻るボタン -->
-        <button id="home-button" class="home-btn hidden">最初に戻る</button>
-
-        <!-- トップページ -->
-        <div id="top-page" class="page active">
-            <h1>原神 縛りプレイルーレット</h1>
-            <div class="menu-buttons">
-                <button class="menu-btn" data-target="bulk-settings-page">一括で決める</button>
-                <button class="menu-btn" data-target="boss-roulette-page">ボスルーレット</button>
-                <button class="menu-btn" data-target="shibari-roulette-page">縛りルーレット</button>
-                <button class="menu-btn" data-target="select-shibari-page">縛りを選んでルーレット</button>
-                <button class="menu-btn" data-target="about-page">このルーレットについて</button>
-            </div>
+    <div id="startScreen">
+        <h1>原神縛りルーレット</h1>
+        <div>
+            <label for="playerCount">プレイヤー数:</label>
+            <input type="number" id="playerCount" value="1" min="1" max="4">
         </div>
-
-        <!-- 各ページ（初期状態では非表示） -->
-        <div id="bulk-settings-page" class="page">
-            <h2>一括で決める - 設定</h2>
-            <!-- 今後の開発で内容を追加 -->
+        <div>
+            <label for="bindCount">縛りの数:</label>
+            <input type="number" id="bindCount" value="1" min="1" max="10">
         </div>
-
-        <div id="boss-roulette-page" class="page">
-            <h2>ボスルーレット</h2>
-            <canvas id="boss-canvas" width="500" height="500"></canvas>
-            <button id="spin-boss">スタート</button>
-        </div>
-
-        <div id="shibari-roulette-page" class="page">
-            <h2>縛りルーレット</h2>
-            <canvas id="shibari-canvas" width="500" height="500"></canvas>
-            <button id="spin-shibari">スタート</button>
-        </div>
-
-        <div id="select-shibari-page" class="page">
-            <h2>縛りを選んでルーレット</h2>
-            <!-- 今後の開発で内容を追加 -->
-        </div>
-        
-        <div id="character-roulette-page" class="page">
-             <h2>キャラルーレット</h2>
-             <!-- 今後の開発で内容を追加 -->
-        </div>
-
-        <div id="about-page" class="page">
-            <h2>このルーレットについて</h2>
-            <!-- 今後の開発で内容を追加 -->
-        </div>
-
-        <!-- 結果表示用ポップアップ -->
-        <div id="result-popup" class="popup-overlay hidden">
-            <div class="popup-content">
-                <h3 id="popup-title">抽選結果</h3>
-                <p id="popup-body"></p>
-                <button id="popup-close">閉じる</button>
-                <button id="popup-next" class="hidden">次へ</button>
-                <button id="popup-reroll" class="hidden">持っていない</button>
-            </div>
-        </div>
-
+        <button onclick="startRoulette('all')">一括ルーレット</button>
+        <button onclick="startRoulette('boss')">ボスルーレット</button>
+        <button onclick="startRoulette('bind')">縛りルーレット</button>
+        <button onclick="showBindSelection()">縛りを選ぶ</button>
     </div>
-
-    <script src="data.js"></script>
+    <div id="bindSelection" class="hidden">
+        <h2>縛りを選んでください</h2>
+        <div id="bindButtons"></div>
+    </div>
+    <div id="rouletteScreen" class="hidden">
+        <canvas id="rouletteCanvas" width="400" height="400"></canvas>
+        <button onclick="spinRoulette()">ルーレットを回す</button>
+        <button id="stopButton" onclick="stopRoulette()" disabled>ストップ</button>
+        <button id="notOwnedButton" onclick="notOwned()" class="hidden">持っていない</button>
+        <button id="nextButton" onclick="nextStep()" class="hidden">次へ</button>
+        <div id="popup" style="display: none;"></div>
+    </div>
+    <div id="resultScreen" class="hidden">
+        <h2>結果</h2>
+        <div id="results"></div>
+        <button onclick="backToStart()">最初に戻る</button>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
