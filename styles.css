@@ -1,172 +1,112 @@
-/* 全体のスタイル */
-body {
-    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-    background-image: url('background.jpg.png');
-    background-color: #2c3e50;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    color: #ecf0f1;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genshin Shibari Roulette</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button id="homeButton" class="home-button">最初に戻る</button>
 
-/* ★★ ここに追加 ★★ */
-.home-button {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.5);
-    border: 1px solid #fff;
-}
-.home-button:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
+    <div class="container">
+        <!-- スタート画面 -->
+        <div id="startScreen">
+            <h1>原神縛りルーレット</h1>
+            <div class="input-group">
+                <label for="playerCount">プレイヤー数：</label>
+                <input type="number" id="playerCount" value="1" min="1" max="4">
+            </div>
+            <div class="input-group">
+                <label for="bindCount">縛りの数：</label>
+                <input type="number" id="bindCount" value="1" min="1" max="4">
+            </div>
+            <div class="button-group">
+                <button id="startAllButton">一括ルーレット</button>
+                <button id="startBossButton">ボスルーレット</button>
+                <button id="startBindButton">縛りルーレット</button>
+                <button id="showBindSelectionButton">縛り選択</button>
+            </div>
+            <!-- ★★ ここに追加 ★★ -->
+            <div class="about-button-container">
+                <button id="aboutButton" class="about-button">このルーレットについて</button>
+            </div>
+        </div>
 
-.container {
-    background-color: rgba(44, 62, 80, 0.9);
-    padding: 20px 40px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    width: 90%;
-    max-width: 600px;
-}
+        <!-- (他の画面は変更なし) -->
+        <div id="bindSelection" class="hidden">
+            <h2>縛りを選択してください</h2>
+            <div id="bindButtons" class="button-group"></div>
+        </div>
+        <div id="rouletteScreen" class="hidden">
+            <div class="roulette-container"><canvas id="rouletteCanvas" width="500" height="500"></canvas></div>
+            <div class="controls"><button id="spinButton">スピン</button><button id="stopButton" disabled>ストップ</button><button id="nextButton" class="hidden">次へ</button><button id="notOwnedButton" class="hidden">持っていない（リロール）</button></div>
+            <div id="popup" class="popup"></div>
+        </div>
+        <div id="resultScreen" class="hidden">
+            <h1>結果</h1>
+            <div id="results"></div>
+            <button id="backToStartButton">最初に戻る</button>
+        </div>
+    </div>
 
-h1, h2 {
-    color: #fff;
-    margin-bottom: 20px;
-}
+    <!-- ★★ ここに追加 ★★ -->
+    <!-- 説明モーダルウィンドウ -->
+    <div id="aboutModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <h2>このルーレットについて</h2>
+            
+            <div class="modal-section">
+                <h3>目的・コンセプト</h3>
+                <p>このルーレットは、普段遊んでいるサーバーでやっている縛りのルーレットをやりやすくしたいという目的のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。</p>
+            </div>
 
-.hidden {
-    display: none;
-}
+            <div class="modal-section">
+                <h3>使用される情報について</h3>
+                <p>ルーレットに使用されるキャラ、武器、縛り条件などの情報はすべて制作者が選定した公式情報のみを使用しています。データミスを見つけた場合は、Twitter:@rakiku_genshin にDMでご報告ください。</p>
+            </div>
 
-.input-group {
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+            <div class="modal-section">
+                <h3>FAQ</h3>
+                <dl>
+                    <dt>Q: 所持していない武器が出たら？</dt>
+                    <dd>A: 「持っていない」ボタンで項目を削除し再抽選できるようになっています。</dd>
+                    <dt>Q: キャラルーレットで被ったら？</dt>
+                    <dd>A: マルチの際は被る可能性があります。もしかぶってしまった場合は、二人目の人がもっていないを押すことで再抽選できるので問題はないと思います。</dd>
+                    <dt>Q: 縛りの重複はどう処理？</dt>
+                    <dd>A: 重複しないよう設計しています。</dd>
+                    <dt>Q: 条件の矛盾が出た場合は？</dt>
+                    <dd>A: 出ないようになっているはずです...</dd>
+                    <dt>Q: ルーレットの結果を保存できますか？</dt>
+                    <dd>A: 現在は保存機能ないので、リザルト画面をスクリーンショットしてください。</dd>
+                    <dt>Q: モバイルでも使えますか？</dt>
+                    <dd>A: はい、ちょっとUIが変になりますがルーレット自体はスマホでもプレイできます。</dd>
+                    <dt>Q: 縛り数が4つに制限されているのはなぜ？</dt>
+                    <dd>A: 現実的に可能な縛り数として最大4つに設定。</dd>
+                    <dt>Q: ボスや縛りを自分で選べますか？</dt>
+                    <dd>A: それぞれ対応するボタンがあるのでそれを押してもらえば選ぶことは可能です。</dd>
+                    <dt>Q: アーロイや旅人の扱いは？</dt>
+                    <dd>A: 例外キャラとして特定の縛り（例：所持率100％、恒常☆5）で除外しています。</dd>
+                    <dt>Q: データミスを見つけたらどうすればいい？</dt>
+                    <dd>A:Twitter： @rakiku_genshin にDMでご報告ください。</dd>
+                    <dt>Q: ルーレットの結果が気に入らない場合は？</dt>
+                    <dd>A: 「持っていない」ボタンでキャラ/武器を再抽選、または「最初に戻る」でリセット。</dd>
+                    <dt>Q: マルチプレイでの縛りは全員同じ？</dt>
+                    <dd>A: 共通縛り（例：回復禁止）は全員同じ、個別縛り（例：キャラルーレット）はプレイヤーごと。</dd>
+                    <dt>Q：背景のキャラはどういう選出？</dt>
+                    <dd>A:サーバーの初期メンバーの推しキャラです<br>らきく：煙緋<br>すーも：フリーナ<br>りょーか：九条裟羅<br>なのさめ：クレー</dd>
+                </dl>
+            </div>
+            
+            <div class="modal-section">
+                <h3>注意事項</h3>
+                <p>これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。データミスやバグ、ご提案などは Twitter：@rakiku_genshin にDMでご報告ください。</p>
+            </div>
 
-.input-group label {
-    margin-right: 10px;
-    font-size: 1.1em;
-}
+        </div>
+    </div>
 
-.input-group input {
-    width: 60px;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #7f8c8d;
-    background-color: #34495e;
-    color: #ecf0f1;
-    font-size: 1.1em;
-    text-align: center;
-}
-
-.button-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-button {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-button:hover {
-    background-color: #2ecc71;
-    transform: translateY(-2px);
-}
-
-button:disabled {
-    background-color: #7f8c8d;
-    cursor: not-allowed;
-    transform: none;
-}
-
-#stopButton {
-    background-color: #555;
-}
-#stopButton:not(:disabled):hover {
-    background-color: #777;
-}
-
-.roulette-container {
-    margin: 20px auto;
-    position: relative;
-    width: 500px;
-    height: 500px;
-}
-
-canvas {
-    width: 100%;
-    height: 100%;
-}
-
-.popup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.85);
-    color: #fff;
-    padding: 30px 50px;
-    border-radius: 10px;
-    font-size: 2.5em;
-    font-weight: bold;
-    z-index: 100;
-    text-shadow: 2px 2px 5px #000;
-    border: 2px solid #fff;
-    cursor: pointer;
-}
-
-#results {
-    text-align: left;
-    background-color: #34495e;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-#results h3 {
-    margin-top: 15px;
-    border-bottom: 1px solid #7f8c8d;
-    padding-bottom: 5px;
-}
-#results ul {
-    list-style: none;
-    padding-left: 0;
-}
-#results li {
-    background-color: #2c3e50;
-    margin-bottom: 5px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.char-list {
-    font-size: 0.8em;
-    color: #bdc3c7;
-    margin-left: 8px;
-    display: block;
-    margin-top: 5px;
-}
+    <script src="script.js"></script>
+</body>
+</html>
