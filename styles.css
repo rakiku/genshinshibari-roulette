@@ -1,69 +1,169 @@
+/* 全体のスタイル */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    
+    /* ★★ ここから修正 ★★ */
+    background-image: url('background.jpg'); /* 背景画像を指定 */
+    background-color: #2c3e50; /* 画像が読み込めない場合の背景色 */
+    background-size: cover; /* 画面全体を覆うように画像を調整 */
+    background-position: center center; /* 画像を中央に配置 */
+    background-repeat: no-repeat; /* 画像の繰り返しを無効化 */
+    background-attachment: fixed; /* スクロールしても背景を固定 */
+    /* ★★ ここまで修正 ★★ */
+    
+    color: #ecf0f1;
+    margin: 0;
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    background: linear-gradient(135deg, #74E4E2, #36d6a0);
-    color: #fff;
-    overflow: auto;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
-#startScreen, #bindSelection, #rouletteScreen, #resultScreen {
+
+.container {
+    background-color: rgba(44, 62, 80, 0.9); /* コンテンツの背景を少し透過させる */
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     text-align: center;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 10px;
-    max-height: 90vh;
-    overflow-y: auto;
+    width: 90%;
+    max-width: 600px;
 }
-.hidden { display: none; }
-button {
-    background: #2ca880;
+
+h1, h2 {
     color: #fff;
+    margin-bottom: 20px;
+}
+
+/* 画面の表示・非表示 */
+.hidden {
+    display: none;
+}
+
+/* 入力欄 */
+.input-group {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-group label {
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+.input-group input {
+    width: 60px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #7f8c8d;
+    background-color: #34495e;
+    color: #ecf0f1;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+/* ボタン */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #27ae60;
+    color: white;
     border: none;
-    padding: 10px 20px;
-    margin: 5px;
+    padding: 12px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
 }
-button:disabled { background: #555; cursor: not-allowed; }
-button:hover:not(:disabled) { background: #238f6a; }
-input {
-    padding: 5px;
-    margin: 5px;
-    border-radius: 5px;
-    border: none;
-    font-size: 16px;
+
+button:hover {
+    background-color: #2ecc71;
+    transform: translateY(-2px);
 }
-#rouletteCanvas { margin: 20px 0; }
-#popup {
+
+button:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#stopButton {
+    background-color: #555;
+}
+#stopButton:not(:disabled):hover {
+    background-color: #777;
+}
+
+/* ルーレット */
+.roulette-container {
+    margin: 20px auto;
+    position: relative;
+    width: 500px;
+    height: 500px;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* ポップアップ */
+.popup {
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.85);
     color: #fff;
+    padding: 30px 50px;
+    border-radius: 10px;
+    font-size: 2.5em;
+    font-weight: bold;
+    z-index: 100;
+    text-shadow: 2px 2px 5px #000;
+    border: 2px solid #fff;
+    cursor: pointer;
+}
+
+/* 結果画面 */
+#results {
+    text-align: left;
+    background-color: #34495e;
     padding: 20px;
     border-radius: 10px;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 1000;
+    margin-bottom: 20px;
 }
-#bindButtons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+#results h3 {
+    margin-top: 15px;
+    border-bottom: 1px solid #7f8c8d;
+    padding-bottom: 5px;
 }
-#bindButtons button {
-    flex: 1 1 150px;
-    margin: 5px;
+#results ul {
+    list-style: none;
+    padding-left: 0;
 }
-#results { text-align: left; }
-/* 結果画面のキャラクターリスト用のスタイル */
+#results li {
+    background-color: #2c3e50;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 .char-list {
     font-size: 0.8em;
-    color: #ccc;
+    color: #bdc3c7;
     margin-left: 8px;
+    display: block; /* 改行して表示 */
+    margin-top: 5px;
 }
