@@ -410,6 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const charData = characters.find(c => c.name === lastResult);
                 items = getFilteredWeapons(charData.weapon);
                 drawRoulette();
+                document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
             } else {
                 results.players[currentPlayer - 1][currentBindName] = lastResult;
                 proceedToNextPlayer();
@@ -435,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (mode === 'all' && currentRoulette === 'boss') {
              currentRoulette = 'bind';
              items = binds.slice().sort(() => Math.random() - 0.5);
-             document.getElementById('spinButton').disabled = false;
+             document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
              drawRoulette();
              return;
         }
@@ -448,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Object.keys(results.common).length + totalPlayerBinds < bindCount) {
                 currentRoulette = 'bind';
                 items = binds.filter(b => !results.common[b] && !results.players[0][b]).slice().sort(() => Math.random() - 0.5);
-                document.getElementById('spinButton').disabled = false;
+                document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
                 drawRoulette();
             } else {
                 showResults();
