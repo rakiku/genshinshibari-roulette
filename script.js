@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const bosses = ["無相の炎", "無相の水", "無相の風", "無相の雷", "無相の草", "無相の氷", "無相の岩", "純水精霊", "雷音権現", "水形タルパ", "深罪の浸礼者", "黄金王獣", "深淵なるミミック・パピラ", "遺跡サーペント", "恒常からくり陣形", "兆載永劫ドレイク", "半永久統制マトリックス", "氷風組曲コペリウス", "氷風組曲コッペリア", "秘源機兵・機構デバイス", "魔偶剣鬼", "実験用フィールド生成装置", "迷える霊覚の修権者", "爆炎樹", "迅電樹", "急凍樹", "エンシェントヴィシャップ・岩", "アビサルヴィシャップ", "マッシュラプトル", "風食ウェネト", "鉄甲熔炎帝王", "千年真珠の海駿", "山隠れの猊獣", "魔像レガトゥス", "暴君・金焔のクク竜", "山の王・貪食のユムカ竜", "輝ける溶岩の龍像", "秘源機兵・統御デバイス", "アンドリアス", "公子", "若陀龍王", "淑女", "禍津御建鳴神命", "正機の神", "アペプ", "吞星の鯨", "召使", "グーシートース", "キング＆クイーン", "ヴィヴィアン", "ニニアン", "イゾルト", "リアム", "ロッキー", "ディアンナラ", "赤璋巡岳府君", "シネアス", "異色三連星", "バラチコ", "コシーホ", "ジャプー", "リライ", "銅の掟", "ピーク", "戦羊・鉄爪", "微末", "最後のテノチズトク人"];
     const binds = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示＋リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止＋リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし"];
     const initialCharacters = ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー"];
+    const ownership100Characters = ["香菱", "旅人", "ガイア", "バーバラ", "コレイ", "ノエル", "リサ", "アンバー"];
     const alphabetData = {"A": ["荒瀧一斗", "アルベド", "アルレッキーノ", "アルハイゼン", "アンバー", "アーロイ"], "B": ["バーバラ", "白朮", "ベネット", "北斗"], "C": ["キャンディス", "クロリンデ", "コレイ", "シャルロット", "シュヴルーズ", "シトラリ", "セノ", "千織", "チャスカ", "重雲"], "D": ["ドリー", "ディシア", "ディルック", "ディオナ", "ダリア"], "E": ["エミリエ", "エウルア", "エスコフィエ"], "F": ["ファルザン", "フリーナ", "フレミネ", "フィッシュル"], "G": ["嘉明", "甘雨", "ゴロー"], "H": ["胡桃"], "I": ["イアンサ", "イファ", "イネファ"], "J": ["ジン"], "K": ["神里綾華", "神里綾人", "キィニチ", "綺良々", "久岐忍", "九条裟羅", "クレー", "刻晴", "カチーナ", "カーヴェ"], "L": ["リサ", "リネ", "リネット", "レイラ", "藍硯"], "M": ["ミカ", "ムアラニ", "モナ", "マーヴィカ"], "N": ["ナヴィア", "ナヒーダ", "ニィロウ", "ヌヴィレット", "ノエル"], "O": ["オロルン"], "Q": ["七七"], "R": ["雷電将軍", "レザー", "ロサリア", "リオセスリ"], "S": ["早柚", "珊瑚宮心海", "鹿野院平蔵", "シグウィン", "申鶴", "スクロース", "セトス", "スカーク"], "T": ["旅人", "ティナリ", "タルタリヤ", "トーマ"], "V": ["ウェンティ", "ヴァレサ"], "W": ["放浪者"], "X": ["行秋", "魈", "香菱", "辛炎", "シロネン", "閑雲"], "Y": ["煙緋", "夜蘭", "雲菫", "八重神子", "宵宮", "ヨォーヨ", "夢見月瑞希"], "Z": ["鍾離"]};
 
     const subRoulettes = {
@@ -133,8 +134,6 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット"];
-    const commonFilterBindTypes = ["国縛り", "モノ元素縛り", "各1.1縛り", "武器種縛り", "誕生月", "アルファベット縛り"];
-    const commonSimpleBindTypes = ["恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "旅人縛り"];
 
     let playerCount, bindCount, mode, currentRoulette, currentBindName, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, lastResult;
     const canvas = document.getElementById('rouletteCanvas');
@@ -144,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('startAllButton').addEventListener('click', () => startRoulette('all'));
     document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
     document.getElementById('startBindButton').addEventListener('click', () => startRoulette('bind'));
-    document.getElementById('showBindSelectionButton').addEventListener('click', () => showBindSelection(true));
+    document.getElementById('showBindSelectionButton').addEventListener('click', () => showBindSelection());
 
     document.getElementById('spinButton').addEventListener('click', spinRoulette);
     document.getElementById('stopButton').addEventListener('click', stopRoulette);
@@ -168,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
         lastResult = null;
     }
 
-    function showBindSelection(isPlayerBind) {
+    function showBindSelection() {
         initialize();
         mode = 'selected';
         selectedBinds = [];
@@ -268,6 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 case "☆４キャラ武器": filtered = filtered.filter(c => c.rarity.includes('☆４')); break;
                 case "初期キャラのみ": filtered = filtered.filter(c => initialCharacters.includes(c.name)); break;
                 case "旅人縛り": filtered = filtered.filter(c => c.name === "旅人"); break;
+                case "所持率100％縛り": filtered = filtered.filter(c => ownership100Characters.includes(c.name)); break;
             }
         }
         return filtered;
@@ -319,9 +319,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const arrowBaseX = canvas.width / 2 + radius;
-        const arrowTipX = arrowBaseX - 20;
         ctx.beginPath();
-        ctx.moveTo(arrowTipX, canvas.height / 2);
+        ctx.moveTo(arrowBaseX - 20, canvas.height / 2);
         ctx.lineTo(arrowBaseX, canvas.height / 2 - 10);
         ctx.lineTo(arrowBaseX, canvas.height / 2 + 10);
         ctx.fillStyle = '#FFD700';
@@ -387,17 +386,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processResult() {
+        const isCommonFilter = subRoulettes[currentBindName] && !playerBindTypes.includes(currentBindName);
+
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
             if (mode === 'boss') {
-                showResults();
-                return;
+                showResults(); return;
             }
             proceedToNext();
         } else if (currentRoulette === 'bind') {
             setupRouletteForBind(lastResult);
         } else if (currentRoulette === 'sub') {
-            if (commonFilterBindTypes.includes(currentBindName)) {
+            if (isCommonFilter) {
                 results.common[currentBindName] = lastResult;
             } else {
                 results.players[currentPlayer - 1][currentBindName] = lastResult;
@@ -421,8 +421,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function proceedToNextPlayer() {
+        const isCommonFilter = subRoulettes[currentBindName] && !playerBindTypes.includes(currentBindName);
         currentPlayer++;
-        if (currentPlayer > playerCount || commonFilterBindTypes.includes(currentBindName)) {
+        if (currentPlayer > playerCount || isCommonFilter) {
             currentPlayer = 1;
             proceedToNext();
         } else {
@@ -525,6 +526,8 @@ document.addEventListener('DOMContentLoaded', function() {
             case "誕生月": return characters.filter(c => c.birth_month === value).map(c => c.name);
             case "各1.1縛り": return characters.filter(c => c.version === value).map(c => c.name);
             case "アルファベット縛り": return alphabetData[value] || [];
+            case "初期キャラのみ": return initialCharacters;
+            case "所持率100％縛り": return ownership100Characters;
             default: return [];
         }
     }
