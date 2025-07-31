@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // (データベース部分は変更ないので省略)
+    // =================================================================
+    // 【最終確定版】全データベース
+    // =================================================================
     const characters = [
         // モンド
         { name: "ジン", country: "モンド", weapon: "片手剣", element: "風", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒常☆５'] },
@@ -30,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "香菱", country: "璃月", weapon: "長柄武器", element: "炎", birth_month: "１１月", version: "n.0", rarity: ['☆４'] },
         { name: "行秋", country: "璃月", weapon: "片手剣", element: "水", birth_month: "１０月", version: "n.0", rarity: ['☆４'] },
         { name: "重雲", country: "璃月", weapon: "両手剣", element: "氷", birth_month: "９月", version: "n.0", rarity: ['☆４'] },
-        { name: "七七", country: "璃月", weapon: "片手剣", element: "氷", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒常☆５'] },
+        { name: "七七", country: "璃月", weapon: "片手剣", element: "氷", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒постоянный☆５'] },
         { name: "刻晴", country: "璃月", weapon: "片手剣", element: "雷", birth_month: "１１月", version: "n.0", rarity: ['☆５', '恒常☆５'] },
         { name: "鍾離", country: "璃月", weapon: "長柄武器", element: "岩", birth_month: "１２月", version: "n.1", rarity: ['☆５'] },
         { name: "辛炎", country: "璃月", weapon: "両手剣", element: "炎", birth_month: "１０月", version: "n.1", rarity: ['☆４'] },
@@ -409,8 +411,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentRoulette = 'weapon';
                 const charData = characters.find(c => c.name === lastResult);
                 items = getFilteredWeapons(charData.weapon);
+                document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
                 drawRoulette();
-                document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
             } else {
                 results.players[currentPlayer - 1][currentBindName] = lastResult;
                 proceedToNextPlayer();
@@ -436,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (mode === 'all' && currentRoulette === 'boss') {
              currentRoulette = 'bind';
              items = binds.slice().sort(() => Math.random() - 0.5);
-             document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
+             document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
              drawRoulette();
              return;
         }
@@ -449,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Object.keys(results.common).length + totalPlayerBinds < bindCount) {
                 currentRoulette = 'bind';
                 items = binds.filter(b => !results.common[b] && !results.players[0][b]).slice().sort(() => Math.random() - 0.5);
-                document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
+                document.getElementById('spinButton').disabled = false; // ★★ 修正 ★★
                 drawRoulette();
             } else {
                 showResults();
