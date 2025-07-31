@@ -255,14 +255,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function getFilteredCharacters() {
         let filtered = [...characters];
         const allFilters = {...results.common, ...results.players[currentPlayer - 1]};
-
         const currentPlayerRerolledChars = rerolledChars[currentPlayer];
         filtered = filtered.filter(c => !currentPlayerRerolledChars.includes(c.name));
 
         for (const bindName in allFilters) {
             const value = allFilters[bindName];
             if (!value) continue;
-
             switch(bindName) {
                 case "国縛り": filtered = filtered.filter(c => c.country === value); break;
                 case "モノ元素縛り": filtered = filtered.filter(c => c.element === value); break;
@@ -287,7 +285,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         const currentPlayerRerolledWeapons = rerolledWeapons[currentPlayer][charName] || [];
         filtered = filtered.filter(w => !currentPlayerRerolledWeapons.includes(w));
-
         return filtered.slice().sort(() => Math.random() - 0.5);
     }
     
@@ -488,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         document.getElementById('notOwnedButton').classList.add('hidden');
         document.getElementById('nextButton').classList.add('hidden');
-        document.getElementById('spinButton').disabled = false; // ★★ 修正箇所 ★★
+        document.getElementById('spinButton').disabled = false;
         drawRoulette();
     }
 
