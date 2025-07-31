@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // データ (省略)
+    // データ
     const bosses = [
         "無相の炎", "無相の水", "無相の風", "無相の雷", "無相の草", "無相の氷", "無相の岩", "純水精霊", "雷音権現", "水形タルパ",
         "深罪の浸礼者", "黄金王獣", "深淵なるミミック・パピラ", "遺跡サーペント", "恒常からくり陣形", "兆載永劫ドレイク", "半永久統制マトリックス",
@@ -92,6 +92,18 @@ document.addEventListener('DOMContentLoaded', function() {
         "n.7": ["夜蘭", "久岐忍", "綺良々", "クロリンデ", "シグウィン", "セトス", "スカーク", "ダリア"],
         "n.8": ["鹿野院平蔵", "エミリエ", "イネファ"]
     };
+    
+    // ★★ ここから新しいデータ ★★
+    // 各縛りの詳細データをまとめる
+    const bindDetails = {
+        "誕生月": birthMonth,
+        "武器種縛り": charWeaponMap,
+        "アルファベット縛り": alphabet,
+        "各1.1縛り": version,
+        // 国縛りはキャラリストがないので、ここでは定義しない
+    };
+    // ★★ ここまで新しいデータ ★★
+
 
     // 状態管理
     let playerCount, bindCount, mode, currentRoulette, currentBindName, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, excludedItems = [], excludedChars = [], excludedWeapons = {}, currentBindIndex = 0, lastResult;
@@ -455,6 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
         drawRoulette();
     }
 
+    // ★★ ここからが修正された関数です ★★
     // 結果表示
     function showResults() {
         showScreen('resultScreen');
@@ -474,19 +487,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += `<h3>プレイヤー${i + 1}：</h3><ul>`;
                 playerBindKeys.forEach(bindName => {
                     const resultDetail = playerBinds[bindName];
+                    let detailHtml = '';
+
                     if (bindName === "キャラ武器ルーレット") {
                         const char = resultDetail.char || "未選択";
                         const weapon = resultDetail.weapon || "未選択";
-                        html += `<li>${bindName}：${char} - ${weapon}</li>`;
+                        detailHtml = `${char} - ${weapon}`;
                     } else {
-                        html += `<li>${bindName}：${resultDetail || "未選択"}</li>`;
+                        detailHtml = resultDetail || "未選択";
+                        // bindDetailsに縛りの詳細データが存在する場合、対象キャラリストを追加
+                        if (bindDetails[bindName] && bindDetails[bindName][resultDetail]) {
+                            const charList = bindDetails[bindName][resultDetail].join('、');
+                            detailHtml += ` <span class="char-list">(${charList})</span>`;
+                        }
                     }
+                    html += `<li>${bindName}：${detailHtml}</li>`;
                 });
                 html += `</ul>`;
             }
         }
         resultsDiv.innerHTML = html;
     }
+    // ★★ ここまでが修正された関数です ★★
 
     // 最初に戻る
     function backToStart() {
