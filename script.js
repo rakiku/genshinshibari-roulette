@@ -609,29 +609,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += `</ul>`;
             }
 
-            let finalChars;
-            const playerHasCharRoulette = hasPlayerBind('キャラルーレット', i + 1);
-            const playerHasCharWeaponRoulette = hasPlayerBind('キャラ武器ルーレット', i + 1);
+            const finalChars = getFilteredCharacters(null, i + 1);
+            let finalCharText = `<h3>プレイヤー${i + 1}の対象キャラクター (${finalChars.length}人)：</h3>`;
 
-            if (playerHasCharRoulette || playerHasCharWeaponRoulette) {
+            if (hasPlayerBind('キャラルーレット', i+1) || hasPlayerBind('キャラ武器ルーレット', i+1)) {
                 const charName = playerBinds['キャラルーレット'] || playerBinds['キャラ武器ルーレット'].char;
                 finalChars = charName ? [{ name: charName }] : [];
-            } else {
-                finalChars = getFilteredCharacters(null, i + 1);
             }
             
-            html += `<h3>プレイヤー${i + 1}の対象キャラクター (${finalChars.length}人)：</h3>`;
             if(finalChars.length > 0){
-                html += `<p class="char-list-final">${finalChars.map(c => c.name).join('、')}</p>`;
+                finalCharText += `<p class="char-list-final">${finalChars.map(c => c.name).join('、')}</p>`;
             } else {
-                html += `<p>条件を満たすキャラクターはいません</p>`;
+                finalCharText += `<p>条件を満たすキャラクターはいません</p>`;
             }
+             html += finalCharText;
         }
 
         resultsDiv.innerHTML = html;
     }
     
     function backToStart() {
+        spinning = false;
         initialize();
         showScreen('startScreen');
     }
