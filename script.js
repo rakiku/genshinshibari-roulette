@@ -196,6 +196,22 @@ document.addEventListener('DOMContentLoaded', function() {
             label.appendChild(document.createTextNode(bind));
             bindButtons.appendChild(label);
         });
+        
+        // ★★ 修正箇所: 実行ボタンの有効化ロジック ★★
+        const checkboxes = bindButtons.querySelectorAll('input[type="checkbox"]');
+        const executeBtn = document.getElementById('executeSelectionButton');
+        executeBtn.disabled = true;
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const checkedCount = bindButtons.querySelectorAll('input:checked').length;
+                if (checkedCount > 0) {
+                    executeBtn.disabled = false;
+                } else {
+                    executeBtn.disabled = true;
+                }
+            });
+        });
     }
 
     function executeBinds() {
@@ -247,8 +263,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let subItems = subRoulettes[bindName];
 
             if (bindName === "武器縛り") {
-                if(results.common["武器種縛り"]) {
-                    subItems = allWeapons[results.common["武器種縛り"]];
+                if(results.players[currentPlayer - 1]["武器種縛り"]) {
+                    subItems = allWeapons[results.players[currentPlayer - 1]["武器種縛り"]];
                 }
                 if(results.common["☆４キャラ武器"]) {
                     subItems = subItems.filter(w => !star5Weapons.includes(w));
@@ -390,7 +406,9 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.textAlign = 'center';
             ctx.fillText('対象アイテムがありません', canvas.width / 2, canvas.height / 2);
              if (items && items.length === 0) {
-                 setTimeout(() => { proceedToNext(); }, 100);
+                 setTimeout(() => {
+                    proceedToNext();
+                 }, 100);
             }
             return;
         }
@@ -471,7 +489,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processResult() {
-        const isPlayerSpecificSubBind = !Object.keys(results.common).includes(currentBindName) && (subRoulettes[currentBindName] || playerBindTypes.includes(currentBindName));
+        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || Object.keys(subRoulettes).includes(currentBindName);
 
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
@@ -485,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentRoulette === 'character') {
             if (currentBindName === 'キャラ武器ルーレット') {
                 if (hasPlayerBind('武器縛り')) {
-                    results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: results.players[currentPlayer - 1]['武器縛り'] };
+                    results.players[currentPlayer-1][currentBindName] = { char: lastResult, weapon: results.players[currentPlayer-1]['武器縛り'] };
                     proceedToNextPlayer();
                     return;
                 }
@@ -511,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function proceedToNextPlayer() {
-        const isPlayerSpecificSubBind = !Object.keys(results.common).includes(currentBindName) && (subRoulettes[currentBindName] || playerBindTypes.includes(currentBindName));
+        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り');
         currentPlayer++;
         if (currentPlayer > playerCount || !isPlayerSpecificSubBind) {
             currentPlayer = 1;
@@ -572,6 +590,9 @@ document.addEventListener('DOMContentLoaded', function() {
                      let subItems = subRoulettes[bind];
                      if(bind === '武器縛り' && tempFilters['武器種縛り']) {
                          subItems = allWeapons[tempFilters['武器種縛り']];
+                     }
+                     if(bind === '武器縛り' && tempFilters['☆４キャラ武器']) {
+                         subItems = subItems.filter(w => !star5Weapons.includes(w));
                      }
                      return subItems.some(option => {
                          const tempSubFilters = {...tempFilters, [bind]: option};
