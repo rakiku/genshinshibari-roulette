@@ -348,45 +348,61 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // (drawRoulette, spin, animate, stop, showPopupは変更ないので省略)
-    function drawRoulette() {
+    function prerenderRouletteImage() {
         if (!items || items.length === 0) {
+            prerenderedRoulette = null;
+            return;
+        }
+        prerenderedRoulette = document.createElement('canvas');
+        prerenderedRoulette.width = canvas.width;
+        prerenderedRoulette.height = canvas.height;
+        const pctx = prerenderedRoulette.getContext('2d');
+        
+        const radius = canvas.width / 2 - 20;
+        const arc = 2 * Math.PI / items.length;
+        for (let i = 0; i < items.length; i++) {
+            const startAngle = i * arc;
+            pctx.beginPath();
+            pctx.arc(canvas.width / 2, canvas.height / 2, radius, startAngle, startAngle + arc);
+            pctx.lineTo(canvas.width / 2, canvas.height / 2);
+            const gradient = pctx.createLinearGradient(canvas.width / 2 + Math.cos(startAngle) * radius, canvas.height / 2 + Math.sin(startAngle) * radius, canvas.width / 2 + Math.cos(startAngle + arc) * radius, canvas.height / 2 + Math.sin(startAngle + arc) * radius);
+            gradient.addColorStop(0, colors[i % colors.length]);
+            gradient.addColorStop(1, colors[(i + 1) % colors.length]);
+            pctx.fillStyle = gradient;
+            pctx.fill();
+            pctx.save();
+            pctx.translate(canvas.width / 2, canvas.height / 2);
+            pctx.rotate(startAngle + arc / 2);
+            pctx.fillStyle = '#fff';
+            pctx.font = '14px Arial';
+            pctx.textAlign = 'right';
+            pctx.textBaseline = 'middle';
+            pctx.fillText(items[i], radius - 10, 0);
+            pctx.restore();
+        }
+    }
+
+    function drawRoulette() {
+        if (!prerenderedRoulette) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#000';
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('対象アイテムがありません', canvas.width / 2, canvas.height / 2);
              if (items && items.length === 0) {
-                 setTimeout(() => {
-                    proceedToNext();
-                 }, 100);
+                 setTimeout(() => { proceedToNext(); }, 100);
             }
             return;
         }
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const radius = canvas.width / 2 - 20;
-        const arc = 2 * Math.PI / items.length;
-        for (let i = 0; i < items.length; i++) {
-            const startAngle = i * arc + angle;
-            ctx.beginPath();
-            ctx.arc(canvas.width / 2, canvas.height / 2, radius, startAngle, startAngle + arc);
-            ctx.lineTo(canvas.width / 2, canvas.height / 2);
-            const gradient = ctx.createLinearGradient(canvas.width / 2 + Math.cos(startAngle) * radius, canvas.height / 2 + Math.sin(startAngle) * radius, canvas.width / 2 + Math.cos(startAngle + arc) * radius, canvas.height / 2 + Math.sin(startAngle + arc) * radius);
-            gradient.addColorStop(0, colors[i % colors.length]);
-            gradient.addColorStop(1, colors[(i + 1) % colors.length]);
-            ctx.fillStyle = gradient;
-            ctx.fill();
-            ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            ctx.rotate(startAngle + arc / 2);
-            ctx.fillStyle = '#fff';
-            ctx.font = '14px Arial';
-            ctx.textAlign = 'right';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(items[i], radius - 10, 0);
-            ctx.restore();
-        }
         
-        const arrowBaseX = canvas.width / 2 + radius;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate(angle);
+        ctx.drawImage(prerenderedRoulette, -canvas.width / 2, -canvas.height / 2);
+        ctx.restore();
+        
+        const arrowBaseX = canvas.width / 2 + (canvas.width / 2 - 20);
         ctx.beginPath();
         ctx.moveTo(arrowBaseX - 20, canvas.height / 2);
         ctx.lineTo(arrowBaseX, canvas.height / 2 - 10);
@@ -427,6 +443,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const index = Math.floor(((2 * Math.PI - (angle % (2 * Math.PI))) % (2 * Math.PI)) / arc);
                 lastResult = items[index];
                 showPopup(lastResult);
+            } else {
+                drawRoulette();
             }
         }, 20);
         document.getElementById('stopButton').disabled = true;
@@ -453,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processResult() {
-        const isPlayerSpecificSubBind = subRoulettes[currentBindName] && !playerBindTypes.includes(currentBindName);
+        const isPlayerSpecificSubBind = !Object.keys(results.common).includes(currentBindName) && (subRoulettes[currentBindName] || playerBindTypes.includes(currentBindName));
 
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
@@ -466,8 +484,8 @@ document.addEventListener('DOMContentLoaded', function() {
             proceedToNextPlayer();
         } else if (currentRoulette === 'character') {
             if (currentBindName === 'キャラ武器ルーレット') {
-                if(hasPlayerBind('武器縛り')) {
-                    results.players[currentPlayer-1][currentBindName] = { char: lastResult, weapon: results.players[currentPlayer-1]['武器縛り'] };
+                if (hasPlayerBind('武器縛り')) {
+                    results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: results.players[currentPlayer - 1]['武器縛り'] };
                     proceedToNextPlayer();
                     return;
                 }
@@ -493,7 +511,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function proceedToNextPlayer() {
-        const isPlayerSpecificSubBind = subRoulettes[currentBindName] && !playerBindTypes.includes(currentBindName);
+        const isPlayerSpecificSubBind = !Object.keys(results.common).includes(currentBindName) && (subRoulettes[currentBindName] || playerBindTypes.includes(currentBindName));
         currentPlayer++;
         if (currentPlayer > playerCount || !isPlayerSpecificSubBind) {
             currentPlayer = 1;
@@ -536,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         available = available.filter(b => !allSelectedBinds.includes(b));
 
-        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b));
+        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b) && b !== '武器縛り');
         if (hasCharBind) {
             const charFilterBinds = Object.keys(subRoulettes).filter(b => b !== '武器縛り');
             available = available.filter(b => !charFilterBinds.includes(b) && b !== 'キャラ武器ルーレット' && b !== 'キャラルーレット');
@@ -550,8 +568,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return available.filter(bind => {
             const tempFilters = { ...results.common };
             if (playerBindTypes.includes(bind) || subRoulettes[bind]) {
-                 if (subRoulettes[bind] && bind !== '武器縛り') {
-                     return subRoulettes[bind].some(option => {
+                 if (subRoulettes[bind]) {
+                     let subItems = subRoulettes[bind];
+                     if(bind === '武器縛り' && tempFilters['武器種縛り']) {
+                         subItems = allWeapons[tempFilters['武器種縛り']];
+                     }
+                     return subItems.some(option => {
                          const tempSubFilters = {...tempFilters, [bind]: option};
                          return characters.some(char => checkCharEligibility(char, tempSubFilters));
                      });
