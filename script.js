@@ -119,13 +119,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let choices = subRoulettes[bindName];
         if(!choices) return;
 
-        // 他の縛りを考慮して選択肢を絞り込む
         if (bindName !== '武器縛り'){
-            choices = choices.filter(choice => {
-                const tempFilters = {...results.common};
-                tempFilters[bindName] = choice;
-                return characters.some(char => checkAllFilters(char, tempFilters));
-            });
+            choices = getAvailableSubItems(bindName);
         }
         
         choices.forEach(choice => {
@@ -134,18 +129,12 @@ document.addEventListener('DOMContentLoaded', function() {
             button.onclick = () => {
                 results.common[bindName] = choice;
                 modal.classList.add('hidden');
-                updateSelectedBindsDisplay();
             };
             modalChoices.appendChild(button);
         });
         modal.classList.remove('hidden');
     }
     
-    function updateSelectedBindsDisplay(){
-        // ここで選択済みの縛りをUIに反映する処理を追加可能 (任意)
-        console.log("現在の縛り:", results);
-    }
-
     function executeBinds() {
         selectedBinds = Array.from(document.querySelectorAll('#rouletteBindButtons input:checked')).map(cb => cb.value);
         
@@ -162,14 +151,13 @@ document.addEventListener('DOMContentLoaded', function() {
         startNextSelectedBind(allCurrentBinds);
     }
     
-    function startNextSelectedBind(bindList = selectedBinds) {
+    function startNextSelectedBind(bindList) {
         if(currentBindIndex >= bindList.length) {
             showResults();
             return;
         }
         currentBindName = bindList[currentBindIndex];
         
-        // 手動選択済みのものはスキップ
         if (results.common[currentBindName] || results.players[0][currentBindName]) {
              currentBindIndex++;
              startNextSelectedBind(bindList);
@@ -224,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function getFilteredCharacters() {
         let filtered = [...characters];
-        const allFilters = {...results.common, ...results.players[currentPlayer - 1]};
+        const allFilters = {...results.common, ...results.players.reduce((acc, p) => ({...acc, ...p}), {})};
         const currentPlayerRerolledChars = rerolledChars[currentPlayer];
         filtered = filtered.filter(c => !currentPlayerRerolledChars.includes(c.name));
         return filtered.filter(char => checkAllFilters(char, allFilters));
@@ -247,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 case "初期キャラのみ": if(initialCharacters.includes(char.name)) match = true; break;
                 case "旅人縛り": if(char.name === "旅人") match = true; break;
                 case "所持率100％縛り": if(ownership100Characters.includes(char.name)) match = true; break;
-                default: match = true; break; // 影響しない縛りは常にtrue
+                default: match = true; break;
             }
             if (!match) return false;
         }
@@ -409,6 +397,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function proceedToNext() {
+        const currentBindList = (mode === 'selected') ? selectedBinds : binds;
+
         if (mode === 'all' && currentRoulette === 'boss') {
              currentRoulette = 'bind';
              items = getAvailableBinds();
@@ -419,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (mode === 'selected') {
             currentBindIndex++;
-            startNextSelectedBind(selectedBinds);
+            startNextSelectedBind(currentBindList);
         } else {
             const totalBinds = Object.keys(results.common).length + Object.keys(results.players.reduce((acc, p) => ({...acc, ...p}), {})).length;
             if (totalBinds < bindCount) {
@@ -439,7 +429,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         available = available.filter(b => !allSelectedBinds.includes(b));
         
-        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b) && results.players[0][b]);
+        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b));
         if (hasCharBind) {
             available = available.filter(b => !subRoulettes[b] && !playerBindTypes.includes(b));
         }
@@ -449,10 +439,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (results.common['☆４キャラ武器']) available = available.filter(b => b !== '恒常☆５縛り');
         
         return available.filter(bind => {
-            if (!subRoulettes[bind] && !playerBindTypes.includes(bind) && !commonSimpleBindTypes.includes(bind)) return true;
+            if (!subRoulettes[bind] && !playerBindTypes.includes(bind) && !(bind === '初期キャラのみ' || bind === '所持率100％縛り' || bind === '恒常☆５縛り' || bind === '☆４キャラ武器' || bind === '旅人縛り')) return true;
+            
             const tempFilters = {...results.common};
             if(subRoulettes[bind]){
-                // サブルーレットの各選択肢が、現在のフィルター下で有効なキャラを持つかチェック
                 return subRoulettes[bind].some(choice => {
                     const tempSubFilters = {...tempFilters, [bind]: choice};
                     return characters.some(char => checkAllFilters(char, tempSubFilters));
@@ -502,6 +492,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const resultsDiv = document.getElementById('results');
         let html = `<h2>ボス：${results.boss || "未選択"}</h2>`;
         
+        const allPlayerBinds = results.players.reduce((acc, p) => ({...acc, ...p}), {});
+        const allFilters = {...results.common, ...allPlayerBinds};
+
         const commonKeys = Object.keys(results.common);
         if (commonKeys.length > 0) {
             html += `<h3>共通の縛り：</h3><ul>`;
