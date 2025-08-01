@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genshin Shibari Roulette</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- script.jsはここには書かない！ -->
 </head>
 <body>
     <button id="homeButton" class="home-button">最初に戻る</button>
@@ -30,25 +29,15 @@
             </div>
         </div>
 
-        <!-- 詳細縛り設定画面 -->
+        <!-- 縛り選択画面 -->
         <div id="bindSelection" class="hidden">
-            <h2>詳細縛り設定</h2>
-            <div class="selection-container">
-                <div class="selection-box">
-                    <h3>▼ 手動で縛りを決める</h3>
-                    <div id="manualBindButtons" class="button-group"></div>
-                </div>
-                <div class="selection-box">
-                    <h3>▼ ルーレットで縛りを決める</h3>
-                    <div id="rouletteBindButtons" class="button-group-checkbox"></div>
-                </div>
-            </div>
-            <button id="executeSelectionButton">設定完了</button>
+            <h2>縛りを選択してください</h2>
+            <div id="bindButtons" class="button-group-checkbox"></div>
+            <button id="executeSelectionButton">選択した縛りで実行</button>
         </div>
 
         <!-- ルーレット画面 -->
         <div id="rouletteScreen" class="hidden">
-            <h2 id="rouletteTitle"></h2>
             <div class="roulette-container">
                 <canvas id="rouletteCanvas" width="500" height="500"></canvas>
             </div>
@@ -60,25 +49,15 @@
             </div>
             <div id="popup" class="popup"></div>
         </div>
-        
-        <!-- 手動選択用モーダル -->
-        <div id="manualSelectModal" class="modal hidden">
-            <div class="modal-content">
-                <h3 id="modalTitle"></h3>
-                <div id="modalChoices" class="button-group"></div>
-                <button id="modalCloseButton">キャンセル</button>
-            </div>
-        </div>
 
         <!-- 結果画面 -->
         <div id="resultScreen" class="hidden">
-            <h1>最終結果</h1>
+            <h1>結果</h1>
             <div id="results"></div>
             <button id="backToStartButton">最初に戻る</button>
         </div>
     </div>
 
-    <!-- ★★ 重要: script.jsは必ずbodyの一番最後に書く ★★ -->
     <script src="script.js"></script>
 </body>
 </html>
