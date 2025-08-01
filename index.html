@@ -22,17 +22,30 @@
                 <input type="number" id="bindCount" value="1" min="1" max="4">
             </div>
             <div class="button-group">
-                <button id="startAllButton">一括ルーレット</button>
-                <button id="startBossButton">ボスルーレット</button>
-                <button id="startBindButton">縛りルーレット</button>
-                <button id="showBindSelectionButton">縛り選択</button>
+                <button id="startAllButton">ボス＋縛りルーレット</button>
+                <button id="startBossButton">ボスルーレットのみ</button>
+                <button id="startBindButton">縛りルーレットのみ</button>
+                <button id="showBindSelectionButton">詳細縛り設定</button>
             </div>
         </div>
 
-        <!-- 縛り選択画面 -->
+        <!-- 詳細縛り設定画面 -->
         <div id="bindSelection" class="hidden">
             <h2>縛りを選択してください</h2>
-            <div id="bindButtons" class="button-group"></div>
+            <div class="manual-selection-group">
+                <h3>▼ 手動で縛りを決める</h3>
+                <div id="manualBindButtons" class="button-group">
+                    <!-- JavaScriptでボタンを生成 -->
+                </div>
+            </div>
+            <hr>
+            <div class="roulette-selection-group">
+                <h3>▼ ルーレットで縛りを決める</h3>
+                <div id="rouletteBindButtons" class="button-group-checkbox">
+                    <!-- JavaScriptでチェックボックスを生成 -->
+                </div>
+                <button id="executeSelectionButton">選択した縛りでルーレット実行</button>
+            </div>
         </div>
 
         <!-- ルーレット画面 -->
@@ -47,6 +60,15 @@
                 <button id="notOwnedButton" class="hidden">持っていない（リロール）</button>
             </div>
             <div id="popup" class="popup"></div>
+        </div>
+        
+        <!-- 手動選択用モーダル -->
+        <div id="manualSelectModal" class="modal hidden">
+            <div class="modal-content">
+                <h3 id="modalTitle"></h3>
+                <div id="modalChoices" class="button-group"></div>
+                <button id="modalCloseButton">キャンセル</button>
+            </div>
         </div>
 
         <!-- 結果画面 -->
