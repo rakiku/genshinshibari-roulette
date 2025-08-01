@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         currentBindName = bindList[currentBindIndex];
         
-        if (results.common[currentBindName] || results.players[0][currentBindName]) {
+        if (results.common[currentBindName] || (results.players[0] && results.players[0][currentBindName])) {
              currentBindIndex++;
              startNextSelectedBind(bindList);
              return;
@@ -429,9 +429,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         available = available.filter(b => !allSelectedBinds.includes(b));
         
-        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b));
+        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b) && (results.players[0] && results.players[0][b]));
         if (hasCharBind) {
-            available = available.filter(b => !subRoulettes[b] && !playerBindTypes.includes(b));
+            available = available.filter(b => !subRoulettes[b] && !playerBindTypes.includes(b) || b === 'キャラ武器ルーレット');
         }
 
         if (results.common['☆１、聖遺物なし']) available = available.filter(b => b !== 'キャラ武器ルーレット' && b !== '武器縛り');
@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (results.common['☆４キャラ武器']) available = available.filter(b => b !== '恒常☆５縛り');
         
         return available.filter(bind => {
-            if (!subRoulettes[bind] && !playerBindTypes.includes(bind) && !(bind === '初期キャラのみ' || bind === '所持率100％縛り' || bind === '恒常☆５縛り' || bind === '☆４キャラ武器' || bind === '旅人縛り')) return true;
+            if (!subRoulettes[bind] && !playerBindTypes.includes(bind) && !(binds.includes(bind))) return true;
             
             const tempFilters = {...results.common};
             if(subRoulettes[bind]){
@@ -447,10 +447,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     const tempSubFilters = {...tempFilters, [bind]: choice};
                     return characters.some(char => checkAllFilters(char, tempSubFilters));
                 });
-            } else {
+            } else if (playerBindTypes.includes(bind)){
                  tempFilters[bind] = true;
                  return characters.some(char => checkAllFilters(char, tempFilters));
             }
+            return true;
         }).slice().sort(() => Math.random() - 0.5);
     }
     
