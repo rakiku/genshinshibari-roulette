@@ -180,7 +180,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const bindButtons = document.getElementById('bindButtons');
         bindButtons.innerHTML = '';
         
-        binds.forEach(bind => {
+        const selectableBinds = binds.filter(b => {
+             const nonRouletteBinds = ["回復禁止", "UI非表示＋リロール", "爆発禁止＋リロール", "聖遺物禁止", "☆１、聖遺物なし", "旅人縛り", "誰か一人が倒れたら負け縛り", "無凸縛り"];
+             return !nonRouletteBinds.includes(b);
+        });
+        
+        selectableBinds.forEach(bind => {
             const label = document.createElement('label');
             label.className = 'checkbox-label';
             const checkbox = document.createElement('input');
@@ -239,7 +244,11 @@ document.addEventListener('DOMContentLoaded', function() {
             currentRoulette = 'sub';
             let subItems = subRoulettes[bindName];
 
-            if(bindName !== '武器縛り') {
+            if (bindName === "武器縛り") {
+                if(results.common["武器種縛り"]) {
+                    subItems = allWeapons[results.common["武器種縛り"]];
+                }
+            } else {
                 const tempFilters = {...results.common, ...results.players[currentPlayer - 1]};
                  subItems = subItems.filter(option => {
                     const tempWithOption = {...tempFilters};
@@ -252,8 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (playerBindTypes.includes(bindName)) {
             currentRoulette = 'character';
             
-            const playerHasCharRoulette = hasPlayerBind('キャラルーレット');
-            if (bindName === 'キャラ武器ルーレット' && playerHasCharRoulette) {
+            if (bindName === 'キャラ武器ルーレット' && hasPlayerBind('キャラルーレット')) {
                 const charName = results.players[currentPlayer - 1]['キャラルーレット'];
                 const charData = characters.find(c => c.name === charName);
                 currentRoulette = 'weapon';
@@ -271,10 +279,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        if (items.length === 1) {
+        if (items.length === 1 && currentRoulette !== 'boss' && currentRoulette !== 'bind') {
             lastResult = items[0];
-            showPopup(lastResult);
-            setTimeout(() => { // ポップアップが一瞬で消えないように
+            showPopup(`${bindName}: ${lastResult} に確定しました`);
+            setTimeout(() => {
                 if(document.getElementById('popup').style.display === 'block'){
                     document.getElementById('popup').click();
                 }
@@ -298,6 +306,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 case "誕生月": if (char.birth_month === value) match = true; break;
                 case "各1.1縛り": if (char.version === value) match = true; break;
                 case "アルファベット縛り": if (alphabetData[value].includes(char.name)) match = true; break;
+                case "武器縛り": {
+                    const weaponType = Object.keys(allWeapons).find(type => allWeapons[type].includes(value));
+                    if (char.weapon === weaponType) match = true;
+                    break;
+                }
                 case "恒常☆５縛り": if (char.rarity.includes('恒常☆５')) match = true; break;
                 case "☆４キャラ武器": if (char.rarity.includes('☆４')) match = true; break;
                 case "初期キャラのみ": if (initialCharacters.includes(char.name)) match = true; break;
@@ -327,6 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return filtered.slice().sort(() => Math.random() - 0.5);
     }
     
+    // (drawRoulette, spin, animate, stop, showPopupは変更ないので省略)
     function drawRoulette() {
         if (!items || items.length === 0) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -511,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b));
         if (hasCharBind) {
             const charFilterBinds = Object.keys(subRoulettes).filter(b => b !== '武器縛り');
-            available = available.filter(b => !charFilterBinds.includes(b) && !playerBindTypes.includes(b));
+            available = available.filter(b => !charFilterBinds.includes(b) && b !== 'キャラ武器ルーレット');
         }
         if (results.common['☆１、聖遺物なし']) {
             available = available.filter(b => b !== 'キャラ武器ルーレット' && b !== '武器縛り');
@@ -522,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return available.filter(bind => {
             const tempFilters = { ...results.common };
             if (playerBindTypes.includes(bind) || subRoulettes[bind]) {
-                 if (subRoulettes[bind]) {
+                 if (subRoulettes[bind] && bind !== '武器縛り') {
                      return subRoulettes[bind].some(option => {
                          const tempSubFilters = {...tempFilters, [bind]: option};
                          return characters.some(char => checkCharEligibility(char, tempSubFilters));
@@ -595,25 +609,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += `</ul>`;
             }
 
-            const finalChars = getFilteredCharacters(null, i + 1);
-            let finalCharText = `<h3>プレイヤー${i + 1}の対象キャラクター (${finalChars.length}人)：</h3>`;
+            let finalChars;
+            const playerHasCharRoulette = hasPlayerBind('キャラルーレット', i + 1);
+            const playerHasCharWeaponRoulette = hasPlayerBind('キャラ武器ルーレット', i + 1);
 
-            if (hasPlayerBind('キャラルーレット', i+1) || hasPlayerBind('キャラ武器ルーレット', i+1)) {
+            if (playerHasCharRoulette || playerHasCharWeaponRoulette) {
                 const charName = playerBinds['キャラルーレット'] || playerBinds['キャラ武器ルーレット'].char;
-                finalCharText = `<h3>プレイヤー${i + 1}の対象キャラクター (1人)：</h3>`;
-                finalChars = [{name: charName}];
-            }
-
-            if(finalChars.length > 0){
-                finalCharText += `<p class="char-list-final">${finalChars.map(c => c.name).join('、')}</p>`;
+                finalChars = charName ? [{ name: charName }] : [];
             } else {
-                finalCharText += `<p>条件を満たすキャラクターはいません</p>`;
+                finalChars = getFilteredCharacters(null, i + 1);
             }
-             html += finalCharText;
+            
+            html += `<h3>プレイヤー${i + 1}の対象キャラクター (${finalChars.length}人)：</h3>`;
+            if(finalChars.length > 0){
+                html += `<p class="char-list-final">${finalChars.map(c => c.name).join('、')}</p>`;
+            } else {
+                html += `<p>条件を満たすキャラクターはいません</p>`;
+            }
         }
 
         resultsDiv.innerHTML = html;
     }
     
-    function backToStart() { showScreen('startScreen'); }
+    function backToStart() {
+        initialize();
+        showScreen('startScreen');
+    }
 });
