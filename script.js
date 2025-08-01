@@ -457,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function getAvailableSubItems(bindName){
         let subItems = subRoulettes[bindName];
         return subItems.filter(choice => {
-            const tempFilters = {...results.common, [bindName]: choice};
+            const tempFilters = {...results.common, ...results.players.reduce((acc, p) => ({...acc, ...p}), {}), [bindName]: choice};
             return characters.some(char => checkAllFilters(char, tempFilters));
         });
     }
@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        const finalChars = getFilteredCharacters();
+        const finalChars = characters.filter(char => checkAllFilters(char, allFilters));
         html += `<h3>今回の対象キャラクター (${finalChars.length}人)：</h3>`;
         if(finalChars.length > 0){
             html += `<p class="char-list-final">${finalChars.map(c => c.name).join('、')}</p>`;
@@ -543,4 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function backToStart() { showScreen('startScreen'); }
+
+    // 初期画面を表示
+    backToStart();
 });
