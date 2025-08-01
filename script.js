@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+    // ★★ prompt() が完全に削除されていることを確認済み ★★
+
     // (データベース部分は変更ないので省略)
     const characters = [
         // モンド
@@ -429,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         available = available.filter(b => !allSelectedBinds.includes(b));
         
-        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b) && (results.players[0] && results.players[0][b]));
+        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b));
         if (hasCharBind) {
             available = available.filter(b => !subRoulettes[b] && !playerBindTypes.includes(b) || b === 'キャラ武器ルーレット');
         }
@@ -439,15 +441,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (results.common['☆４キャラ武器']) available = available.filter(b => b !== '恒常☆５縛り');
         
         return available.filter(bind => {
-            if (!subRoulettes[bind] && !playerBindTypes.includes(bind) && !(binds.includes(bind))) return true;
-            
             const tempFilters = {...results.common};
             if(subRoulettes[bind]){
                 return subRoulettes[bind].some(choice => {
                     const tempSubFilters = {...tempFilters, [bind]: choice};
                     return characters.some(char => checkAllFilters(char, tempSubFilters));
                 });
-            } else if (playerBindTypes.includes(bind)){
+            } else if (playerBindTypes.includes(bind) || binds.some(b => b === bind && !subRoulettes[b])){
                  tempFilters[bind] = true;
                  return characters.some(char => checkAllFilters(char, tempFilters));
             }
