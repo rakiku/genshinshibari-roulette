@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genshin Shibari Roulette</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- script.jsはここには書かない！ -->
 </head>
 <body>
     <button id="homeButton" class="home-button">最初に戻る</button>
@@ -22,10 +23,10 @@
                 <input type="number" id="bindCount" value="1" min="1" max="4">
             </div>
             <div class="button-group">
-                <button id="startAllButton">一括ルーレット</button>
-                <button id="startBossButton">ボスルーレット</button>
-                <button id="startBindButton">縛りルーレット</button>
-                <button id="showBindSelectionButton">縛りを選ぶ</button>
+                <button id="startAllButton">ボス＋縛りルーレット</button>
+                <button id="startBossButton">ボスルーレットのみ</button>
+                <button id="startBindButton">縛りルーレットのみ</button>
+                <button id="showBindSelectionButton">詳細縛り設定</button>
             </div>
         </div>
 
@@ -77,6 +78,7 @@
         </div>
     </div>
 
+    <!-- ★★ 重要: script.jsは必ずbodyの一番最後に書く ★★ -->
     <script src="script.js"></script>
 </body>
 </html>
