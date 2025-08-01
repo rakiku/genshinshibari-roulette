@@ -22,34 +22,32 @@
                 <input type="number" id="bindCount" value="1" min="1" max="4">
             </div>
             <div class="button-group">
-                <button id="startAllButton">一括ルーレット</button>
-                <button id="startBossButton">ボスルーレット</button>
-                <button id="startBindButton">縛りルーレット</button>
-                <button id="showBindSelectionButton">縛りを選んでルーレット</button>
+                <button id="startAllButton">ボス＋縛りルーレット</button>
+                <button id="startBossButton">ボスルーレットのみ</button>
+                <button id="startBindButton">縛りルーレットのみ</button>
+                <button id="showBindSelectionButton">詳細縛り設定</button>
             </div>
         </div>
 
         <!-- 詳細縛り設定画面 -->
         <div id="bindSelection" class="hidden">
-            <h2>縛りを選択してください</h2>
-            <div class="manual-selection-group">
-                <h3>▼ 手動で縛りを決める</h3>
-                <div id="manualBindButtons" class="button-group">
-                    <!-- JavaScriptでボタンを生成 -->
+            <h2>詳細縛り設定</h2>
+            <div class="selection-container">
+                <div class="selection-box">
+                    <h3>▼ 手動で縛りを決める</h3>
+                    <div id="manualBindButtons" class="button-group"></div>
+                </div>
+                <div class="selection-box">
+                    <h3>▼ ルーレットで縛りを決める</h3>
+                    <div id="rouletteBindButtons" class="button-group-checkbox"></div>
                 </div>
             </div>
-            <hr>
-            <div class="roulette-selection-group">
-                <h3>▼ ルーレットで縛りを決める</h3>
-                <div id="rouletteBindButtons" class="button-group-checkbox">
-                    <!-- JavaScriptでチェックボックスを生成 -->
-                </div>
-                <button id="executeSelectionButton">選択した縛りでルーレット実行</button>
-            </div>
+            <button id="executeSelectionButton">設定完了</button>
         </div>
 
         <!-- ルーレット画面 -->
         <div id="rouletteScreen" class="hidden">
+            <h2 id="rouletteTitle"></h2>
             <div class="roulette-container">
                 <canvas id="rouletteCanvas" width="500" height="500"></canvas>
             </div>
@@ -73,7 +71,7 @@
 
         <!-- 結果画面 -->
         <div id="resultScreen" class="hidden">
-            <h1>結果</h1>
+            <h1>最終結果</h1>
             <div id="results"></div>
             <button id="backToStartButton">最初に戻る</button>
         </div>
