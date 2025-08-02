@@ -1,243 +1,74 @@
-/* 全体のスタイル */
-body {
-    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-    background-image: url('background.jpg.png');
-    background-color: #2c3e50;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    color: #ecf0f1;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genshin Shibari Roulette</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button id="homeButton" class="home-button">最初に戻る</button>
 
-.home-button {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.5);
-    border: 1px solid #fff;
-}
-.home-button:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
+    <div class="container">
+        <!-- スタート画面 -->
+        <div id="startScreen">
+            <h1>原神縛りルーレット</h1>
+            <div class="input-group">
+                <label for="playerCount">プレイヤー数：</label>
+                <input type="number" id="playerCount" value="1" min="1" max="4">
+            </div>
+            <div class="input-group">
+                <label for="bindCount">縛りの数：</label>
+                <input type="number" id="bindCount" value="1" min="1" max="4">
+            </div>
+            <div class="button-group">
+                <button id="startAllButton">ボス＋縛りルーレット</button>
+                <button id="startBossButton">ボスルーレットのみ</button>
+                <button id="startBindButton">縛りルーレットのみ</button>
+                <button id="showBindSelectionButton">詳細縛り設定</button>
+                <button id="showCustomBindScreenButton">カスタム縛り設定</button>
+            </div>
+        </div>
 
-.container {
-    background-color: rgba(44, 62, 80, 0.9);
-    padding: 20px 40px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    width: 90%;
-    max-width: 600px;
-}
+        <!-- ★★ここを修正★★ カスタム縛り設定画面 -->
+        <div id="customBindScreen" class="hidden">
+            <h2>カスタム縛り設定</h2>
+            <p>実行したい縛りにチェックを入れ、詳細を設定してください。</p>
+            <div id="customBindContainer" class="custom-bind-container">
+                <!-- JavaScriptによってコンテンツがここに生成されます -->
+            </div>
+            <button id="executeCustomBindsButton">この条件で実行</button>
+        </div>
 
-h1, h2, h3 {
-    color: #fff;
-    margin-bottom: 20px;
-}
+        <!-- 縛り選択画面 (詳細縛り設定) -->
+        <div id="bindSelection" class="hidden">
+            <h2>縛りを選択してください</h2>
+            <div id="bindButtons" class="button-group-checkbox"></div>
+            <button id="executeSelectionButton">選択した縛りで実行</button>
+        </div>
 
-.hidden {
-    display: none;
-}
+        <!-- ルーレット画面 -->
+        <div id="rouletteScreen" class="hidden">
+            <div class="roulette-container">
+                <canvas id="rouletteCanvas" width="500" height="500"></canvas>
+            </div>
+            <div class="controls">
+                <button id="spinButton">スピン</button>
+                <button id="stopButton" disabled>ストップ</button>
+                <button id="nextButton" class="hidden">次へ</button>
+                <button id="notOwnedButton" class="hidden">持っていない（リロール）</button>
+            </div>
+            <div id="popup" class="popup"></div>
+        </div>
 
-.input-group {
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        <!-- 結果画面 -->
+        <div id="resultScreen" class="hidden">
+            <h1>結果</h1>
+            <div id="results"></div>
+            <button id="backToStartButton">最初に戻る</button>
+        </div>
+    </div>
 
-.input-group label {
-    margin-right: 10px;
-    font-size: 1.1em;
-}
-
-.input-group input {
-    width: 60px;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #7f8c8d;
-    background-color: #34495e;
-    color: #ecf0f1;
-    font-size: 1.1em;
-    text-align: center;
-}
-
-.button-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-button {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-button:hover {
-    background-color: #2ecc71;
-    transform: translateY(-2px);
-}
-
-button:disabled {
-    background-color: #7f8c8d;
-    cursor: not-allowed;
-    transform: none;
-}
-
-#stopButton {
-    background-color: #555;
-}
-#stopButton:not(:disabled):hover {
-    background-color: #777;
-}
-
-/* カスタム縛り設定画面 (★★推奨スタイル★★) */
-#customBindContainer {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    text-align: left;
-    margin-bottom: 20px;
-}
-
-.custom-bind-item {
-    background-color: #34495e;
-    padding: 10px 15px;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.custom-bind-item .checkbox-label-main {
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.custom-bind-item select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #7f8c8d;
-    background-color: #2c3e50;
-    color: #ecf0f1;
-}
-
-/* ------------------------------------ */
-
-.custom-bind-checkboxes {
-    margin-top: 20px;
-    border-top: 1px solid #7f8c8d;
-    padding-top: 20px;
-}
-
-.button-group-checkbox {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-    margin: 20px 0;
-    text-align: left;
-}
-.checkbox-label {
-    display: block;
-    background-color: #34495e;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-.checkbox-label:hover {
-    background-color: #4a6fa5;
-}
-.checkbox-label input {
-    margin-right: 10px;
-}
-.checkbox-label.disabled {
-    background-color: #2c3e50;
-    color: #7f8c8d;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-.checkbox-label.disabled input {
-    cursor: not-allowed;
-}
-
-
-.roulette-container {
-    margin: 20px auto;
-    position: relative;
-    width: 500px;
-    height: 500px;
-}
-
-canvas {
-    width: 100%;
-    height: 100%;
-}
-
-.popup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.85);
-    color: #fff;
-    padding: 30px 50px;
-    border-radius: 10px;
-    font-size: 2.5em;
-    font-weight: bold;
-    z-index: 100;
-    text-shadow: 2px 2px 5px #000;
-    border: 2px solid #fff;
-    cursor: pointer;
-}
-
-#results {
-    text-align: left;
-    background-color: #34495e;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-#results h3 {
-    margin-top: 15px;
-    border-bottom: 1px solid #7f8c8d;
-    padding-bottom: 5px;
-}
-#results ul {
-    list-style: none;
-    padding-left: 0;
-}
-#results li {
-    background-color: #2c3e50;
-    margin-bottom: 5px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.char-list, .char-list-final {
-    font-size: 0.8em;
-    color: #bdc3c7;
-    margin-left: 8px;
-    display: block;
-    margin-top: 5px;
-}
+    <script src="script.js"></script>
+</body>
+</html>
