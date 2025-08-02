@@ -291,12 +291,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (items.length === 1 && currentRoulette !== 'boss' && currentRoulette !== 'bind') {
             lastResult = items[0];
+            processResult();
             showPopup(`${bindName}: ${lastResult} に確定しました`);
-            setTimeout(() => {
-                if(document.getElementById('popup').style.display === 'block'){
-                    document.getElementById('popup').click();
-                }
-            }, 1500);
         } else {
             document.getElementById('spinButton').disabled = false;
             showScreen('rouletteScreen');
@@ -386,19 +382,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function drawRoulette() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (!prerenderedRoulette) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#000';
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('対象アイテムがありません', canvas.width / 2, canvas.height / 2);
-             if (items && items.length === 0) {
-                 setTimeout(() => { proceedToNext(); }, 100);
-            }
             return;
         }
         
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         ctx.translate(canvas.width / 2, canvas.height / 2);
         ctx.rotate(angle);
@@ -679,4 +671,124 @@ document.addEventListener('DOMContentLoaded', function() {
         initialize();
         showScreen('startScreen');
     }
+
+    // ★★ 追加機能: カスタム縛り ★★
+    function showCustomBindScreen() {
+        initialize();
+        mode = 'custom';
+        showScreen('customBindScreen');
+        updateCustomBindOptions();
+    }
+
+    function updateCustomBindOptions() {
+        const grid = document.getElementById('customBindGrid');
+        const checkboxesContainer = document.getElementById('customBindButtons');
+        grid.innerHTML = '';
+        checkboxesContainer.innerHTML = '';
+
+        const currentFilters = {};
+        document.querySelectorAll('.custom-bind-item select').forEach(select => {
+            if (select.value !== 'random') {
+                currentFilters[select.dataset.bind] = select.value;
+            }
+        });
+
+        // ドロップダウン
+        const dropdownBinds = ['国縛り', 'モノ元素縛り', '武器種縛り', '誕生月', 'アルファベット縛り'];
+        dropdownBinds.forEach(bindName => {
+            const item = document.createElement('div');
+            item.className = 'custom-bind-item';
+            const label = document.createElement('label');
+            label.textContent = `${bindName}：`;
+            const select = document.createElement('select');
+            select.dataset.bind = bindName;
+            
+            let options = ['random', ...subRoulettes[bindName]];
+            // 動的絞り込み
+            options = options.filter(opt => {
+                if (opt === 'random') return true;
+                const tempFilters = {...currentFilters, [bindName]: opt};
+                return characters.some(c => checkCharEligibility(c, tempFilters));
+            });
+
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt === 'random' ? 'ランダム' : opt;
+                select.appendChild(option);
+            });
+
+            select.value = currentFilters[bindName] || 'random';
+            select.onchange = updateCustomBindOptions;
+
+            item.appendChild(label);
+            item.appendChild(select);
+            grid.appendChild(item);
+        });
+
+        // チェックボックス
+        const checkboxBinds = ["☆４キャラ武器", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "旅人縛り", "キャラルーレット", "キャラ武器ルーレット", "武器縛り"];
+        checkboxBinds.forEach(bindName => {
+            const isPossible = characters.some(char => checkCharEligibility(char, {...currentFilters, [bindName]: true}));
+            
+            const label = document.createElement('label');
+            label.className = `checkbox-label ${isPossible ? '' : 'disabled'}`;
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = bindName;
+            checkbox.disabled = !isPossible;
+
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(bindName));
+            checkboxesContainer.appendChild(label);
+        });
+    }
+
+    function executeCustomBinds() {
+        const tempCommon = {};
+        document.querySelectorAll('#customBindGrid select').forEach(select => {
+            if (select.value !== 'random') {
+                tempCommon[select.dataset.bind] = select.value;
+            }
+        });
+        
+        const checkedBinds = Array.from(document.querySelectorAll('#customBindButtons input:checked')).map(cb => cb.value);
+        
+        Object.keys(tempCommon).forEach(key => {
+            results.common[key] = tempCommon[key];
+        });
+
+        selectedBinds = Object.keys(subRoulettes).filter(key => tempCommon[key] === undefined);
+        selectedBinds = [...selectedBinds, ...checkedBinds];
+        
+        // 残りの縛りをランダムに選ぶ
+        const remainingBindCount = bindCount - Object.keys(tempCommon).length;
+        if (remainingBindCount > 0) {
+             let availableForRandom = binds.filter(b => !selectedBinds.includes(b) && !tempCommon[b]);
+             // 矛盾チェック
+             availableForRandom = availableForRandom.filter(bind => {
+                 const testFilters = {...results.common};
+                 testFilters[bind] = true;
+                 return characters.some(c => checkCharEligibility(c, testFilters));
+             });
+
+             while (selectedBinds.length < bindCount && availableForRandom.length > 0) {
+                 const randomIndex = Math.floor(Math.random() * availableForRandom.length);
+                 const randomBind = availableForRandom.splice(randomIndex, 1)[0];
+                 selectedBinds.push(randomBind);
+             }
+        }
+        
+        selectedBinds.sort((a, b) => {
+            const aIsPlayerBind = playerBindTypes.includes(a);
+            const bIsPlayerBind = playerBindTypes.includes(b);
+            if (aIsPlayerBind && !bIsPlayerBind) return 1;
+            if (!aIsPlayerBind && bIsPlayerBind) return -1;
+            return 0;
+        });
+        
+        mode = 'selected';
+        startNextSelectedBind();
+    }
+
 });
