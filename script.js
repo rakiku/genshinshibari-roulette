@@ -388,6 +388,9 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('対象アイテムがありません', canvas.width / 2, canvas.height / 2);
+             if (items && items.length === 0 && (mode === 'bind' || mode === 'selected')) {
+                 setTimeout(() => { proceedToNext(); }, 100);
+            }
             return;
         }
         
@@ -671,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initialize();
         showScreen('startScreen');
     }
-
+    
     // ★★ 追加機能: カスタム縛り ★★
     function showCustomBindScreen() {
         initialize();
@@ -687,7 +690,7 @@ document.addEventListener('DOMContentLoaded', function() {
         checkboxesContainer.innerHTML = '';
 
         const currentFilters = {};
-        document.querySelectorAll('.custom-bind-item select').forEach(select => {
+        document.querySelectorAll('#customBindGrid select').forEach(select => {
             if (select.value !== 'random') {
                 currentFilters[select.dataset.bind] = select.value;
             }
@@ -704,7 +707,6 @@ document.addEventListener('DOMContentLoaded', function() {
             select.dataset.bind = bindName;
             
             let options = ['random', ...subRoulettes[bindName]];
-            // 動的絞り込み
             options = options.filter(opt => {
                 if (opt === 'random') return true;
                 const tempFilters = {...currentFilters, [bindName]: opt};
@@ -729,7 +731,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // チェックボックス
         const checkboxBinds = ["☆４キャラ武器", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "旅人縛り", "キャラルーレット", "キャラ武器ルーレット", "武器縛り"];
         checkboxBinds.forEach(bindName => {
-            const isPossible = characters.some(char => checkCharEligibility(char, {...currentFilters, [bindName]: true}));
+            const tempFilters = {...currentFilters, [bindName]: true};
+            const isPossible = characters.some(char => checkCharEligibility(char, tempFilters));
             
             const label = document.createElement('label');
             label.className = `checkbox-label ${isPossible ? '' : 'disabled'}`;
@@ -745,40 +748,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function executeCustomBinds() {
-        const tempCommon = {};
+        const manualBinds = {};
         document.querySelectorAll('#customBindGrid select').forEach(select => {
             if (select.value !== 'random') {
-                tempCommon[select.dataset.bind] = select.value;
+                manualBinds[select.dataset.bind] = select.value;
             }
         });
         
         const checkedBinds = Array.from(document.querySelectorAll('#customBindButtons input:checked')).map(cb => cb.value);
         
-        Object.keys(tempCommon).forEach(key => {
-            results.common[key] = tempCommon[key];
-        });
-
-        selectedBinds = Object.keys(subRoulettes).filter(key => tempCommon[key] === undefined);
-        selectedBinds = [...selectedBinds, ...checkedBinds];
+        // 残りの縛りを決定
+        const remainingBindsToSelect = [];
+        const randomizableBinds = ['国縛り', 'モノ元素縛り', '武器種縛り', '誕生月', 'アルファベット縛り'].filter(b => !manualBinds[b]);
         
-        // 残りの縛りをランダムに選ぶ
-        const remainingBindCount = bindCount - Object.keys(tempCommon).length;
-        if (remainingBindCount > 0) {
-             let availableForRandom = binds.filter(b => !selectedBinds.includes(b) && !tempCommon[b]);
-             // 矛盾チェック
-             availableForRandom = availableForRandom.filter(bind => {
-                 const testFilters = {...results.common};
-                 testFilters[bind] = true;
-                 return characters.some(c => checkCharEligibility(c, testFilters));
-             });
+        selectedBinds = [...Object.keys(manualBinds), ...checkedBinds, ...randomizableBinds];
 
-             while (selectedBinds.length < bindCount && availableForRandom.length > 0) {
-                 const randomIndex = Math.floor(Math.random() * availableForRandom.length);
-                 const randomBind = availableForRandom.splice(randomIndex, 1)[0];
-                 selectedBinds.push(randomBind);
-             }
-        }
-        
         selectedBinds.sort((a, b) => {
             const aIsPlayerBind = playerBindTypes.includes(a);
             const bIsPlayerBind = playerBindTypes.includes(b);
@@ -787,8 +771,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return 0;
         });
         
+        Object.assign(results.common, manualBinds);
+
         mode = 'selected';
         startNextSelectedBind();
     }
-
 });
