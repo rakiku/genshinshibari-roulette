@@ -469,7 +469,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processResult() {
-        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && !Object.keys(results.common).includes(currentBindName));
+        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && !results.common[currentBindName]);
 
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
@@ -509,7 +509,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function proceedToNextPlayer() {
-        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && !Object.keys(results.common).includes(currentBindName));
+        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && !results.common[currentBindName]);
         currentPlayer++;
         if (currentPlayer > playerCount || !isPlayerSpecificSubBind) {
             currentPlayer = 1;
@@ -757,12 +757,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const checkedBinds = Array.from(document.querySelectorAll('#customBindButtons input:checked')).map(cb => cb.value);
         
-        // 残りの縛りを決定
-        const remainingBindsToSelect = [];
-        const randomizableBinds = ['国縛り', 'モノ元素縛り', '武器種縛り', '誕生月', 'アルファベット縛り'].filter(b => !manualBinds[b]);
-        
-        selectedBinds = [...Object.keys(manualBinds), ...checkedBinds, ...randomizableBinds];
+        Object.assign(results.common, manualBinds);
 
+        selectedBinds = [...checkedBinds];
+        
+        // ランダムで決定すべき項目を追加
+        const randomizableBinds = ['国縛り', 'モノ元素縛り', '武器種縛り', '誕生月', 'アルファベット縛り'].filter(b => !manualBinds[b]);
+        randomizableBinds.forEach(b => selectedBinds.push(b));
+        
         selectedBinds.sort((a, b) => {
             const aIsPlayerBind = playerBindTypes.includes(a);
             const bIsPlayerBind = playerBindTypes.includes(b);
@@ -771,9 +773,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return 0;
         });
         
-        Object.assign(results.common, manualBinds);
-
         mode = 'selected';
         startNextSelectedBind();
     }
+
 });
