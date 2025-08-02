@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function processResult() {
         const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り');
-
+        
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
             if (mode === 'boss') { showResults(); return; }
@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentRoulette === 'character') {
             if (currentBindName === 'キャラ武器ルーレット') {
                 if (hasPlayerBind('武器縛り')) {
-                    results.players[currentPlayer-1][currentBindName] = { char: lastResult, weapon: results.players[currentPlayer-1]['武器縛り'] };
+                    results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: results.players[currentPlayer - 1]['武器縛り'] };
                     proceedToNextPlayer();
                     return;
                 }
@@ -597,11 +597,11 @@ document.addEventListener('DOMContentLoaded', function() {
         initialize();
         showScreen('startScreen');
     }
-    
+
     // =================================================================
     // 【新機能】カスタム縛り設定
     // =================================================================
-    const customBindDropdowns = {
+    const customBindDropdownsDef = {
         "国縛り": ["ランダム", ...subRoulettes["国縛り"]],
         "モノ元素縛り": ["ランダム", ...subRoulettes["モノ元素縛り"]],
         "武器種縛り": ["ランダム", ...subRoulettes["武器種縛り"]],
@@ -609,7 +609,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "アルファベット縛り": ["ランダム", ...subRoulettes["アルファベット縛り"]],
     };
     
-    const customBindCheckboxes = ["☆４キャラ武器", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "旅人縛り", "キャラルーレット", "キャラ武器ルーレット", "武器縛り"];
+    const customBindCheckboxesDef = ["☆４キャラ武器", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "旅人縛り", "キャラルーレット", "キャラ武器ルーレット", "武器縛り"];
     
     function showCustomBindScreen() {
         initialize();
@@ -621,7 +621,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownsContainer.innerHTML = '';
         checkboxesContainer.innerHTML = '';
 
-        Object.keys(customBindDropdowns).forEach(bindName => {
+        Object.keys(customBindDropdownsDef).forEach(bindName => {
             const item = document.createElement('div');
             item.className = 'dropdown-item';
             
@@ -631,7 +631,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const select = document.createElement('select');
             select.id = `custom-${bindName}`;
             
-            customBindDropdowns[bindName].forEach(option => {
+            customBindDropdownsDef[bindName].forEach(option => {
                 const opt = document.createElement('option');
                 opt.value = option;
                 opt.textContent = option;
@@ -645,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
             select.addEventListener('change', updateCustomBindOptions);
         });
 
-        customBindCheckboxes.forEach(bindName => {
+        customBindCheckboxesDef.forEach(bindName => {
             const label = document.createElement('label');
             label.className = 'checkbox-label';
             const checkbox = document.createElement('input');
@@ -674,24 +674,22 @@ document.addEventListener('DOMContentLoaded', function() {
             currentFilters[cb.value] = true;
         });
 
-        // 他のドロップダウンを更新
         document.querySelectorAll('#custom-bind-dropdowns select').forEach(select => {
             const bindName = select.id.replace('custom-', '');
             for (const option of select.options) {
                 if (option.value === 'ランダム') continue;
                 const tempFilters = {...currentFilters};
-                delete tempFilters[bindName]; // 自分自身のフィルターは除外してチェック
+                delete tempFilters[bindName];
                 tempFilters[bindName] = option.value;
                 option.disabled = !characters.some(char => checkCharEligibility(char, tempFilters));
             }
         });
 
-        // チェックボックスを更新
         document.querySelectorAll('#custom-bind-checkboxes .checkbox-label').forEach(label => {
             const checkbox = label.querySelector('input');
             const bindName = checkbox.value;
+            if(checkbox.checked) return; // 既にチェックされているものは無効化しない
             const tempFilters = {...currentFilters};
-            delete tempFilters[bindName];
             tempFilters[bindName] = true;
             
             const isPossible = characters.some(char => checkCharEligibility(char, tempFilters));
@@ -722,7 +720,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         results.common = manualBinds;
         
-        // ランダム項目を解決
         randomBinds.forEach(bindName => {
             let availableOptions = subRoulettes[bindName];
             availableOptions = availableOptions.filter(option => {
@@ -736,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const playerBindsToExecute = Object.keys(manualBinds).filter(b => playerBindTypes.includes(b));
         if (playerBindsToExecute.length > 0) {
-            mode = 'selected';
+            mode = 'selected'; // selectedモードとして実行
             selectedBinds = playerBindsToExecute;
             startNextSelectedBind();
         } else {
