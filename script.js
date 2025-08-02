@@ -39,8 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り"];
-    const characterFilterBinds = ["国縛り", "モノ元素縛り", "武器種縛り", "誕生月", "各1.1縛り", "アルファベット縛り", "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "旅人縛り", "所持率100％縛り", "武器縛り"];
-    
+
     let playerCount, bindCount, mode, currentRoulette, currentBindName, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, lastResult;
     let rerolledChars, rerolledWeapons;
     let prerenderedRoulette = null;
@@ -393,8 +392,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processResult() {
-        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り' && currentBindName !== '武器種縛り' && currentBindName !== '誕生月' && currentBindName !== 'アルファベット縛り');
-        
+        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り');
+
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
             if (mode === 'boss') { showResults(); return; }
@@ -407,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentRoulette === 'character') {
             if (currentBindName === 'キャラ武器ルーレット') {
                 if (hasPlayerBind('武器縛り')) {
-                    results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: results.players[currentPlayer - 1]['武器縛り'] };
+                    results.players[currentPlayer-1][currentBindName] = { char: lastResult, weapon: results.players[currentPlayer-1]['武器縛り'] };
                     proceedToNextPlayer();
                     return;
                 }
@@ -433,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function proceedToNextPlayer() {
-        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り' && currentBindName !== '武器種縛り' && currentBindName !== '誕生月' && currentBindName !== 'アルファベット縛り');
+        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り');
         currentPlayer++;
         if (currentPlayer > playerCount || !isPlayerSpecificSubBind) {
             currentPlayer = 1;
@@ -453,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
              return;
         }
 
-        if (mode === 'selected') {
+        if (mode === 'selected' || mode === 'custom') {
             currentBindIndex++;
             startNextSelectedBind();
         } else {
@@ -597,5 +596,151 @@ document.addEventListener('DOMContentLoaded', function() {
         spinning = false;
         initialize();
         showScreen('startScreen');
+    }
+    
+    // =================================================================
+    // 【新機能】カスタム縛り設定
+    // =================================================================
+    const customBindDropdowns = {
+        "国縛り": ["ランダム", ...subRoulettes["国縛り"]],
+        "モノ元素縛り": ["ランダム", ...subRoulettes["モノ元素縛り"]],
+        "武器種縛り": ["ランダム", ...subRoulettes["武器種縛り"]],
+        "誕生月": ["ランダム", ...subRoulettes["誕生月"]],
+        "アルファベット縛り": ["ランダム", ...subRoulettes["アルファベット縛り"]],
+    };
+    
+    const customBindCheckboxes = ["☆４キャラ武器", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "旅人縛り", "キャラルーレット", "キャラ武器ルーレット", "武器縛り"];
+    
+    function showCustomBindScreen() {
+        initialize();
+        mode = 'custom';
+        showScreen('customBindScreen');
+        
+        const dropdownsContainer = document.getElementById('custom-bind-dropdowns');
+        const checkboxesContainer = document.getElementById('custom-bind-checkboxes');
+        dropdownsContainer.innerHTML = '';
+        checkboxesContainer.innerHTML = '';
+
+        Object.keys(customBindDropdowns).forEach(bindName => {
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            
+            const label = document.createElement('label');
+            label.textContent = bindName + '：';
+            
+            const select = document.createElement('select');
+            select.id = `custom-${bindName}`;
+            
+            customBindDropdowns[bindName].forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                select.appendChild(opt);
+            });
+            
+            item.appendChild(label);
+            item.appendChild(select);
+            dropdownsContainer.appendChild(item);
+            
+            select.addEventListener('change', updateCustomBindOptions);
+        });
+
+        customBindCheckboxes.forEach(bindName => {
+            const label = document.createElement('label');
+            label.className = 'checkbox-label';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = bindName;
+            
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(bindName));
+            checkboxesContainer.appendChild(label);
+            
+            checkbox.addEventListener('change', updateCustomBindOptions);
+        });
+        
+        updateCustomBindOptions();
+    }
+    
+    function updateCustomBindOptions() {
+        const currentFilters = {};
+        document.querySelectorAll('#custom-bind-dropdowns select').forEach(select => {
+            if (select.value !== 'ランダム') {
+                const bindName = select.id.replace('custom-', '');
+                currentFilters[bindName] = select.value;
+            }
+        });
+        document.querySelectorAll('#custom-bind-checkboxes input:checked').forEach(cb => {
+            currentFilters[cb.value] = true;
+        });
+
+        // 他のドロップダウンを更新
+        document.querySelectorAll('#custom-bind-dropdowns select').forEach(select => {
+            const bindName = select.id.replace('custom-', '');
+            for (const option of select.options) {
+                if (option.value === 'ランダム') continue;
+                const tempFilters = {...currentFilters};
+                delete tempFilters[bindName]; // 自分自身のフィルターは除外してチェック
+                tempFilters[bindName] = option.value;
+                option.disabled = !characters.some(char => checkCharEligibility(char, tempFilters));
+            }
+        });
+
+        // チェックボックスを更新
+        document.querySelectorAll('#custom-bind-checkboxes .checkbox-label').forEach(label => {
+            const checkbox = label.querySelector('input');
+            const bindName = checkbox.value;
+            const tempFilters = {...currentFilters};
+            delete tempFilters[bindName];
+            tempFilters[bindName] = true;
+            
+            const isPossible = characters.some(char => checkCharEligibility(char, tempFilters));
+            checkbox.disabled = !isPossible;
+            label.classList.toggle('disabled', !isPossible);
+        });
+    }
+
+    function executeCustomBinds() {
+        const dropdowns = document.querySelectorAll('#custom-bind-dropdowns select');
+        const checkboxes = document.querySelectorAll('#custom-bind-checkboxes input:checked');
+
+        const manualBinds = {};
+        const randomBinds = [];
+        
+        dropdowns.forEach(select => {
+            const bindName = select.id.replace('custom-', '');
+            if(select.value === 'ランダム') {
+                randomBinds.push(bindName);
+            } else {
+                manualBinds[bindName] = select.value;
+            }
+        });
+
+        checkboxes.forEach(cb => {
+            manualBinds[cb.value] = true;
+        });
+        
+        results.common = manualBinds;
+        
+        // ランダム項目を解決
+        randomBinds.forEach(bindName => {
+            let availableOptions = subRoulettes[bindName];
+            availableOptions = availableOptions.filter(option => {
+                const tempFilters = {...results.common, [bindName]: option};
+                return characters.some(char => checkCharEligibility(char, tempFilters));
+            });
+            if(availableOptions.length > 0) {
+                results.common[bindName] = availableOptions[Math.floor(Math.random() * availableOptions.length)];
+            }
+        });
+        
+        const playerBindsToExecute = Object.keys(manualBinds).filter(b => playerBindTypes.includes(b));
+        if (playerBindsToExecute.length > 0) {
+            mode = 'selected';
+            selectedBinds = playerBindsToExecute;
+            startNextSelectedBind();
+        } else {
+            showResults();
+        }
     }
 });
