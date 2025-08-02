@@ -142,10 +142,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const ctx = canvas.getContext('2d');
     const colors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
 
+    // ★★ 修正箇所: イベントリスナーを全てここに集約 ★★
     document.getElementById('startAllButton').addEventListener('click', () => startRoulette('all'));
     document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
     document.getElementById('startBindButton').addEventListener('click', () => startRoulette('bind'));
-    document.getElementById('showBindSelectionButton').addEventListener('click', () => showBindSelection());
+    document.getElementById('showBindSelectionButton').addEventListener('click', showBindSelection);
     document.getElementById('homeButton').addEventListener('click', backToStart);
     document.getElementById('executeSelectionButton').addEventListener('click', executeBinds);
     document.getElementById('showCustomBindScreenButton').addEventListener('click', showCustomBindScreen);
@@ -249,8 +250,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let subItems = subRoulettes[bindName];
 
             if (bindName === "武器縛り") {
-                if(results.common["武器種縛り"]) {
-                    subItems = allWeapons[results.common["武器種縛り"]];
+                if(results.players[currentPlayer - 1]["武器種縛り"]) {
+                    subItems = allWeapons[results.players[currentPlayer - 1]["武器種縛り"]];
                 }
                 if(results.common["☆４キャラ武器"]) {
                     subItems = subItems.filter(w => !star5Weapons.includes(w));
@@ -556,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         available = available.filter(b => !allSelectedBinds.includes(b));
 
-        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b) && b !== '武器縛り');
+        const hasCharBind = allSelectedBinds.some(b => playerBindTypes.includes(b) && b !== '武器縛り' && b !== 'アルファベット縛り');
         if (hasCharBind) {
             const charFilterBinds = Object.keys(subRoulettes).filter(b => b !== '武器縛り');
             available = available.filter(b => !charFilterBinds.includes(b) && b !== 'キャラ武器ルーレット' && b !== 'キャラルーレット');
