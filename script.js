@@ -514,7 +514,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function proceedToNextPlayer() {
         const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && !Object.keys(results.common).includes(currentBindName));
-
         currentPlayer++;
         if (currentPlayer > playerCount || !isPlayerSpecificSubBind) {
             currentPlayer = 1;
