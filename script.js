@@ -291,8 +291,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (items.length === 1 && currentRoulette !== 'boss' && currentRoulette !== 'bind') {
             lastResult = items[0];
-            processResult();
             showPopup(`${bindName}: ${lastResult} に確定しました`);
+            setTimeout(() => {
+                if(document.getElementById('popup').style.display === 'block'){
+                    document.getElementById('popup').click();
+                }
+            }, 1500);
         } else {
             document.getElementById('spinButton').disabled = false;
             showScreen('rouletteScreen');
@@ -758,7 +762,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkedBinds = Array.from(document.querySelectorAll('#customBindButtons input:checked')).map(cb => cb.value);
         
         Object.assign(results.common, manualBinds);
-        
+
         const randomizableBinds = [];
         document.querySelectorAll('#customBindGrid select').forEach(select => {
             if (select.value === 'random') {
@@ -779,4 +783,5 @@ document.addEventListener('DOMContentLoaded', function() {
         mode = 'selected';
         startNextSelectedBind();
     }
+
 });
