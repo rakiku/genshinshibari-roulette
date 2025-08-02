@@ -392,8 +392,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processResult() {
-        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り');
-        
+        const isCommonFilter = subRoulettes[currentBindName] && !playerBindTypes.includes(currentBindName) && currentBindName !== 'アルファベット縛り';
+
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
             if (mode === 'boss') { showResults(); return; }
@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentRoulette === 'bind') {
             setupRouletteForBind(lastResult);
         } else if (currentRoulette === 'sub') {
-            (isPlayerSpecificSubBind ? results.players[currentPlayer - 1] : results.common)[currentBindName] = lastResult;
+            (isCommonFilter ? results.common : results.players[currentPlayer - 1])[currentBindName] = lastResult;
             proceedToNextPlayer();
         } else if (currentRoulette === 'character') {
             if (currentBindName === 'キャラ武器ルーレット') {
@@ -432,9 +432,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function proceedToNextPlayer() {
-        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り');
+        const isCommonFilter = subRoulettes[currentBindName] && !playerBindTypes.includes(currentBindName) && currentBindName !== 'アルファベット縛り';
         currentPlayer++;
-        if (currentPlayer > playerCount || !isPlayerSpecificSubBind) {
+        if (currentPlayer > playerCount || !isCommonFilter) {
             currentPlayer = 1;
             proceedToNext();
         } else {
