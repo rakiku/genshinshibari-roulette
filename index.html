@@ -30,17 +30,23 @@
             </div>
         </div>
 
-        <!-- カスタム縛り設定画面 -->
+        <!-- ★★ここを修正★★ カスタム縛り設定画面 -->
         <div id="customBindScreen" class="hidden">
             <h2>カスタム縛り設定</h2>
-            <div class="custom-bind-grid">
+            <p>固定したい性質や、追加したいルールを自由に組み合わせて実行します。</p>
+            
+            <div id="customBindGrid" class="custom-bind-grid">
                 <!-- ドロップダウンがここに生成されます -->
             </div>
+
             <div class="custom-bind-checkboxes">
-                <h3>追加するルーレットを選ぶ</h3>
-                <!-- チェックボックスがここに生成されます -->
+                <h3>追加ルール・実行ルーレット</h3>
+                <div id="customBindButtons" class="button-group-checkbox">
+                    <!-- チェックボックスがここに生成されます -->
+                </div>
             </div>
-            <button id="executeCustomBindsButton">この条件で実行</button>
+
+            <button id="executeCustomBindsButton" class="execute-button">この条件で実行</button>
         </div>
 
         <!-- 縛り選択画面 (詳細縛り設定) -->
