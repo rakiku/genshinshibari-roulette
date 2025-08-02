@@ -1,7 +1,7 @@
 /* 全体のスタイル */
 body {
     font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-    background-image: url('background.jpg.png');
+    background-image: url('background.jpg');
     background-color: #2c3e50;
     background-size: cover;
     background-position: center center;
@@ -36,7 +36,7 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     text-align: center;
     width: 90%;
-    max-width: 700px; /* 少し幅を広げる */
+    max-width: 600px;
 }
 
 h1, h2, h3 {
@@ -109,6 +109,39 @@ button:disabled {
     background-color: #777;
 }
 
+/* カスタム縛り設定画面 */
+.custom-bind-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.custom-bind-item {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.custom-bind-item label {
+    margin-bottom: 5px;
+}
+
+.custom-bind-item select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #7f8c8d;
+    background-color: #34495e;
+    color: #ecf0f1;
+}
+
+.custom-bind-checkboxes {
+    margin-top: 20px;
+    border-top: 1px solid #7f8c8d;
+    padding-top: 20px;
+}
+
 .button-group-checkbox {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -130,43 +163,6 @@ button:disabled {
 .checkbox-label input {
     margin-right: 10px;
 }
-.checkbox-label.disabled {
-    background-color: #2c3e50;
-    color: #7f8c8d;
-    cursor: not-allowed;
-}
-
-/* カスタム縛り設定画面用 */
-.custom-bind-section {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #7f8c8d;
-}
-.custom-bind-section:last-of-type {
-    border-bottom: none;
-}
-.custom-dropdown-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-}
-.dropdown-item {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-.dropdown-item label {
-    margin-bottom: 5px;
-}
-.dropdown-item select {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #7f8c8d;
-    background-color: #34495e;
-    color: #ecf0f1;
-    font-size: 1em;
-}
-
 
 .roulette-container {
     margin: 20px auto;
