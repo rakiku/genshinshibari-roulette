@@ -34,11 +34,21 @@
         <div id="customBindScreen" class="hidden">
             <h2>カスタム縛り設定</h2>
             <p>実行したい縛りにチェックを入れ、詳細を設定してください。</p>
-            <div id="customBindContainer" class="custom-bind-container">
-                <!-- JavaScriptによってコンテンツがここに生成されます -->
+
+            <div id="customBindGrid" class="custom-bind-grid">
+                <!-- JSによって性質決定の項目がここに生成されます -->
             </div>
+
+            <div class="custom-bind-checkboxes">
+                <h3>追加ルール・実行ルーレット</h3>
+                <div id="customBindButtons" class="button-group-checkbox">
+                    <!-- JSによって追加ルールの項目がここに生成されます -->
+                </div>
+            </div>
+
             <button id="executeCustomBindsButton">この条件で実行</button>
         </div>
+
 
         <!-- 縛り選択画面 (詳細縛り設定) -->
         <div id="bindSelection" class="hidden">
