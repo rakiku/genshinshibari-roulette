@@ -383,7 +383,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ★★ここを修正★★ 矢印の向きを修正
     function drawRoulette() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (!prerenderedRoulette) {
@@ -403,11 +402,12 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.drawImage(prerenderedRoulette, -canvas.width / 2, -canvas.height / 2);
         ctx.restore();
         
-        // 矢印を描画 (右側中央を指す)
+        // 矢印を描画 (右側中央)
+        const arrowBaseX = canvas.width / 2 + (canvas.width / 2 - 20);
         ctx.beginPath();
-        ctx.moveTo(canvas.width - 20, canvas.height / 2 - 10); // 先端の上
-        ctx.lineTo(canvas.width - 20, canvas.height / 2 + 10); // 先端の下
-        ctx.lineTo(canvas.width - 45, canvas.height / 2); // 付け根
+        ctx.moveTo(arrowBaseX - 20, canvas.height / 2);
+        ctx.lineTo(arrowBaseX, canvas.height / 2 - 10);
+        ctx.lineTo(arrowBaseX, canvas.height / 2 + 10);
         ctx.closePath();
         ctx.fillStyle = '#FF0000';
         ctx.fill();
@@ -689,23 +689,29 @@ document.addEventListener('DOMContentLoaded', function() {
         initialize();
         mode = 'custom';
         showScreen('customBindScreen');
-        const container = document.getElementById('customBindContainer');
-        if (!container) return; // コンテナが見つからない場合は終了
-        container.innerHTML = ''; 
+        const gridContainer = document.getElementById('customBindGrid');
+        const buttonsContainer = document.getElementById('customBindButtons');
+
+        if (!gridContainer || !buttonsContainer) return; 
+
+        gridContainer.innerHTML = '';
+        buttonsContainer.innerHTML = '';
 
         const bindDefinitions = [
-            { name: '国縛り', type: 'select', options: subRoulettes['国縛り'] },
-            { name: 'モノ元素縛り', type: 'select', options: subRoulettes['モノ元素縛り'] },
-            { name: '武器種縛り', type: 'select', options: subRoulettes['武器種縛り'] },
-            { name: '誕生月', type: 'select', options: subRoulettes['誕生月'] },
-            { name: 'アルファベット縛り', type: 'select', options: subRoulettes['アルファベット縛り'] },
-            { name: '恒常☆５縛り', type: 'check' },
-            { name: '☆４キャラ武器', type: 'check' },
-            { name: '所持率100％縛り', type: 'check' },
-            { name: '初期キャラのみ', type: 'check' },
-            { name: '旅人縛り', type: 'check' },
-            { name: 'キャラルーレット', type: 'check' },
-            { name: 'キャラ武器ルーレット', type: 'check' },
+            // target: 'grid' は性質決定エリアに配置
+            { name: '国縛り', type: 'select', options: subRoulettes['国縛り'], target: 'grid' },
+            { name: 'モノ元素縛り', type: 'select', options: subRoulettes['モノ元素縛り'], target: 'grid' },
+            { name: '武器種縛り', type: 'select', options: subRoulettes['武器種縛り'], target: 'grid' },
+            { name: '誕生月', type: 'select', options: subRoulettes['誕生月'], target: 'grid' },
+            { name: 'アルファベット縛り', type: 'select', options: subRoulettes['アルファベット縛り'], target: 'grid' },
+            // target: 'buttons' は追加ルールエリアに配置
+            { name: '恒常☆５縛り', type: 'check', target: 'buttons' },
+            { name: '☆４キャラ武器', type: 'check', target: 'buttons' },
+            { name: '所持率100％縛り', type: 'check', target: 'buttons' },
+            { name: '初期キャラのみ', type: 'check', target: 'buttons' },
+            { name: '旅人縛り', type: 'check', target: 'buttons' },
+            { name: 'キャラルーレット', type: 'check', target: 'buttons' },
+            { name: 'キャラ武器ルーレット', type: 'check', target: 'buttons' },
         ];
 
         bindDefinitions.forEach(bind => {
@@ -720,7 +726,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             label.appendChild(checkbox);
             label.appendChild(document.createTextNode(` ${bind.name}`));
-
             itemDiv.appendChild(label);
 
             if (bind.type === 'select') {
@@ -745,7 +750,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     select.style.display = e.target.checked ? 'inline-block' : 'none';
                 });
             }
-            container.appendChild(itemDiv);
+            
+            // 縛りの種類に応じて配置場所を決定
+            if (bind.target === 'grid') {
+                gridContainer.appendChild(itemDiv);
+            } else {
+                // button-group-checkboxの中に直接入れるのではなく、
+                // checkbox-labelでラップしてスタイルを適用する
+                const wrapperLabel = document.createElement('label');
+                wrapperLabel.className = 'checkbox-label';
+                wrapperLabel.innerHTML = ''; // 中身を一旦空に
+                wrapperLabel.appendChild(itemDiv);
+                buttonsContainer.appendChild(wrapperLabel);
+            }
         });
     }
 
@@ -755,7 +772,8 @@ document.addEventListener('DOMContentLoaded', function() {
         results.players = [{}];
         currentPlayer = 1;
         
-        const bindItems = document.querySelectorAll('#customBindContainer .custom-bind-item');
+        // 両方のコンテナからアイテムを取得
+        const bindItems = document.querySelectorAll('#customBindGrid .custom-bind-item, #customBindButtons .custom-bind-item');
         selectedBinds = [];
 
         bindItems.forEach(item => {
