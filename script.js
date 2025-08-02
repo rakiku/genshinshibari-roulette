@@ -122,11 +122,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const ownership100Characters = ["香菱", "旅人", "ガイア", "バーバラ", "コレイ", "ノエル", "リサ", "アンバー"];
     const alphabetData = {"A": ["荒瀧一斗", "アルベド", "アルレッキーノ", "アルハイゼン", "アンバー", "アーロイ"], "B": ["バーバラ", "白朮", "ベネット", "北斗"], "C": ["キャンディス", "クロリンデ", "コレイ", "シャルロット", "シュヴルーズ", "シトラリ", "セノ", "千織", "チャスカ", "重雲"], "D": ["ドリー", "ディシア", "ディルック", "ディオナ", "ダリア"], "E": ["エミリエ", "エウルア", "エスコフィエ"], "F": ["ファルザン", "フリーナ", "フレミネ", "フィッシュル"], "G": ["嘉明", "甘雨", "ゴロー"], "H": ["胡桃"], "I": ["イアンサ", "イファ", "イネファ"], "J": ["ジン"], "K": ["神里綾華", "神里綾人", "キィニチ", "綺良々", "久岐忍", "九条裟羅", "クレー", "刻晴", "カチーナ", "カーヴェ"], "L": ["リサ", "リネ", "リネット", "レイラ", "藍硯"], "M": ["ミカ", "ムアラニ", "モナ", "マーヴィカ"], "N": ["ナヴィア", "ナヒーダ", "ニィロウ", "ヌヴィレット", "ノエル"], "O": ["オロルン"], "Q": ["七七"], "R": ["雷電将軍", "レザー", "ロサリア", "リオセスリ"], "S": ["早柚", "珊瑚宮心海", "鹿野院平蔵", "シグウィン", "申鶴", "スクロース", "セトス", "スカーク"], "T": ["旅人", "ティナリ", "タルタリヤ", "トーマ"], "V": ["ウェンティ", "ヴァレサ"], "W": ["放浪者"], "X": ["行秋", "魈", "香菱", "辛炎", "シロネン", "閑雲"], "Y": ["煙緋", "夜蘭", "雲菫", "八重神子", "宵宮", "ヨォーヨ", "夢見月瑞希"], "Z": ["鍾離"]};
 
-    // ★★ 修正点: 並び替え用の配列を定義 ★★
     const countryOrder = ["モンド", "璃月", "稲妻", "スメール", "フォンテーヌ", "ナタ", "スネージナヤ", "例外"];
     const monthOrder = ["１月", "２月", "３月", "４月", "５月", "６月", "７月", "８月", "９月", "１０月", "１１月", "１２月"];
 
-    // ★★ 修正点: 並び替えロジックを適用 ★★
     const subRoulettes = {
         "国縛り": [...new Set(characters.map(c => c.country))].sort((a, b) => countryOrder.indexOf(a) - countryOrder.indexOf(b)),
         "モノ元素縛り": [...new Set(characters.filter(c => c.element !== "その他").map(c => c.element))].sort(),
@@ -385,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ★★ 修正点: 矢印描画部分を修正 ★★
+    // ★★ここを修正★★ 矢印の向きを修正
     function drawRoulette() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (!prerenderedRoulette) {
@@ -405,12 +403,11 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.drawImage(prerenderedRoulette, -canvas.width / 2, -canvas.height / 2);
         ctx.restore();
         
-        // 矢印を描画 (右側中央)
-        const radius = canvas.width / 2 - 20;
+        // 矢印を描画 (右側中央を指す)
         ctx.beginPath();
-        ctx.moveTo(canvas.width / 2 + radius + 5, canvas.height / 2);
-        ctx.lineTo(canvas.width / 2 + radius - 20, canvas.height / 2 - 10);
-        ctx.lineTo(canvas.width / 2 + radius - 20, canvas.height / 2 + 10);
+        ctx.moveTo(canvas.width - 20, canvas.height / 2 - 10); // 先端の上
+        ctx.lineTo(canvas.width - 20, canvas.height / 2 + 10); // 先端の下
+        ctx.lineTo(canvas.width - 45, canvas.height / 2); // 付け根
         ctx.closePath();
         ctx.fillStyle = '#FF0000';
         ctx.fill();
@@ -446,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInterval(stopInterval);
                 const arc = 2 * Math.PI / items.length;
                 const finalAngle = angle % (2 * Math.PI);
-                const index = items.length - 1 - Math.floor(finalAngle / arc);
+                let index = Math.floor(((2 * Math.PI - finalAngle) % (2 * Math.PI)) / arc);
                 lastResult = items[index];
                 showPopup(lastResult);
             } else {
@@ -687,12 +684,13 @@ document.addEventListener('DOMContentLoaded', function() {
         showScreen('startScreen');
     }
     
-    // ★★ 修正点: カスタム縛り関連の関数を全面的に見直し ★★
+    // ★★ここを修正★★ カスタム縛り関連の関数を再修正
     function showCustomBindScreen() {
         initialize();
         mode = 'custom';
         showScreen('customBindScreen');
         const container = document.getElementById('customBindContainer');
+        if (!container) return; // コンテナが見つからない場合は終了
         container.innerHTML = ''; 
 
         const bindDefinitions = [
@@ -728,7 +726,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (bind.type === 'select') {
                 const select = document.createElement('select');
                 select.dataset.detailFor = bind.name;
-                select.style.display = 'none'; 
+                select.style.display = 'none'; // 最初は非表示
                 
                 const randomOption = document.createElement('option');
                 randomOption.value = 'random';
@@ -752,7 +750,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function executeCustomBinds() {
-        initialize(); // 最初に初期化
+        initialize(); 
         playerCount = 1;
         results.players = [{}];
         currentPlayer = 1;
@@ -766,34 +764,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 const bindName = checkbox.dataset.bindName;
                 const select = item.querySelector('select');
 
-                if (select) { // selectがある縛り
+                if (select) { 
                     const selectedValue = select.value;
                     if (selectedValue === 'random') {
                         selectedBinds.push(bindName); // ルーレット対象
                     } else {
                         results.common[bindName] = selectedValue; // 条件を直接設定
                     }
-                } else { // selectがない縛り (恒常☆5など)
-                     selectedBinds.push(bindName); // ルーレット対象 (setupRouletteForBindでフラグ処理される)
+                } else { 
+                     selectedBinds.push(bindName); 
                 }
             }
         });
         
-        // 処理のフローを詳細縛り設定(selected)に統一
         mode = 'selected';
         currentBindIndex = 0;
         
-        // 矛盾する縛りのチェック（例：恒常☆5と☆4キャラ武器）
-        if (selectedBinds.includes('恒常☆５縛り') && selectedBinds.includes('☆４キャラ武器')) {
+        if (results.common['恒常☆５縛り'] && results.common['☆４キャラ武器'] ||
+            selectedBinds.includes('恒常☆５縛り') && selectedBinds.includes('☆４キャラ武器')) {
              alert('「恒常☆５縛り」と「☆４キャラ武器」は同時に選択できません。');
              return;
         }
-        if (results.common['恒常☆５縛り'] && results.common['☆４キャラ武器']) {
-            alert('「恒常☆５縛り」と「☆４キャラ武器」は同時に選択できません。');
-            return;
-        }
 
-        // プレイヤーに依存する縛りが最後に実行されるようにソート
         selectedBinds.sort((a, b) => {
             const aIsPlayerBind = playerBindTypes.includes(a);
             const bIsPlayerBind = playerBindTypes.includes(b);
