@@ -758,12 +758,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkedBinds = Array.from(document.querySelectorAll('#customBindButtons input:checked')).map(cb => cb.value);
         
         Object.assign(results.common, manualBinds);
-
-        selectedBinds = [...checkedBinds];
         
-        // ランダムで決定すべき項目を追加
-        const randomizableBinds = ['国縛り', 'モノ元素縛り', '武器種縛り', '誕生月', 'アルファベット縛り'].filter(b => !manualBinds[b]);
-        randomizableBinds.forEach(b => selectedBinds.push(b));
+        const randomizableBinds = [];
+        document.querySelectorAll('#customBindGrid select').forEach(select => {
+            if (select.value === 'random') {
+                randomizableBinds.push(select.dataset.bind);
+            }
+        });
+        
+        selectedBinds = [...randomizableBinds, ...checkedBinds];
         
         selectedBinds.sort((a, b) => {
             const aIsPlayerBind = playerBindTypes.includes(a);
@@ -776,5 +779,4 @@ document.addEventListener('DOMContentLoaded', function() {
         mode = 'selected';
         startNextSelectedBind();
     }
-
 });
