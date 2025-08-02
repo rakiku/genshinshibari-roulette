@@ -134,15 +134,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り"];
 
-    let playerCount, bindCount, mode, currentRoulette, currentBindName, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, lastResult;
+    let playerCount, bindCount, mode, currentRoulette, currentBindName, currentBindIndex, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, lastResult;
     let rerolledChars, rerolledWeapons;
     let prerenderedRoulette = null;
+    let spinSpeed = 0;
 
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
     const colors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
 
-    // ★★ 修正箇所: イベントリスナーを全てここに集約 ★★
+    // イベントリスナー集約
     document.getElementById('startAllButton').addEventListener('click', () => startRoulette('all'));
     document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
     document.getElementById('startBindButton').addEventListener('click', () => startRoulette('bind'));
@@ -151,7 +152,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('executeSelectionButton').addEventListener('click', executeBinds);
     document.getElementById('showCustomBindScreenButton').addEventListener('click', showCustomBindScreen);
     document.getElementById('executeCustomBindsButton').addEventListener('click', executeCustomBinds);
-
     document.getElementById('spinButton').addEventListener('click', spinRoulette);
     document.getElementById('stopButton').addEventListener('click', stopRoulette);
     document.getElementById('nextButton').addEventListener('click', nextStep);
@@ -289,8 +289,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         prerenderRouletteImage();
 
-        if (items.length === 1 && currentRoulette !== 'boss' && currentRoulette !== 'bind') {
-            lastResult = items[0];
+        if (items.length <= 1 && currentRoulette !== 'boss' && currentRoulette !== 'bind') {
+            lastResult = items.length > 0 ? items[0] : '該当なし';
             processResult();
             showPopup(`${bindName}: ${lastResult} に確定しました`);
         } else {
@@ -346,7 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return filtered.slice().sort(() => Math.random() - 0.5);
     }
     
-    // (drawRoulette, spin, animate, stop, showPopupは変更ないので省略)
     function prerenderRouletteImage() {
         if (!items || items.length === 0) {
             prerenderedRoulette = null;
@@ -384,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function drawRoulette() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (!prerenderedRoulette) {
-            ctx.fillStyle = '#000';
+            ctx.fillStyle = '#fff';
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('対象アイテムがありません', canvas.width / 2, canvas.height / 2);
@@ -400,14 +399,14 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.drawImage(prerenderedRoulette, -canvas.width / 2, -canvas.height / 2);
         ctx.restore();
         
-        const arrowBaseX = canvas.width / 2 + (canvas.width / 2 - 20);
         ctx.beginPath();
-        ctx.moveTo(arrowBaseX - 20, canvas.height / 2);
-        ctx.lineTo(arrowBaseX, canvas.height / 2 - 10);
-        ctx.lineTo(arrowBaseX, canvas.height / 2 + 10);
+        ctx.moveTo(canvas.width - 30, canvas.height / 2 - 10);
+        ctx.lineTo(canvas.width - 10, canvas.height / 2);
+        ctx.lineTo(canvas.width - 30, canvas.height / 2 + 10);
+        ctx.closePath();
         ctx.fillStyle = '#FF0000';
         ctx.fill();
-        ctx.strokeStyle = '#000';
+        ctx.strokeStyle = '#fff';
         ctx.lineWidth = 2;
         ctx.stroke();
     };
@@ -438,7 +437,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 spinning = false;
                 clearInterval(stopInterval);
                 const arc = 2 * Math.PI / items.length;
-                const index = Math.floor(((2 * Math.PI - (angle % (2 * Math.PI))) % (2 * Math.PI)) / arc);
+                const finalAngle = angle % (2 * Math.PI);
+                const index = items.length - 1 - Math.floor(finalAngle / arc);
                 lastResult = items[index];
                 showPopup(lastResult);
             } else {
@@ -469,6 +469,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processResult() {
+        if (lastResult === '該当なし') {
+            proceedToNextPlayer();
+            return;
+        }
         const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && !results.common[currentBindName]);
 
         if (currentRoulette === 'boss') {
@@ -686,6 +690,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCustomBindOptions() {
         const grid = document.getElementById('customBindGrid');
         const checkboxesContainer = document.getElementById('customBindButtons');
+        if (!grid || !checkboxesContainer) {
+            console.error("Custom bind container not found!");
+            return;
+        }
         grid.innerHTML = '';
         checkboxesContainer.innerHTML = '';
 
@@ -703,7 +711,9 @@ document.addEventListener('DOMContentLoaded', function() {
             item.className = 'custom-bind-item';
             const label = document.createElement('label');
             label.textContent = `${bindName}：`;
+            label.htmlFor = `select-${bindName}`;
             const select = document.createElement('select');
+            select.id = `select-${bindName}`;
             select.dataset.bind = bindName;
             
             let options = ['random', ...subRoulettes[bindName]];
@@ -729,7 +739,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // チェックボックス
-        const checkboxBinds = ["☆４キャラ武器", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "旅人縛り", "キャラルーレット", "キャラ武器ルーレット", "武器縛り"];
+        const checkboxBinds = ["☆４キャラ武器", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "旅人縛り", "キャラルーレット", "キャラ武器ルーレット"];
         checkboxBinds.forEach(bindName => {
             const tempFilters = {...currentFilters, [bindName]: true};
             const isPossible = characters.some(char => checkCharEligibility(char, tempFilters));
@@ -766,6 +776,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // プレイヤー数を1人に固定して実行
+        playerCount = 1;
+        results.players = [{}];
+        currentPlayer = 1;
+
         selectedBinds = [...randomizableBinds, ...checkedBinds];
         
         selectedBinds.sort((a, b) => {
@@ -776,7 +791,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return 0;
         });
         
-        mode = 'selected';
+        mode = 'selected'; // 詳細縛り設定と同じフローを利用
+        currentBindIndex = 0;
         startNextSelectedBind();
     }
 
