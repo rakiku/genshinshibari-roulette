@@ -122,11 +122,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const ownership100Characters = ["香菱", "旅人", "ガイア", "バーバラ", "コレイ", "ノエル", "リサ", "アンバー"];
     const alphabetData = {"A": ["荒瀧一斗", "アルベド", "アルレッキーノ", "アルハイゼン", "アンバー", "アーロイ"], "B": ["バーバラ", "白朮", "ベネット", "北斗"], "C": ["キャンディス", "クロリンデ", "コレイ", "シャルロット", "シュヴルーズ", "シトラリ", "セノ", "千織", "チャスカ", "重雲"], "D": ["ドリー", "ディシア", "ディルック", "ディオナ", "ダリア"], "E": ["エミリエ", "エウルア", "エスコフィエ"], "F": ["ファルザン", "フリーナ", "フレミネ", "フィッシュル"], "G": ["嘉明", "甘雨", "ゴロー"], "H": ["胡桃"], "I": ["イアンサ", "イファ", "イネファ"], "J": ["ジン"], "K": ["神里綾華", "神里綾人", "キィニチ", "綺良々", "久岐忍", "九条裟羅", "クレー", "刻晴", "カチーナ", "カーヴェ"], "L": ["リサ", "リネ", "リネット", "レイラ", "藍硯"], "M": ["ミカ", "ムアラニ", "モナ", "マーヴィカ"], "N": ["ナヴィア", "ナヒーダ", "ニィロウ", "ヌヴィレット", "ノエル"], "O": ["オロルン"], "Q": ["七七"], "R": ["雷電将軍", "レザー", "ロサリア", "リオセスリ"], "S": ["早柚", "珊瑚宮心海", "鹿野院平蔵", "シグウィン", "申鶴", "スクロース", "セトス", "スカーク"], "T": ["旅人", "ティナリ", "タルタリヤ", "トーマ"], "V": ["ウェンティ", "ヴァレサ"], "W": ["放浪者"], "X": ["行秋", "魈", "香菱", "辛炎", "シロネン", "閑雲"], "Y": ["煙緋", "夜蘭", "雲菫", "八重神子", "宵宮", "ヨォーヨ", "夢見月瑞希"], "Z": ["鍾離"]};
 
+    // ★★ 修正点: 並び替え用の配列を定義 ★★
+    const countryOrder = ["モンド", "璃月", "稲妻", "スメール", "フォンテーヌ", "ナタ", "スネージナヤ", "例外"];
+    const monthOrder = ["１月", "２月", "３月", "４月", "５月", "６月", "７月", "８月", "９月", "１０月", "１１月", "１２月"];
+
+    // ★★ 修正点: 並び替えロジックを適用 ★★
     const subRoulettes = {
-        "国縛り": [...new Set(characters.map(c => c.country))].sort(),
+        "国縛り": [...new Set(characters.map(c => c.country))].sort((a, b) => countryOrder.indexOf(a) - countryOrder.indexOf(b)),
         "モノ元素縛り": [...new Set(characters.filter(c => c.element !== "その他").map(c => c.element))].sort(),
         "武器種縛り": [...new Set(characters.map(c => c.weapon))].sort(),
-        "誕生月": [...new Set(characters.filter(c => c.birth_month !== "その他").map(c => c.birth_month))].sort((a,b) => parseInt(a) - parseInt(b)),
+        "誕生月": [...new Set(characters.filter(c => c.birth_month !== "その他").map(c => c.birth_month))].sort((a,b) => monthOrder.indexOf(a) - monthOrder.indexOf(b)),
         "各1.1縛り": [...new Set(characters.map(c => c.version))].filter(v => v !== 'その他').sort(),
         "アルファベット縛り": Object.keys(alphabetData).sort(),
         "武器縛り": Object.values(allWeapons).flat()
@@ -380,6 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // ★★ 修正点: 矢印描画部分を修正 ★★
     function drawRoulette() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (!prerenderedRoulette) {
@@ -399,10 +405,12 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.drawImage(prerenderedRoulette, -canvas.width / 2, -canvas.height / 2);
         ctx.restore();
         
+        // 矢印を描画 (右側中央)
+        const radius = canvas.width / 2 - 20;
         ctx.beginPath();
-        ctx.moveTo(canvas.width - 30, canvas.height / 2 - 10);
-        ctx.lineTo(canvas.width - 10, canvas.height / 2);
-        ctx.lineTo(canvas.width - 30, canvas.height / 2 + 10);
+        ctx.moveTo(canvas.width / 2 + radius + 5, canvas.height / 2);
+        ctx.lineTo(canvas.width / 2 + radius - 20, canvas.height / 2 - 10);
+        ctx.lineTo(canvas.width / 2 + radius - 20, canvas.height / 2 + 10);
         ctx.closePath();
         ctx.fillStyle = '#FF0000';
         ctx.fill();
@@ -679,110 +687,113 @@ document.addEventListener('DOMContentLoaded', function() {
         showScreen('startScreen');
     }
     
-    // ★★ 追加機能: カスタム縛り ★★
+    // ★★ 修正点: カスタム縛り関連の関数を全面的に見直し ★★
     function showCustomBindScreen() {
         initialize();
         mode = 'custom';
         showScreen('customBindScreen');
-        updateCustomBindOptions();
-    }
+        const container = document.getElementById('customBindContainer');
+        container.innerHTML = ''; 
 
-    function updateCustomBindOptions() {
-        const grid = document.getElementById('customBindGrid');
-        const checkboxesContainer = document.getElementById('customBindButtons');
-        if (!grid || !checkboxesContainer) {
-            console.error("Custom bind container not found!");
-            return;
-        }
-        grid.innerHTML = '';
-        checkboxesContainer.innerHTML = '';
+        const bindDefinitions = [
+            { name: '国縛り', type: 'select', options: subRoulettes['国縛り'] },
+            { name: 'モノ元素縛り', type: 'select', options: subRoulettes['モノ元素縛り'] },
+            { name: '武器種縛り', type: 'select', options: subRoulettes['武器種縛り'] },
+            { name: '誕生月', type: 'select', options: subRoulettes['誕生月'] },
+            { name: 'アルファベット縛り', type: 'select', options: subRoulettes['アルファベット縛り'] },
+            { name: '恒常☆５縛り', type: 'check' },
+            { name: '☆４キャラ武器', type: 'check' },
+            { name: '所持率100％縛り', type: 'check' },
+            { name: '初期キャラのみ', type: 'check' },
+            { name: '旅人縛り', type: 'check' },
+            { name: 'キャラルーレット', type: 'check' },
+            { name: 'キャラ武器ルーレット', type: 'check' },
+        ];
 
-        const currentFilters = {};
-        document.querySelectorAll('#customBindGrid select').forEach(select => {
-            if (select.value !== 'random') {
-                currentFilters[select.dataset.bind] = select.value;
-            }
-        });
-
-        // ドロップダウン
-        const dropdownBinds = ['国縛り', 'モノ元素縛り', '武器種縛り', '誕生月', 'アルファベット縛り'];
-        dropdownBinds.forEach(bindName => {
-            const item = document.createElement('div');
-            item.className = 'custom-bind-item';
-            const label = document.createElement('label');
-            label.textContent = `${bindName}：`;
-            label.htmlFor = `select-${bindName}`;
-            const select = document.createElement('select');
-            select.id = `select-${bindName}`;
-            select.dataset.bind = bindName;
-            
-            let options = ['random', ...subRoulettes[bindName]];
-            options = options.filter(opt => {
-                if (opt === 'random') return true;
-                const tempFilters = {...currentFilters, [bindName]: opt};
-                return characters.some(c => checkCharEligibility(c, tempFilters));
-            });
-
-            options.forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt;
-                option.textContent = opt === 'random' ? 'ランダム' : opt;
-                select.appendChild(option);
-            });
-
-            select.value = currentFilters[bindName] || 'random';
-            select.onchange = updateCustomBindOptions;
-
-            item.appendChild(label);
-            item.appendChild(select);
-            grid.appendChild(item);
-        });
-
-        // チェックボックス
-        const checkboxBinds = ["☆４キャラ武器", "恒常☆５縛り", "所持率100％縛り", "初期キャラのみ", "旅人縛り", "キャラルーレット", "キャラ武器ルーレット"];
-        checkboxBinds.forEach(bindName => {
-            const tempFilters = {...currentFilters, [bindName]: true};
-            const isPossible = characters.some(char => checkCharEligibility(char, tempFilters));
+        bindDefinitions.forEach(bind => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'custom-bind-item';
             
             const label = document.createElement('label');
-            label.className = `checkbox-label ${isPossible ? '' : 'disabled'}`;
+            label.className = 'checkbox-label-main';
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            checkbox.value = bindName;
-            checkbox.disabled = !isPossible;
-
+            checkbox.dataset.bindName = bind.name;
+            
             label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(bindName));
-            checkboxesContainer.appendChild(label);
+            label.appendChild(document.createTextNode(` ${bind.name}`));
+
+            itemDiv.appendChild(label);
+
+            if (bind.type === 'select') {
+                const select = document.createElement('select');
+                select.dataset.detailFor = bind.name;
+                select.style.display = 'none'; 
+                
+                const randomOption = document.createElement('option');
+                randomOption.value = 'random';
+                randomOption.textContent = 'ランダム';
+                select.appendChild(randomOption);
+
+                bind.options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    option.textContent = opt;
+                    select.appendChild(option);
+                });
+                itemDiv.appendChild(select);
+                
+                checkbox.addEventListener('change', (e) => {
+                    select.style.display = e.target.checked ? 'inline-block' : 'none';
+                });
+            }
+            container.appendChild(itemDiv);
         });
     }
 
     function executeCustomBinds() {
-        const manualBinds = {};
-        document.querySelectorAll('#customBindGrid select').forEach(select => {
-            if (select.value !== 'random') {
-                manualBinds[select.dataset.bind] = select.value;
-            }
-        });
-        
-        const checkedBinds = Array.from(document.querySelectorAll('#customBindButtons input:checked')).map(cb => cb.value);
-        
-        Object.assign(results.common, manualBinds);
-
-        const randomizableBinds = [];
-        document.querySelectorAll('#customBindGrid select').forEach(select => {
-            if (select.value === 'random') {
-                randomizableBinds.push(select.dataset.bind);
-            }
-        });
-        
-        // プレイヤー数を1人に固定して実行
+        initialize(); // 最初に初期化
         playerCount = 1;
         results.players = [{}];
         currentPlayer = 1;
-
-        selectedBinds = [...randomizableBinds, ...checkedBinds];
         
+        const bindItems = document.querySelectorAll('#customBindContainer .custom-bind-item');
+        selectedBinds = [];
+
+        bindItems.forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            if (checkbox.checked) {
+                const bindName = checkbox.dataset.bindName;
+                const select = item.querySelector('select');
+
+                if (select) { // selectがある縛り
+                    const selectedValue = select.value;
+                    if (selectedValue === 'random') {
+                        selectedBinds.push(bindName); // ルーレット対象
+                    } else {
+                        results.common[bindName] = selectedValue; // 条件を直接設定
+                    }
+                } else { // selectがない縛り (恒常☆5など)
+                     selectedBinds.push(bindName); // ルーレット対象 (setupRouletteForBindでフラグ処理される)
+                }
+            }
+        });
+        
+        // 処理のフローを詳細縛り設定(selected)に統一
+        mode = 'selected';
+        currentBindIndex = 0;
+        
+        // 矛盾する縛りのチェック（例：恒常☆5と☆4キャラ武器）
+        if (selectedBinds.includes('恒常☆５縛り') && selectedBinds.includes('☆４キャラ武器')) {
+             alert('「恒常☆５縛り」と「☆４キャラ武器」は同時に選択できません。');
+             return;
+        }
+        if (results.common['恒常☆５縛り'] && results.common['☆４キャラ武器']) {
+            alert('「恒常☆５縛り」と「☆４キャラ武器」は同時に選択できません。');
+            return;
+        }
+
+        // プレイヤーに依存する縛りが最後に実行されるようにソート
         selectedBinds.sort((a, b) => {
             const aIsPlayerBind = playerBindTypes.includes(a);
             const bIsPlayerBind = playerBindTypes.includes(b);
@@ -790,10 +801,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!aIsPlayerBind && bIsPlayerBind) return -1;
             return 0;
         });
-        
-        mode = 'selected'; // 詳細縛り設定と同じフローを利用
-        currentBindIndex = 0;
+
         startNextSelectedBind();
     }
-
 });
