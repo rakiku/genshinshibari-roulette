@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
 
     const star5Weapons = ["千烈の日輪", "ヴィヴィッド・ハート", "寝正月の初晴", "祭星者の眺め", "星鷲の紅き羽", "岩峰を巡る歌", "サーフィンタイム", "山の王の長牙", "ルミドゥースの挽歌", "赦罪", "白雨心弦", "赤月のシルエット", "有楽御簾切", "鶴鳴の余韻", "裁断", "静水流転の輝き", "凛流の監視者", "久遠流転の大典", "始まりの大魔術", "碧落の瓏", "葦海の標", "翠光の裁葉", "トゥライトゥーラの記憶", "千夜に浮かぶ夢", "聖顕の鍵", "赤砂の杖", "狩人の道", "若水", "飛来の鳴弦", "風鷹剣", "霧切の廻光", "アモスの弓", "赤角石塵滅砕", "破天の槍", "草薙の稲光", "蒼古なる自由への誓い", "終焉を嘆く詩", "神楽の真意", "盤岩結緑", "狼の末路", "波乱月白経津", "松韻の響く頃", "無工の剣", "斬山の刃", "護摩の杖", "息災", "天空の脊", "浮世の錠", "天空の翼", "天空の巻", "天空の刃", "天空の傲", "四風原典", "和璞鳶", "冬極の白星", "不滅の月華", "砕け散る光輪"];
-    const allWeapons = {"長柄武器": ["香りのシンフォニスト", "砕け散る光輪", "玉響停の御噺", "鎮山の釘", "虹の行方", "ルミドゥースの挽歌", "赤月のシルエット", "砂中の賢者達の問答", "プロスペクタードリル", "フィヨルドの歌", "正義の報酬", "赤砂の杖", "風信の矛", "ムーンピアサー", "ドラゴンスピア", "黒缨槍", "黒岩の突槍", "鉄尖槍", "鉾槍", "破天の槍", "星鎌・試作", "西風長槍", "草薙の稲光", "白缨槍", "流月の針", "新米の長槍", "斬波のひれ長", "護摩の杖", "息災", "旧貴族猟槍", "天空の脊", "喜多院十文字槍", "和璞鳶", "千岩長槍", "「漁獲」", "匣中滅龍", "死闘の槍"], "法器": ["ヴィヴィッド・ハート", "寝正月の初晴", "祭星者の眺め", "波乗りの旋回", "ヤシュチェの環", "蒼紋の角杯", "サーフィンタイム", "鶴鳴の余韻", "凛流の監視者", "久遠流転の大典", "果てなき紺碧の唄", "古祠の瓏", "純水流華", "碧落の瓏", "トゥライトゥーラの記憶", "千夜に浮かぶ夢", "彷徨える星", "満悦の実", "黒岩の緋玉", "魔導緒論", "金珀・試作", "誓いの明瞳", "龍殺しの英傑譚", "西風秘典", "翡玉法珠", "祭礼の断片", "神楽の真意", "白辰の輪", "特級の宝玉", "流浪楽章", "ダークアレイの酒と詩", "昭心", "冬忍びの実", "異世界旅行記", "浮世の錠", "旧貴族秘法録", "生徒ノート", "天空の巻", "四風原典", "ドドコの物語", "ポケット魔導書", "匣中日月", "不滅の月華", "万国諸海の図譜"], "弓": ["冷寂の音", "星鷲の紅き羽", "花飾りの羽", "チェーンブレイカー", "築雲", "白雨心弦", "レンジゲージ", "烈日の後嗣", "静寂の唄", "ael", "トキの嘴", "王の近侍", "竭沢", "狩人の道", "落霞", "若水", "黒岩の戦弓", "鴉羽の弓", "飛来の鳴弦", "風花の頌歌", "アモスの弓", "リングボウ", "澹月・試作", "西風猟弓", "青翠の狩猟弓", "絶弦", "終焉を嘆く詩", "祭礼の弓", "シャープシューターの誓い", "破魔の弓", "狩猟弓", "曚雲の月", "ダークアレイの狩人", "プレデター", "弾弓", "弓蔵", "幽夜のワルツ", "旧貴族長弓", "天空の翼", "リカーブボウ", "歴戦の狩猟弓", "冬極の白星", "文使い"], "両手剣": ["千烈の日輪", "実りの鉤鉈", "アースシェイカー", "山の王の長牙", "「スーパーアルティメット覇王魔剣」", "裁断", "携帯型チェンソー", "話死合い棒", "タイダル・シャドー", "葦海の標", "鉄彩の花", "マカイラの水色", "森林のレガリア", "黒岩の斬刀", "飛天大御剣", "雪葬の星銀", "雨裁", "鉄影段平", "鐘の剣", "赤角石塵滅砕", "古華・試作", "訓練用大剣", "西風大剣", "知恵の溶炎", "銜玉の海皇", "螭龍の剣", "祭礼の大剣", "白鉄の大剣", "白影の剣", "狼の末路", "龍血を浴びた剣", "桂木斬長正", "松韻の響く頃", "無工の剣", "惡王丸", "旧貴族大剣", "天空の傲", "千岩古剣", "傭兵の重剣", "理屈責め"], "片手剣": ["厄水の災い", "岩峰を巡る歌", "ストロングボーン", "エズピツァルの笛", "赦罪", "有楽御簾切", "水仙十字の剣", "静水流転の輝き", "船渠剣", "狼牙", "サーンドルの渡し守", "海淵のフィナーレ", "翠光の裁葉", "東花坊時雨", "サイフォスの月明かり", "聖顕の鍵", "原木刀", "籠鶴瓶一心", "黒岩の長剣", "黒剣", "黎明の神剣", "飛天御剣", "風鷹剣", "霧切の廻光", "降臨の剣", "銀の剣", "鉄蜂の刺し", "シナバースピンドル", "斬岩・試作", "西風剣", "蒼古なる自由への誓い", "腐食の剣", "笛の剣", "祭礼の剣", "盤岩結緑", "波乱月白経津", "暗鉄剣", "ダークアレイの閃光", "無鋒の剣", "旅道の剣", "斬山の刃", "旧貴族長剣", "天空の刃", "天目影打", "チ虎魚の刀", "匣中龍吟", "冷刃", "蒼耀"]};
+    const allWeapons = {"長柄武器": ["香りのシンフォニスト", "砕け散る光輪", "玉響停の御噺", "鎮山の釘", "虹の行方", "ルミドゥースの挽歌", "赤月のシルエット", "砂中の賢者達の問答", "プロスペクタードリル", "フィヨルドの歌", "正義の報酬", "赤砂の杖", "風信の矛", "ムーンピアサー", "ドラゴンスピア", "黒缨槍", "黒岩の突槍", "鉄尖槍", "鉾槍", "破天の槍", "星鎌・試作", "西風長槍", "草薙の稲光", "白缨槍", "流月の針", "新米の長槍", "斬波のひれ長", "護摩の杖", "息災", "旧貴族猟槍", "天空の脊", "喜多院十文字槍", "和璞鳶", "千岩長槍", "「漁獲」", "匣中滅龍", "死闘の槍"], "法器": ["ヴィヴィッド・ハート", "寝正月の初晴", "祭星者の眺め", "波乗りの旋回", "ヤシュチェの環", "蒼紋の角杯", "サーフィンタイム", "鶴鳴の余韻", "凛流の監視者", "久遠流転の大典", "果てなき紺碧の唄", "古祠の瓏", "純水流華", "碧落の瓏", "トゥライトゥーラの記憶", "千夜に浮かぶ夢", "彷徨える星", "満悦の実", "黒岩の緋玉", "魔導緒論", "金珀・試作", "誓いの明瞳", "龍殺しの英傑譚", "西風秘典", "翡玉法珠", "祭礼の断片", "神楽の真意", "白辰の輪", "特級の宝玉", "流浪楽章", "ダークアレイの酒と詩", "昭心", "冬忍びの実", "異世界旅行記", "浮世の錠", "旧貴族秘法録", "生徒ノート", "天空の巻", "四風原典", "ドドコの物語", "ポケット魔導書", "匣中日月", "不滅の月華", "万国諸海の図譜"], "弓": ["冷寂の音", "星鷲の紅き羽", "花飾りの羽", "チェーンブレイカー", "築雲", "白雨心弦", "レンジゲージ", "烈日の後嗣", "静寂の唄", "ael", "トキの嘴", "王の近侍", "竭沢", "狩人の道", "落霞", "若水", "黒岩の戦弓", "鴉羽の弓", "飛来の鳴弦", "風花の頌歌", "アモスの弓", "リングボウ", "澹月・試作", "西風猟弓", "青翠の狩猟弓", "絶弦", "終焉を嘆く詩", "祭礼の弓", "シャープシューターの誓い", "破魔の弓", "狩猟弓", "曚雲の月", "ダークアレイの狩人", "プレデター", "弾弓", "弓蔵", "幽夜のワルツ", "旧貴族長弓", "天空の翼", "リカーブボウ", "歴戦の狩猟弓", "冬極の白星", "文使い"], "両手剣": ["千烈の日輪", "実りの鉤鉈", "アースシェイカー", "山の王の長牙", "「スーパーアルティメット覇王魔剣」", "裁断", "携帯型チェンソー", "話死合い棒", "タイダル・シャドー", "葦海の標", "鉄彩の花", "マカイラの水色", "森林のレガリア", "黒岩の斬刀", "飛天大御剣", "雪葬の星銀", "雨裁", "鉄影段平", "鐘の剣", "赤角石塵滅砕", "古華・試作", "訓練用大剣", "西風大剣", "銜玉の海皇", "螭龍の剣", "祭礼の大剣", "白鉄の大剣", "白影の剣", "狼の末路", "龍血を浴びた剣", "桂木斬長正", "松韻の響く頃", "無工の剣", "惡王丸", "旧貴族大剣", "天空の傲", "千岩古剣", "傭兵の重剣", "理屈責め"], "片手剣": ["厄水の災い", "岩峰を巡る歌", "ストロングボーン", "エズピツァルの笛", "赦罪", "有楽御簾切", "水仙十字の剣", "静水流転の輝き", "船渠剣", "狼牙", "サーンドルの渡し守", "海淵のフィナーレ", "翠光の裁葉", "東花坊時雨", "サイフォスの月明かり", "聖顕の鍵", "原木刀", "籠鶴瓶一心", "黒岩の長剣", "黒剣", "黎明の神剣", "飛天御剣", "風鷹剣", "霧切の廻光", "降臨の剣", "銀の剣", "鉄蜂の刺し", "シナバースピンドル", "斬岩・試作", "西風剣", "蒼古なる自由への誓い", "腐食の剣", "笛の剣", "祭礼の剣", "盤岩結緑", "波乱月白経津", "暗鉄剣", "ダークアレイの閃光", "無鋒の剣", "旅道の剣", "斬山の刃", "旧貴族長剣", "天空の刃", "天目影打", "チ虎魚の刀", "匣中龍吟", "冷刃", "蒼耀"]};
     const bosses = ["無相の炎", "無相の水", "無相の風", "無相の雷", "無相の草", "無相の氷", "無相の岩", "純水精霊", "雷音権現", "水形タルパ", "深罪の浸礼者", "黄金王獣", "深淵なるミミック・パピラ", "遺跡サーペント", "恒常からくり陣形", "兆載永劫ドレイク", "半永久統制マトリックス", "氷風組曲コペリウス", "氷風組曲コッペリア", "秘源機兵・機構デバイス", "魔偶剣鬼", "実験用フィールド生成装置", "迷える霊覚の修権者", "爆炎樹", "迅電樹", "急凍樹", "エンシェントヴィシャップ・岩", "アビサルヴィシャップ", "マッシュラプトル", "風食ウェネト", "鉄甲熔炎帝王", "千年真珠の海駿", "山隠れの猊獣", "魔像レガトゥス", "暴君・金焔のクク竜", "山の王・貪食のユムカ竜", "輝ける溶岩の龍像", "秘源機兵・統御デバイス", "アンドリアス", "公子", "若陀龍王", "淑女", "禍津御建鳴神命", "正機の神", "アペプ", "吞星の鯨", "召使", "グーシートース", "キング＆クイーン", "ヴィヴィアン", "ニニアン", "イゾルト", "リアム", "ロッキー", "ディアンナラ", "赤璋巡岳府君", "シネアス", "異色三連星", "バラチコ", "コシーホ", "ジャプー", "リライ", "銅の掟", "ピーク", "戦羊・鉄爪", "微末", "最後のテノチズトク人"];
     const binds = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示＋リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止＋リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし", "武器縛り"];
     const initialCharacters = ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー"];
@@ -251,18 +251,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (subRoulettes[bindName]) {
             currentRoulette = 'sub';
             let subItems = subRoulettes[bindName];
+            const currentFilters = {...results.common, ...results.players[currentPlayer - 1]};
 
             if (bindName === "武器縛り") {
-                if(results.players[currentPlayer - 1]["武器種縛り"]) {
-                    subItems = allWeapons[results.players[currentPlayer - 1]["武器種縛り"]];
+                const weaponTypeFilter = currentFilters["武器種縛り"];
+                if(weaponTypeFilter) {
+                    subItems = allWeapons[weaponTypeFilter] || [];
                 }
-                if(results.common["☆４キャラ武器"]) {
+                if(currentFilters["☆４キャラ武器"]) {
                     subItems = subItems.filter(w => !star5Weapons.includes(w));
                 }
             } else {
-                const tempFilters = {...results.common, ...results.players[currentPlayer - 1]};
                  subItems = subItems.filter(option => {
-                    const tempWithOption = {...tempFilters};
+                    const tempWithOption = {...currentFilters};
                     tempWithOption[bindName] = option;
                     return characters.some(char => checkCharEligibility(char, tempWithOption));
                  });
@@ -402,12 +403,11 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.drawImage(prerenderedRoulette, -canvas.width / 2, -canvas.height / 2);
         ctx.restore();
         
-        // 矢印を描画 (右側中央)
         const arrowBaseX = canvas.width / 2 + (canvas.width / 2 - 20);
         ctx.beginPath();
-        ctx.moveTo(arrowBaseX - 20, canvas.height / 2);
-        ctx.lineTo(arrowBaseX, canvas.height / 2 - 10);
+        ctx.moveTo(arrowBaseX, canvas.height / 2 - 10);
         ctx.lineTo(arrowBaseX, canvas.height / 2 + 10);
+        ctx.lineTo(arrowBaseX - 25, canvas.height / 2);
         ctx.closePath();
         ctx.fillStyle = '#FF0000';
         ctx.fill();
@@ -684,7 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showScreen('startScreen');
     }
     
-    // ★★ここを修正★★ カスタム縛り関連の関数を再修正
+    // ★★ここを修正★★ 「武器縛り」の定義を変更
     function showCustomBindScreen() {
         initialize();
         mode = 'custom';
@@ -705,6 +705,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: '誕生月', type: 'select', options: subRoulettes['誕生月'], target: 'grid' },
             { name: 'アルファベット縛り', type: 'select', options: subRoulettes['アルファベット縛り'], target: 'grid' },
             // target: 'buttons' は追加ルールエリアに配置
+            { name: '武器縛り', type: 'check', target: 'buttons' }, // ★ドロップダウンをやめて、追加ルールエリアに移動
             { name: '恒常☆５縛り', type: 'check', target: 'buttons' },
             { name: '☆４キャラ武器', type: 'check', target: 'buttons' },
             { name: '所持率100％縛り', type: 'check', target: 'buttons' },
@@ -716,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         bindDefinitions.forEach(bind => {
             const itemDiv = document.createElement('div');
-            itemDiv.className = 'custom-bind-item';
+            itemDiv.className = bind.target === 'buttons' ? 'checkbox-label' : 'custom-bind-item';
             
             const label = document.createElement('label');
             label.className = 'checkbox-label-main';
@@ -731,7 +732,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (bind.type === 'select') {
                 const select = document.createElement('select');
                 select.dataset.detailFor = bind.name;
-                select.style.display = 'none'; // 最初は非表示
+                select.style.display = 'none'; 
                 
                 const randomOption = document.createElement('option');
                 randomOption.value = 'random';
@@ -751,17 +752,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
             
-            // 縛りの種類に応じて配置場所を決定
             if (bind.target === 'grid') {
                 gridContainer.appendChild(itemDiv);
             } else {
-                // button-group-checkboxの中に直接入れるのではなく、
-                // checkbox-labelでラップしてスタイルを適用する
-                const wrapperLabel = document.createElement('label');
-                wrapperLabel.className = 'checkbox-label';
-                wrapperLabel.innerHTML = ''; // 中身を一旦空に
-                wrapperLabel.appendChild(itemDiv);
-                buttonsContainer.appendChild(wrapperLabel);
+                buttonsContainer.appendChild(itemDiv);
             }
         });
     }
@@ -772,8 +766,7 @@ document.addEventListener('DOMContentLoaded', function() {
         results.players = [{}];
         currentPlayer = 1;
         
-        // 両方のコンテナからアイテムを取得
-        const bindItems = document.querySelectorAll('#customBindGrid .custom-bind-item, #customBindButtons .custom-bind-item');
+        const bindItems = document.querySelectorAll('#customBindGrid .custom-bind-item, #customBindButtons .checkbox-label');
         selectedBinds = [];
 
         bindItems.forEach(item => {
@@ -785,9 +778,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (select) { 
                     const selectedValue = select.value;
                     if (selectedValue === 'random') {
-                        selectedBinds.push(bindName); // ルーレット対象
+                        selectedBinds.push(bindName);
                     } else {
-                        results.common[bindName] = selectedValue; // 条件を直接設定
+                        results.common[bindName] = selectedValue;
                     }
                 } else { 
                      selectedBinds.push(bindName); 
