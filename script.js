@@ -39,8 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り"];
-    const characterFilterBinds = ["国縛り", "モノ元素縛り", "武器種縛り", "誕生月", "各1.1縛り", "アルファベット縛り", "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "旅人縛り", "所持率100％縛り", "武器縛り"];
-    
+
     let playerCount, bindCount, mode, currentRoulette, currentBindName, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, lastResult;
     let rerolledChars, rerolledWeapons;
     let prerenderedRoulette = null;
@@ -719,20 +718,32 @@ document.addEventListener('DOMContentLoaded', function() {
             manualBinds[cb.value] = true;
         });
         
-        results.common = manualBinds;
+        // プレイヤーごとの縛りと共通縛りを正しく分類
+        Object.keys(manualBinds).forEach(key => {
+            if (playerBindTypes.includes(key)) {
+                results.players[0][key] = manualBinds[key];
+            } else {
+                results.common[key] = manualBinds[key];
+            }
+        });
         
         randomBinds.forEach(bindName => {
             let availableOptions = subRoulettes[bindName];
             availableOptions = availableOptions.filter(option => {
-                const tempFilters = {...results.common, [bindName]: option};
+                const tempFilters = {...results.common, ...results.players[0], [bindName]: option};
                 return characters.some(char => checkCharEligibility(char, tempFilters));
             });
             if(availableOptions.length > 0) {
-                results.common[bindName] = availableOptions[Math.floor(Math.random() * availableOptions.length)];
+                const result = availableOptions[Math.floor(Math.random() * availableOptions.length)];
+                if (playerBindTypes.includes(bindName)) {
+                     results.players[0][bindName] = result;
+                } else {
+                     results.common[bindName] = result;
+                }
             }
         });
         
-        const playerBindsToExecute = Object.keys(manualBinds).filter(b => playerBindTypes.includes(b));
+        const playerBindsToExecute = Object.keys(results.players[0]);
         if (playerBindsToExecute.length > 0) {
             mode = 'selected';
             selectedBinds = playerBindsToExecute;
