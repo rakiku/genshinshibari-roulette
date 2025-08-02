@@ -597,7 +597,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initialize();
         showScreen('startScreen');
     }
-
+    
     // =================================================================
     // 【新機能】カスタム縛り設定
     // =================================================================
@@ -688,7 +688,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('#custom-bind-checkboxes .checkbox-label').forEach(label => {
             const checkbox = label.querySelector('input');
             const bindName = checkbox.value;
-            if(checkbox.checked) return; // 既にチェックされているものは無効化しない
+            if(checkbox.checked) return;
             const tempFilters = {...currentFilters};
             tempFilters[bindName] = true;
             
@@ -733,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const playerBindsToExecute = Object.keys(manualBinds).filter(b => playerBindTypes.includes(b));
         if (playerBindsToExecute.length > 0) {
-            mode = 'selected'; // selectedモードとして実行
+            mode = 'selected';
             selectedBinds = playerBindsToExecute;
             startNextSelectedBind();
         } else {
