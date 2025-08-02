@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り"];
-
+    const characterFilterBinds = ["国縛り", "モノ元素縛り", "武器種縛り", "誕生月", "各1.1縛り", "アルファベット縛り", "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "旅人縛り", "所持率100％縛り", "武器縛り"];
+    
     let playerCount, bindCount, mode, currentRoulette, currentBindName, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, lastResult;
     let rerolledChars, rerolledWeapons;
     let prerenderedRoulette = null;
@@ -392,8 +393,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processResult() {
-        const isCommonFilter = subRoulettes[currentBindName] && !playerBindTypes.includes(currentBindName) && currentBindName !== 'アルファベット縛り';
-
+        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り');
+        
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
             if (mode === 'boss') { showResults(); return; }
@@ -401,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentRoulette === 'bind') {
             setupRouletteForBind(lastResult);
         } else if (currentRoulette === 'sub') {
-            (isCommonFilter ? results.common : results.players[currentPlayer - 1])[currentBindName] = lastResult;
+            (isPlayerSpecificSubBind ? results.players[currentPlayer - 1] : results.common)[currentBindName] = lastResult;
             proceedToNextPlayer();
         } else if (currentRoulette === 'character') {
             if (currentBindName === 'キャラ武器ルーレット') {
@@ -432,9 +433,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function proceedToNextPlayer() {
-        const isCommonFilter = subRoulettes[currentBindName] && !playerBindTypes.includes(currentBindName) && currentBindName !== 'アルファベット縛り';
+        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && currentBindName !== '国縛り' && currentBindName !== 'モノ元素縛り' && currentBindName !== '各1.1縛り');
         currentPlayer++;
-        if (currentPlayer > playerCount || !isCommonFilter) {
+        if (currentPlayer > playerCount || !isPlayerSpecificSubBind) {
             currentPlayer = 1;
             proceedToNext();
         } else {
