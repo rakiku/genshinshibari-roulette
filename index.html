@@ -26,31 +26,29 @@
                 <button id="startBossButton">ボスルーレットのみ</button>
                 <button id="startBindButton">縛りルーレットのみ</button>
                 <button id="showBindSelectionButton">詳細縛り設定</button>
-                <button id="showCustomBindButton">カスタム縛り設定</button>
+                <button id="showCustomBindScreenButton">カスタム縛り設定</button>
             </div>
         </div>
 
-        <!-- 詳細縛り設定画面 (従来) -->
+        <!-- カスタム縛り設定画面 -->
+        <div id="customBindScreen" class="hidden">
+            <h2>カスタム縛り設定</h2>
+            <div class="custom-bind-grid">
+                <!-- ドロップダウンがここに生成されます -->
+            </div>
+            <div class="custom-bind-checkboxes">
+                <h3>追加するルーレットを選ぶ</h3>
+                <!-- チェックボックスがここに生成されます -->
+            </div>
+            <button id="executeCustomBindsButton">この条件で実行</button>
+        </div>
+
+        <!-- 縛り選択画面 (詳細縛り設定) -->
         <div id="bindSelection" class="hidden">
             <h2>縛りを選択してください</h2>
             <div id="bindButtons" class="button-group-checkbox"></div>
             <button id="executeSelectionButton">選択した縛りで実行</button>
         </div>
-        
-        <!-- カスタム縛り設定画面 (新機能) -->
-        <div id="customBindScreen" class="hidden">
-            <h2>カスタム縛り設定</h2>
-            <div class="custom-bind-section">
-                <h3>キャラクターの性質を直接指定</h3>
-                <div id="custom-bind-dropdowns" class="custom-dropdown-group"></div>
-            </div>
-            <div class="custom-bind-section">
-                <h3>追加するルーレットを選ぶ</h3>
-                <div id="custom-bind-checkboxes" class="button-group-checkbox"></div>
-            </div>
-            <button id="executeCustomBindsButton">この条件で実行</button>
-        </div>
-
 
         <!-- ルーレット画面 -->
         <div id="rouletteScreen" class="hidden">
