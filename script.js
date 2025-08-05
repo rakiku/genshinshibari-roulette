@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // (データベース部分は変更ないので省略)
+
     const characters = [
         // モンド
         { name: "ジン", country: "モンド", weapon: "片手剣", element: "風", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒常☆５'] },
@@ -146,7 +146,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const ctx = canvas.getContext('2d');
     const colors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
 
-    // イベントリスナー集約
     document.getElementById('startAllButton').addEventListener('click', () => startRoulette('all'));
     document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
     document.getElementById('startBindButton').addEventListener('click', () => startRoulette('bind'));
@@ -684,7 +683,6 @@ document.addEventListener('DOMContentLoaded', function() {
         showScreen('startScreen');
     }
     
-    // ★★ここを修正★★ 「武器縛り」の定義を変更
     function showCustomBindScreen() {
         initialize();
         mode = 'custom';
@@ -698,14 +696,13 @@ document.addEventListener('DOMContentLoaded', function() {
         buttonsContainer.innerHTML = '';
 
         const bindDefinitions = [
-            // target: 'grid' は性質決定エリアに配置
+
             { name: '国縛り', type: 'select', options: subRoulettes['国縛り'], target: 'grid' },
             { name: 'モノ元素縛り', type: 'select', options: subRoulettes['モノ元素縛り'], target: 'grid' },
             { name: '武器種縛り', type: 'select', options: subRoulettes['武器種縛り'], target: 'grid' },
             { name: '誕生月', type: 'select', options: subRoulettes['誕生月'], target: 'grid' },
             { name: 'アルファベット縛り', type: 'select', options: subRoulettes['アルファベット縛り'], target: 'grid' },
-            // target: 'buttons' は追加ルールエリアに配置
-            { name: '武器縛り', type: 'check', target: 'buttons' }, // ★ドロップダウンをやめて、追加ルールエリアに移動
+            { name: '武器縛り', type: 'check', target: 'buttons' }, 
             { name: '恒常☆５縛り', type: 'check', target: 'buttons' },
             { name: '☆４キャラ武器', type: 'check', target: 'buttons' },
             { name: '所持率100％縛り', type: 'check', target: 'buttons' },
