@@ -1,7 +1,6 @@
-/* 全体のスタイル */
 body {
     font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-    background-image: url('background.jpg');
+    background-image: url('background.jpg.png');
     background-color: #2c3e50;
     background-size: cover;
     background-position: center center;
@@ -43,6 +42,13 @@ h1, h2, h3 {
     color: #fff;
     margin-bottom: 20px;
 }
+
+h2 + p {
+    margin-top: -15px;
+    margin-bottom: 25px;
+    color: #bdc3c7;
+}
+
 
 .hidden {
     display: none;
@@ -103,13 +109,17 @@ button:disabled {
 }
 
 #stopButton {
-    background-color: #555;
+    background-color: #c0392b;
 }
 #stopButton:not(:disabled):hover {
-    background-color: #777;
+    background-color: #e74c3c;
+}
+#executeCustomBindsButton {
+    margin-top: 10px;
+    width: 100%;
 }
 
-/* カスタム縛り設定画面 */
+
 .custom-bind-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -118,13 +128,22 @@ button:disabled {
 }
 
 .custom-bind-item {
+    background-color: #34495e;
+    padding: 10px 15px;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
+    gap: 10px;
     text-align: left;
 }
 
-.custom-bind-item label {
-    margin-bottom: 5px;
+.custom-bind-item .checkbox-label-main {
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+}
+.custom-bind-item .checkbox-label-main input {
+    margin-right: 8px;
 }
 
 .custom-bind-item select {
@@ -132,8 +151,9 @@ button:disabled {
     padding: 8px;
     border-radius: 5px;
     border: 1px solid #7f8c8d;
-    background-color: #34495e;
+    background-color: #2c3e50;
     color: #ecf0f1;
+    margin-top: 5px;
 }
 
 .custom-bind-checkboxes {
@@ -142,6 +162,7 @@ button:disabled {
     padding-top: 20px;
 }
 
+
 .button-group-checkbox {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -149,6 +170,7 @@ button:disabled {
     margin: 20px 0;
     text-align: left;
 }
+
 .checkbox-label {
     display: block;
     background-color: #34495e;
@@ -194,7 +216,7 @@ canvas {
     transform: translate(-50%, -50%);
     background-color: rgba(0, 0, 0, 0.85);
     color: #fff;
-    padding: 40px 50px 30px 50px; /* 上の余白を少し増やす */
+    padding: 30px 50px;
     border-radius: 10px;
     font-size: 2.5em;
     font-weight: bold;
@@ -202,24 +224,7 @@ canvas {
     text-shadow: 2px 2px 5px #000;
     border: 2px solid #fff;
     cursor: pointer;
-    position: relative; /* ★★ 修正 ★★ */
 }
-
-/* ★★ ここから追加 ★★ */
-.popup-close {
-    position: absolute;
-    top: 5px;
-    right: 15px;
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #fff;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-.popup-close:hover {
-    color: #ccc;
-}
-
 
 #results {
     text-align: left;
