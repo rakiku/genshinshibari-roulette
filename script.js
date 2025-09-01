@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "ロサリア", country: "モンド", weapon: "長柄武器", element: "氷", birth_month: "１月", version: "n.4", rarity: ['☆４'] },
         { name: "エウルア", country: "モンド", weapon: "両手剣", element: "氷", birth_month: "１０月", version: "n.5", rarity: ['☆５'] },
         { name: "ミカ", country: "モンド", weapon: "長柄武器", element: "氷", birth_month: "８月", version: "n.5", rarity: ['☆４'] },
-        { name: "ダリア", country: "モンド", weapon: "片手剣", element: "水", birth_month: "その他", version: "n.7", rarity: ['☆４'] },
+        { name: "ダリア", country: "モンド", weapon: "片手剣", element: "水", birth_month: "５月", version: "n.7", rarity: ['☆４'] },
         // 璃月
         { name: "魈", country: "璃月", weapon: "長柄武器", element: "風", birth_month: "４月", version: "n.4", rarity: ['☆５'] },
         { name: "北斗", country: "璃月", weapon: "両手剣", element: "雷", birth_month: "２月", version: "n.0", rarity: ['☆４'] },
@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let rerolledChars, rerolledWeapons;
     let prerenderedRoulette = null;
     let spinSpeed = 0;
+    let rerolledCommonWeapons; // ★★★ 修正・追加箇所 ★★★
 
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
@@ -180,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
         lastResult = null;
         rerolledChars = Array(playerCount + 1).fill(0).map(() => []);
         rerolledWeapons = Array(playerCount + 1).fill(0).map(() => ({}));
+        rerolledCommonWeapons = []; // ★★★ 修正・追加箇所 ★★★
     }
 
     function showBindSelection() {
@@ -455,6 +457,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 20);
         document.getElementById('stopButton').disabled = true;
     };
+    
+    // ★★★ 修正・追加箇所 ★★★ (ここから)
     function showPopup(text) {
         const popup = document.getElementById('popup');
         popup.textContent = text;
@@ -462,13 +466,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const clickHandler = () => {
             popup.style.display = 'none';
             document.getElementById('nextButton').classList.remove('hidden');
-            if(currentRoulette === 'character' || currentRoulette === 'weapon') {
+            if(currentRoulette === 'character' || currentRoulette === 'weapon' || (currentRoulette === 'sub' && currentBindName === '武器縛り')) {
                 document.getElementById('notOwnedButton').classList.remove('hidden');
             }
             popup.removeEventListener('click', clickHandler);
         };
         popup.addEventListener('click', clickHandler);
     };
+    // ★★★ 修正・追加箇所 ★★★ (ここまで)
     
     function nextStep() {
         processResult();
@@ -603,6 +608,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).slice().sort(() => Math.random() - 0.5);
     }
     
+    // ★★★ 修正・追加箇所 ★★★ (ここから)
     function notOwned() {
         if(currentRoulette === 'character') {
             rerolledChars[currentPlayer].push(lastResult);
@@ -613,6 +619,19 @@ document.addEventListener('DOMContentLoaded', function() {
             rerolledWeapons[currentPlayer][charName].push(lastResult);
             const weaponType = characters.find(c => c.name === charName).weapon;
             items = getFilteredWeapons(weaponType, charName);
+        } else if (currentRoulette === 'sub' && currentBindName === '武器縛り') {
+            rerolledCommonWeapons.push(lastResult);
+            
+            let filteredWeapons = subRoulettes['武器縛り'];
+            const weaponTypeFilter = results.common["武器種縛り"];
+            if(weaponTypeFilter) {
+                filteredWeapons = allWeapons[weaponTypeFilter] || [];
+            }
+            if(results.common["☆４キャラ武器"]) {
+                filteredWeapons = filteredWeapons.filter(w => !star5Weapons.includes(w));
+            }
+
+            items = filteredWeapons.filter(w => !rerolledCommonWeapons.includes(w)).slice().sort(() => Math.random() - 0.5);
         }
         
         if (items.length === 0) {
@@ -626,6 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
         prerenderRouletteImage();
         drawRoulette();
     }
+    // ★★★ 修正・追加箇所 ★★★ (ここまで)
 
     function showResults() {
         showScreen('resultScreen');
