@@ -145,7 +145,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let rerolledChars, rerolledWeapons;
     let prerenderedRoulette = null;
     let spinSpeed = 0;
-    let rerolledCommonWeapons; // ★★★ 修正・追加箇所 ★★★
+    let rerolledCommonWeapons;
+    let playerNames = []; // ★★★ 修正・追加箇所 ★★★
 
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
@@ -164,6 +165,24 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('nextButton').addEventListener('click', nextStep);
     document.getElementById('notOwnedButton').addEventListener('click', notOwned);
     document.getElementById('backToStartButton').addEventListener('click', backToStart);
+    document.getElementById('playerCount').addEventListener('input', updatePlayerNameInputs); // ★★★ 修正・追加箇所 ★★★
+
+    // ★★★ 修正・追加箇所 ★★★ (ここから)
+    function updatePlayerNameInputs() {
+        const container = document.getElementById('playerNameInputsContainer');
+        const currentCount = parseInt(document.getElementById('playerCount').value) || 1;
+        container.innerHTML = ''; 
+
+        for (let i = 0; i < currentCount; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = `playerName${i + 1}`;
+            input.className = 'playerNameInput';
+            input.placeholder = `プレイヤー${i + 1}の名前`;
+            container.appendChild(input);
+        }
+    }
+    // ★★★ 修正・追加箇所 ★★★ (ここまで)
 
     function showScreen(screenId) {
         ['startScreen', 'bindSelection', 'rouletteScreen', 'resultScreen', 'customBindScreen'].forEach(id => {
@@ -175,13 +194,22 @@ document.addEventListener('DOMContentLoaded', function() {
     function initialize() {
         playerCount = parseInt(document.getElementById('playerCount').value) || 1;
         bindCount = parseInt(document.getElementById('bindCount').value) || 1;
+        
+        // ★★★ 修正・追加箇所 ★★★ (ここから)
+        playerNames = [];
+        for (let i = 0; i < playerCount; i++) {
+            const nameInput = document.getElementById(`playerName${i + 1}`);
+            playerNames.push(nameInput.value || `プレイヤー${i + 1}`);
+        }
+        // ★★★ 修正・追加箇所 ★★★ (ここまで)
+
         results = { boss: null, common: {}, players: Array(playerCount).fill(0).map(() => ({})) };
         currentPlayer = 1;
         currentBindIndex = 0;
         lastResult = null;
         rerolledChars = Array(playerCount + 1).fill(0).map(() => []);
         rerolledWeapons = Array(playerCount + 1).fill(0).map(() => ({}));
-        rerolledCommonWeapons = []; // ★★★ 修正・追加箇所 ★★★
+        rerolledCommonWeapons = [];
     }
 
     function showBindSelection() {
@@ -458,7 +486,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('stopButton').disabled = true;
     };
     
-    // ★★★ 修正・追加箇所 ★★★ (ここから)
     function showPopup(text) {
         const popup = document.getElementById('popup');
         popup.textContent = text;
@@ -473,7 +500,6 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         popup.addEventListener('click', clickHandler);
     };
-    // ★★★ 修正・追加箇所 ★★★ (ここまで)
     
     function nextStep() {
         processResult();
@@ -494,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentRoulette === 'bind') {
             setupRouletteForBind(lastResult);
         } else if (currentRoulette === 'sub') {
-            const commonSubBinds = ["国縛り", "各1.1縛り", "モノ元素縛り", "武器種縛り"];
+            const commonSubBinds = ["国縛り", "モノ元素縛り", "武器種縛り"];
             
             if (commonSubBinds.includes(currentBindName)) {
                 results.common[currentBindName] = lastResult;
@@ -608,7 +634,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }).slice().sort(() => Math.random() - 0.5);
     }
     
-    // ★★★ 修正・追加箇所 ★★★ (ここから)
     function notOwned() {
         if(currentRoulette === 'character') {
             rerolledChars[currentPlayer].push(lastResult);
@@ -645,7 +670,6 @@ document.addEventListener('DOMContentLoaded', function() {
         prerenderRouletteImage();
         drawRoulette();
     }
-    // ★★★ 修正・追加箇所 ★★★ (ここまで)
 
     function showResults() {
         showScreen('resultScreen');
@@ -668,7 +692,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const playerBinds = results.players[i];
             const playerBindKeys = Object.keys(playerBinds);
             if (playerBindKeys.length > 0) {
-                html += `<h3>プレイヤー${i + 1}の縛り：</h3><ul>`;
+                // ★★★ 修正・追加箇所 ★★★
+                html += `<h3>${playerNames[i]}の縛り：</h3><ul>`;
                 playerBindKeys.forEach(bindName => {
                     const resultDetail = playerBinds[bindName];
                     let detailHtml = '';
@@ -696,7 +721,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 finalChars = getFilteredCharacters(null, i + 1);
             }
             
-            html += `<h3>プレイヤー${i + 1}の対象キャラクター (${finalChars.length}人)：</h3>`;
+            // ★★★ 修正・追加箇所 ★★★
+            html += `<h3>${playerNames[i]}の対象キャラクター (${finalChars.length}人)：</h3>`;
             if(finalChars.length > 0){
                 html += `<p class="char-list-final">${finalChars.map(c => c.name).join('、')}</p>`;
             } else {
@@ -790,6 +816,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function executeCustomBinds() {
         initialize(); 
         playerCount = 1;
+        // ★★★ 修正・追加箇所 ★★★ (ここから)
+        playerNames = [];
+        const nameInput = document.getElementById('playerName1');
+        if (nameInput) {
+            playerNames.push(nameInput.value || `プレイヤー1`);
+        }
+        updatePlayerNameInputs();
+        // ★★★ 修正・追加箇所 ★★★ (ここまで)
+
         results.players = [{}];
         currentPlayer = 1;
         
@@ -834,4 +869,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         startNextSelectedBind();
     }
+
+    updatePlayerNameInputs(); // ★★★ 修正・追加箇所 ★★★
 });
