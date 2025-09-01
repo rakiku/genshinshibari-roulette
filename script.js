@@ -478,7 +478,6 @@ document.addEventListener('DOMContentLoaded', function() {
             proceedToNextPlayer();
             return;
         }
-        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && !results.common[currentBindName]);
 
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
@@ -487,8 +486,15 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentRoulette === 'bind') {
             setupRouletteForBind(lastResult);
         } else if (currentRoulette === 'sub') {
-            (isPlayerSpecificSubBind ? results.players[currentPlayer - 1] : results.common)[currentBindName] = lastResult;
-            proceedToNextPlayer();
+            const commonSubBinds = ["国縛り", "モノ元素縛り", "武器種縛り"];
+            
+            if (commonSubBinds.includes(currentBindName)) {
+                results.common[currentBindName] = lastResult;
+                proceedToNext();
+            } else {
+                results.players[currentPlayer - 1][currentBindName] = lastResult;
+                proceedToNextPlayer();
+            }
         } else if (currentRoulette === 'character') {
             if (currentBindName === 'キャラ武器ルーレット') {
                 if(hasPlayerBind('武器縛り')) {
