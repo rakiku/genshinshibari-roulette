@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let prerenderedRoulette = null;
     let spinSpeed = 0;
     let rerolledCommonWeapons;
-    let playerNames = []; // ★★★ 修正・追加箇所 ★★★
+    let playerNames = [];
 
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
@@ -165,9 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('nextButton').addEventListener('click', nextStep);
     document.getElementById('notOwnedButton').addEventListener('click', notOwned);
     document.getElementById('backToStartButton').addEventListener('click', backToStart);
-    document.getElementById('playerCount').addEventListener('input', updatePlayerNameInputs); // ★★★ 修正・追加箇所 ★★★
+    document.getElementById('playerCount').addEventListener('input', updatePlayerNameInputs);
 
-    // ★★★ 修正・追加箇所 ★★★ (ここから)
     function updatePlayerNameInputs() {
         const container = document.getElementById('playerNameInputsContainer');
         const currentCount = parseInt(document.getElementById('playerCount').value) || 1;
@@ -182,7 +181,18 @@ document.addEventListener('DOMContentLoaded', function() {
             container.appendChild(input);
         }
     }
-    // ★★★ 修正・追加箇所 ★★★ (ここまで)
+
+    function updateCurrentPlayerDisplay() {
+        const nameDisplay = document.getElementById('currentPlayerNameDisplay');
+        const commonSubBinds = ["国縛り", "モノ元素縛り", "武器種縛り"];
+        let isPlayerTurn = (currentRoulette === 'character' || currentRoulette === 'weapon' || (currentRoulette === 'sub' && !commonSubBinds.includes(currentBindName)));
+
+        if (isPlayerTurn && playerNames[currentPlayer - 1]) {
+            nameDisplay.textContent = `${playerNames[currentPlayer - 1]} のルーレット`;
+        } else {
+            nameDisplay.textContent = ''; 
+        }
+    }
 
     function showScreen(screenId) {
         ['startScreen', 'bindSelection', 'rouletteScreen', 'resultScreen', 'customBindScreen'].forEach(id => {
@@ -195,13 +205,11 @@ document.addEventListener('DOMContentLoaded', function() {
         playerCount = parseInt(document.getElementById('playerCount').value) || 1;
         bindCount = parseInt(document.getElementById('bindCount').value) || 1;
         
-        // ★★★ 修正・追加箇所 ★★★ (ここから)
         playerNames = [];
         for (let i = 0; i < playerCount; i++) {
             const nameInput = document.getElementById(`playerName${i + 1}`);
             playerNames.push(nameInput.value || `プレイヤー${i + 1}`);
         }
-        // ★★★ 修正・追加箇所 ★★★ (ここまで)
 
         results = { boss: null, common: {}, players: Array(playerCount).fill(0).map(() => ({})) };
         currentPlayer = 1;
@@ -274,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
             currentRoulette = 'bind';
             items = getAvailableBinds();
         }
+        updateCurrentPlayerDisplay();
         document.getElementById('spinButton').disabled = false;
         prerenderRouletteImage();
         drawRoulette();
@@ -324,6 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        updateCurrentPlayerDisplay(); // ★★★ 修正・追加箇所 ★★★
         prerenderRouletteImage();
 
         if (items.length <= 1 && currentRoulette !== 'boss' && currentRoulette !== 'bind') {
@@ -692,7 +702,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const playerBinds = results.players[i];
             const playerBindKeys = Object.keys(playerBinds);
             if (playerBindKeys.length > 0) {
-                // ★★★ 修正・追加箇所 ★★★
                 html += `<h3>${playerNames[i]}の縛り：</h3><ul>`;
                 playerBindKeys.forEach(bindName => {
                     const resultDetail = playerBinds[bindName];
@@ -721,7 +730,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 finalChars = getFilteredCharacters(null, i + 1);
             }
             
-            // ★★★ 修正・追加箇所 ★★★
             html += `<h3>${playerNames[i]}の対象キャラクター (${finalChars.length}人)：</h3>`;
             if(finalChars.length > 0){
                 html += `<p class="char-list-final">${finalChars.map(c => c.name).join('、')}</p>`;
@@ -737,6 +745,7 @@ document.addEventListener('DOMContentLoaded', function() {
         spinning = false;
         initialize();
         showScreen('startScreen');
+        updateCurrentPlayerDisplay();
     }
     
     function showCustomBindScreen() {
@@ -816,14 +825,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function executeCustomBinds() {
         initialize(); 
         playerCount = 1;
-        // ★★★ 修正・追加箇所 ★★★ (ここから)
         playerNames = [];
         const nameInput = document.getElementById('playerName1');
         if (nameInput) {
             playerNames.push(nameInput.value || `プレイヤー1`);
         }
         updatePlayerNameInputs();
-        // ★★★ 修正・追加箇所 ★★★ (ここまで)
 
         results.players = [{}];
         currentPlayer = 1;
@@ -870,5 +877,5 @@ document.addEventListener('DOMContentLoaded', function() {
         startNextSelectedBind();
     }
 
-    updatePlayerNameInputs(); // ★★★ 修正・追加箇所 ★★★
+    updatePlayerNameInputs();
 });
