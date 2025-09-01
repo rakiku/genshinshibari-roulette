@@ -494,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentRoulette === 'bind') {
             setupRouletteForBind(lastResult);
         } else if (currentRoulette === 'sub') {
-            const commonSubBinds = ["国縛り", "モノ元素縛り", "武器種縛り"];
+            const commonSubBinds = ["国縛り", "各1.1縛り", "モノ元素縛り", "武器種縛り"];
             
             if (commonSubBinds.includes(currentBindName)) {
                 results.common[currentBindName] = lastResult;
