@@ -139,7 +139,17 @@ document.addEventListener('DOMContentLoaded', function() {
         "武器縛り": Object.values(allWeapons).flat()
     };
     
-    const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り"];
+    const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り", "誕生月", "各1.1縛り"];
+    
+    // ★★★ 修正箇所 ★★★ 縛りの優先順位を定義
+    const bindOrder = [
+        "国縛り", "モノ元素縛り", "武器種縛り",
+        "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "所持率100％縛り", "旅人縛り",
+        "武器縛り",
+        "誕生月", "アルファベット縛り", "各1.1縛り",
+        "キャラルーレット", "キャラ武器ルーレット"
+    ];
+
 
     let playerCount, bindCount, mode, currentRoulette, currentBindName, currentBindIndex, items, angle = 0, spinning = false, selectedBinds = [], results = {}, currentPlayer = 1, lastResult;
     let rerolledChars, rerolledWeapons;
@@ -151,6 +161,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
     const colors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
+
+    // ★★★ 修正箇所 ★★★ 数値入力制限の関数
+    function enforceMinMax(input) {
+        let value = parseInt(input.value, 10);
+        const min = parseInt(input.min, 10);
+        const max = parseInt(input.max, 10);
+        if (isNaN(value)) value = min;
+        if (value > max) input.value = max;
+        if (value < min) input.value = min;
+    }
+    
+    const playerCountInput = document.getElementById('playerCount');
+    const bindCountInput = document.getElementById('bindCount');
+    playerCountInput.addEventListener('input', () => {
+        enforceMinMax(playerCountInput);
+        updatePlayerNameInputs();
+    });
+    bindCountInput.addEventListener('input', () => enforceMinMax(bindCountInput));
+
 
     document.getElementById('startAllButton').addEventListener('click', () => startRoulette('all'));
     document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
@@ -165,11 +194,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('nextButton').addEventListener('click', nextStep);
     document.getElementById('notOwnedButton').addEventListener('click', notOwned);
     document.getElementById('backToStartButton').addEventListener('click', backToStart);
-    document.getElementById('playerCount').addEventListener('input', updatePlayerNameInputs);
 
     function updatePlayerNameInputs() {
         const container = document.getElementById('playerNameInputsContainer');
-        const currentCount = parseInt(document.getElementById('playerCount').value) || 1;
+        const currentCount = parseInt(playerCountInput.value) || 1;
+        
+        const existingNames = Array.from(container.querySelectorAll('.playerNameInput')).map(input => input.value);
         container.innerHTML = ''; 
 
         for (let i = 0; i < currentCount; i++) {
@@ -178,6 +208,9 @@ document.addEventListener('DOMContentLoaded', function() {
             input.id = `playerName${i + 1}`;
             input.className = 'playerNameInput';
             input.placeholder = `プレイヤー${i + 1}の名前`;
+            if(existingNames[i]) {
+                input.value = existingNames[i];
+            }
             container.appendChild(input);
         }
     }
@@ -185,7 +218,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCurrentPlayerDisplay() {
         const nameDisplay = document.getElementById('currentPlayerNameDisplay');
         const commonSubBinds = ["国縛り", "モノ元素縛り", "武器種縛り"];
-        let isPlayerTurn = (currentRoulette === 'character' || currentRoulette === 'weapon' || (currentRoulette === 'sub' && !commonSubBinds.includes(currentBindName)));
+        
+        let isPlayerTurn = playerBindTypes.includes(currentBindName);
 
         if (isPlayerTurn && playerNames[currentPlayer - 1]) {
             nameDisplay.textContent = `${playerNames[currentPlayer - 1]} のルーレット`;
@@ -202,8 +236,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function initialize() {
-        playerCount = parseInt(document.getElementById('playerCount').value) || 1;
-        bindCount = parseInt(document.getElementById('bindCount').value) || 1;
+        playerCount = parseInt(playerCountInput.value) || 1;
+        bindCount = parseInt(bindCountInput.value) || 1;
         
         playerNames = [];
         for (let i = 0; i < playerCount; i++) {
@@ -245,6 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ★★★ 修正箇所 ★★★ 実行順序を並び替えるロジックを追加
     function executeBinds() {
         selectedBinds = Array.from(document.querySelectorAll('#bindButtons input:checked')).map(cb => cb.value);
         if (selectedBinds.length === 0) {
@@ -253,12 +288,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         selectedBinds.sort((a, b) => {
-            const aIsPlayerBind = playerBindTypes.includes(a);
-            const bIsPlayerBind = playerBindTypes.includes(b);
-            if (aIsPlayerBind && !bIsPlayerBind) return 1;
-            if (!aIsPlayerBind && bIsPlayerBind) return -1;
-            return 0;
+            const indexA = bindOrder.indexOf(a) !== -1 ? bindOrder.indexOf(a) : Infinity;
+            const indexB = bindOrder.indexOf(b) !== -1 ? bindOrder.indexOf(b) : Infinity;
+            return indexA - indexB;
         });
+
         startNextSelectedBind();
     }
     
@@ -333,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        updateCurrentPlayerDisplay(); // ★★★ 修正・追加箇所 ★★★
+        updateCurrentPlayerDisplay();
         prerenderRouletteImage();
 
         if (items.length <= 1 && currentRoulette !== 'boss' && currentRoulette !== 'bind') {
@@ -530,8 +564,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentRoulette === 'bind') {
             setupRouletteForBind(lastResult);
         } else if (currentRoulette === 'sub') {
+            // ★★★ 修正箇所 ★★★ 共通縛りと個人縛りの判定を変更
             const commonSubBinds = ["国縛り", "モノ元素縛り", "武器種縛り"];
-            
             if (commonSubBinds.includes(currentBindName)) {
                 results.common[currentBindName] = lastResult;
                 proceedToNext();
@@ -568,7 +602,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function proceedToNextPlayer() {
-        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName) || (subRoulettes[currentBindName] && !results.common[currentBindName]);
+        const isPlayerSpecificSubBind = playerBindTypes.includes(currentBindName);
         currentPlayer++;
         if (currentPlayer > playerCount || !isPlayerSpecificSubBind) {
             currentPlayer = 1;
@@ -592,8 +626,8 @@ document.addEventListener('DOMContentLoaded', function() {
             currentBindIndex++;
             startNextSelectedBind();
         } else {
-            const totalBinds = Object.keys(results.common).length + Object.keys(results.players[0]).length;
-            if (totalBinds < bindCount) {
+            const totalBinds = Object.keys(results.common).length + Object.values(results.players).reduce((acc, p) => acc + Object.keys(p).length, 0);
+            if (totalBinds < bindCount * playerCount + Object.keys(results.common).length) {
                 currentRoulette = 'bind';
                 items = getAvailableBinds();
                 document.getElementById('spinButton').disabled = false;
@@ -743,139 +777,193 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function backToStart() {
         spinning = false;
-        initialize();
         showScreen('startScreen');
+        updatePlayerNameInputs();
         updateCurrentPlayerDisplay();
     }
     
+    // ★★★ 修正箇所 ★★★ カスタム縛り画面の表示ロジックを大幅に変更
     function showCustomBindScreen() {
         initialize();
         mode = 'custom';
         showScreen('customBindScreen');
-        const gridContainer = document.getElementById('customBindGrid');
-        const buttonsContainer = document.getElementById('customBindButtons');
+        const commonGridContainer = document.getElementById('customBindGrid');
+        const commonButtonsContainer = document.getElementById('customBindButtonsCommon');
+        const playersContainer = document.getElementById('customBindsPlayersContainer');
 
-        if (!gridContainer || !buttonsContainer) return; 
+        commonGridContainer.innerHTML = '';
+        commonButtonsContainer.innerHTML = '';
+        playersContainer.innerHTML = '';
 
-        gridContainer.innerHTML = '';
-        buttonsContainer.innerHTML = '';
+        const commonSelectBinds = ['国縛り', 'モノ元素縛り', '武器種縛り'];
+        const commonCheckBinds = ['恒常☆５縛り', '☆４キャラ武器', '所持率100％縛り', '初期キャラのみ', '旅人縛り'];
+        const playerSelectBinds = ['誕生月', 'アルファベット縛り', '各1.1縛り'];
+        const playerCheckBinds = ['武器縛り', 'キャラルーレット', 'キャラ武器ルーレット'];
 
-        const bindDefinitions = [
+        // 共通の選択縛り
+        commonSelectBinds.forEach(name => createBindItem(name, 'select', commonGridContainer));
+        // 共通のチェック縛り
+        commonCheckBinds.forEach(name => createBindItem(name, 'check', commonButtonsContainer));
 
-            { name: '国縛り', type: 'select', options: subRoulettes['国縛り'], target: 'grid' },
-            { name: 'モノ元素縛り', type: 'select', options: subRoulettes['モノ元素縛り'], target: 'grid' },
-            { name: '武器種縛り', type: 'select', options: subRoulettes['武器種縛り'], target: 'grid' },
-            { name: '誕生月', type: 'select', options: subRoulettes['誕生月'], target: 'grid' },
-            { name: 'アルファベット縛り', type: 'select', options: subRoulettes['アルファベット縛り'], target: 'grid' },
-            { name: '武器縛り', type: 'check', target: 'buttons' }, 
-            { name: '恒常☆５縛り', type: 'check', target: 'buttons' },
-            { name: '☆４キャラ武器', type: 'check', target: 'buttons' },
-            { name: '所持率100％縛り', type: 'check', target: 'buttons' },
-            { name: '初期キャラのみ', type: 'check', target: 'buttons' },
-            { name: '旅人縛り', type: 'check', target: 'buttons' },
-            { name: 'キャラルーレット', type: 'check', target: 'buttons' },
-            { name: 'キャラ武器ルーレット', type: 'check', target: 'buttons' },
-        ];
-
-        bindDefinitions.forEach(bind => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = bind.target === 'buttons' ? 'checkbox-label' : 'custom-bind-item';
+        // プレイヤーごとの縛り
+        for (let i = 1; i <= playerCount; i++) {
+            const playerDiv = document.createElement('div');
+            playerDiv.className = 'custom-bind-player-section';
+            playerDiv.innerHTML = `<h3>${playerNames[i-1]}の縛り</h3>`;
             
-            const label = document.createElement('label');
-            label.className = 'checkbox-label-main';
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.dataset.bindName = bind.name;
+            const playerGrid = document.createElement('div');
+            playerGrid.className = 'custom-bind-grid';
+            playerSelectBinds.forEach(name => createBindItem(name, 'select', playerGrid, i));
             
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(` ${bind.name}`));
-            itemDiv.appendChild(label);
-
-            if (bind.type === 'select') {
-                const select = document.createElement('select');
-                select.dataset.detailFor = bind.name;
-                select.style.display = 'none'; 
-                
-                const randomOption = document.createElement('option');
-                randomOption.value = 'random';
-                randomOption.textContent = 'ランダム';
-                select.appendChild(randomOption);
-
-                bind.options.forEach(opt => {
-                    const option = document.createElement('option');
-                    option.value = opt;
-                    option.textContent = opt;
-                    select.appendChild(option);
-                });
-                itemDiv.appendChild(select);
-                
-                checkbox.addEventListener('change', (e) => {
-                    select.style.display = e.target.checked ? 'inline-block' : 'none';
-                });
-            }
+            const playerButtons = document.createElement('div');
+            playerButtons.className = 'button-group-checkbox';
+            playerCheckBinds.forEach(name => createBindItem(name, 'check', playerButtons, i));
             
-            if (bind.target === 'grid') {
-                gridContainer.appendChild(itemDiv);
-            } else {
-                buttonsContainer.appendChild(itemDiv);
-            }
-        });
+            playerDiv.appendChild(playerGrid);
+            playerDiv.appendChild(playerButtons);
+            playersContainer.appendChild(playerDiv);
+        }
     }
 
+    // ★★★ 追加 ★★★ カスタム縛りのUI要素を作成するヘルパー関数
+    function createBindItem(name, type, container, playerIndex = 0) {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = type === 'check' ? 'checkbox-label' : 'custom-bind-item';
+        
+        const label = document.createElement('label');
+        label.className = 'checkbox-label-main';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.bindName = name;
+        if(playerIndex > 0) checkbox.dataset.player = playerIndex;
+        
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(` ${name}`));
+        itemDiv.appendChild(label);
+
+        if (type === 'select') {
+            const select = document.createElement('select');
+            select.dataset.detailFor = name;
+            if(playerIndex > 0) select.dataset.player = playerIndex;
+            select.style.display = 'none'; 
+            
+            const randomOption = document.createElement('option');
+            randomOption.value = 'random';
+            randomOption.textContent = 'ランダム';
+            select.appendChild(randomOption);
+
+            subRoulettes[name].forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                select.appendChild(option);
+            });
+            itemDiv.appendChild(select);
+            
+            checkbox.addEventListener('change', (e) => {
+                select.style.display = e.target.checked ? 'inline-block' : 'none';
+            });
+        }
+        container.appendChild(itemDiv);
+    }
+    
+    // ★★★ 修正箇所 ★★★ カスタム縛り実行ロジックを複数人対応に変更
     function executeCustomBinds() {
         initialize(); 
-        playerCount = 1;
-        playerNames = [];
-        const nameInput = document.getElementById('playerName1');
-        if (nameInput) {
-            playerNames.push(nameInput.value || `プレイヤー1`);
-        }
-        updatePlayerNameInputs();
-
-        results.players = [{}];
-        currentPlayer = 1;
+        mode = 'selected';
+        selectedBinds = []; 
+        results.players = Array(playerCount).fill(0).map(() => ({}));
         
-        const bindItems = document.querySelectorAll('#customBindGrid .custom-bind-item, #customBindButtons .checkbox-label');
-        selectedBinds = [];
+        const bindItems = document.querySelectorAll('#customBindScreen input[type="checkbox"]');
 
-        bindItems.forEach(item => {
-            const checkbox = item.querySelector('input[type="checkbox"]');
+        bindItems.forEach(checkbox => {
             if (checkbox.checked) {
                 const bindName = checkbox.dataset.bindName;
-                const select = item.querySelector('select');
+                const player = checkbox.dataset.player;
+                const select = checkbox.closest('.custom-bind-item, .checkbox-label').querySelector('select');
+                
+                let target = player ? results.players[player - 1] : results.common;
 
                 if (select) { 
                     const selectedValue = select.value;
                     if (selectedValue === 'random') {
-                        selectedBinds.push(bindName);
+                        selectedBinds.push({ name: bindName, player: player });
                     } else {
-                        results.common[bindName] = selectedValue;
+                        target[bindName] = selectedValue;
                     }
-                } else { 
-                     selectedBinds.push(bindName); 
+                } else {
+                    if (playerBindTypes.includes(bindName)) {
+                         selectedBinds.push({ name: bindName, player: player });
+                    } else {
+                        target[bindName] = true;
+                    }
                 }
             }
         });
-        
-        mode = 'selected';
-        currentBindIndex = 0;
-        
-        if (results.common['恒常☆５縛り'] && results.common['☆４キャラ武器'] ||
-            selectedBinds.includes('恒常☆５縛り') && selectedBinds.includes('☆４キャラ武器')) {
+
+        if (results.common['恒常☆５縛り'] && results.common['☆４キャラ武器']) {
              alert('「恒常☆５縛り」と「☆４キャラ武器」は同時に選択できません。');
              return;
         }
 
         selectedBinds.sort((a, b) => {
-            const aIsPlayerBind = playerBindTypes.includes(a);
-            const bIsPlayerBind = playerBindTypes.includes(b);
-            if (aIsPlayerBind && !bIsPlayerBind) return 1;
-            if (!aIsPlayerBind && bIsPlayerBind) return -1;
-            return 0;
+            const indexA = bindOrder.indexOf(a.name) !== -1 ? bindOrder.indexOf(a.name) : Infinity;
+            const indexB = bindOrder.indexOf(b.name) !== -1 ? bindOrder.indexOf(b.name) : Infinity;
+            return indexA - indexB;
         });
-
-        startNextSelectedBind();
+        
+        mode = 'custom_selected';
+        currentBindIndex = 0;
+        startNextCustomBind();
     }
+
+    // ★★★ 追加 ★★★ カスタム縛り専用の次のステップに進む関数
+    function startNextCustomBind() {
+        if (currentBindIndex >= selectedBinds.length) {
+            showResults();
+            return;
+        }
+        const bindInfo = selectedBinds[currentBindIndex];
+        currentBindName = bindInfo.name;
+        currentPlayer = bindInfo.player ? parseInt(bindInfo.player) : 1;
+        setupRouletteForBind(currentBindName);
+    }
+    
+    // ★★★ 修正箇所 ★★★ `proceedToNext` をカスタム縛りモードに対応
+    function proceedToNext() {
+        if(mode === 'custom_selected') {
+            currentBindIndex++;
+            startNextCustomBind();
+            return;
+        }
+
+        if (mode === 'all' && currentRoulette === 'boss') {
+             currentRoulette = 'bind';
+             items = getAvailableBinds();
+             document.getElementById('spinButton').disabled = false;
+             prerenderRouletteImage();
+             drawRoulette();
+             return;
+        }
+
+        if (mode === 'selected') {
+            currentBindIndex++;
+            startNextSelectedBind();
+        } else {
+            const totalBinds = Object.keys(results.common).length + Object.values(results.players).reduce((acc, p) => acc + Object.keys(p).length, 0);
+            if (totalBinds < bindCount * playerCount + Object.keys(results.common).length) {
+                currentRoulette = 'bind';
+                items = getAvailableBinds();
+                document.getElementById('spinButton').disabled = false;
+                prerenderRouletteImage();
+                drawRoulette();
+            } else {
+                showResults();
+            }
+        }
+    }
+
 
     updatePlayerNameInputs();
 });
