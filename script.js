@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCurrentPlayerDisplay() {
         const nameDisplay = document.getElementById('currentPlayerNameDisplay');
-        const commonSubBinds = ["国縛り", "モノ元素縛り", "武器種縛り"];
+        const commonSubBinds = ["国縛り", "モノ元素縛り", "武器種縛り", "各1.1縛り"];
         
         let isPlayerTurn = playerBindTypes.includes(currentBindName);
 
