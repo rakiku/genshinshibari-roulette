@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り", "誕生月", "各1.1縛り"];
     
-    // ★★★ 修正箇所 ★★★ 縛りの優先順位を定義
     const bindOrder = [
         "国縛り", "モノ元素縛り", "武器種縛り",
         "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "所持率100％縛り", "旅人縛り",
@@ -162,7 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const ctx = canvas.getContext('2d');
     const colors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
 
-    // ★★★ 修正箇所 ★★★ 数値入力制限の関数
     function enforceMinMax(input) {
         let value = parseInt(input.value, 10);
         const min = parseInt(input.min, 10);
@@ -279,7 +277,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ★★★ 修正箇所 ★★★ 実行順序を並び替えるロジックを追加
     function executeBinds() {
         selectedBinds = Array.from(document.querySelectorAll('#bindButtons input:checked')).map(cb => cb.value);
         if (selectedBinds.length === 0) {
@@ -781,8 +778,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updatePlayerNameInputs();
         updateCurrentPlayerDisplay();
     }
-    
-    // ★★★ 修正箇所 ★★★ カスタム縛り画面の表示ロジックを大幅に変更
+
     function showCustomBindScreen() {
         initialize();
         mode = 'custom';
@@ -800,12 +796,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const playerSelectBinds = ['誕生月', 'アルファベット縛り', '各1.1縛り'];
         const playerCheckBinds = ['武器縛り', 'キャラルーレット', 'キャラ武器ルーレット'];
 
-        // 共通の選択縛り
         commonSelectBinds.forEach(name => createBindItem(name, 'select', commonGridContainer));
-        // 共通のチェック縛り
         commonCheckBinds.forEach(name => createBindItem(name, 'check', commonButtonsContainer));
 
-        // プレイヤーごとの縛り
         for (let i = 1; i <= playerCount; i++) {
             const playerDiv = document.createElement('div');
             playerDiv.className = 'custom-bind-player-section';
@@ -825,7 +818,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ★★★ 追加 ★★★ カスタム縛りのUI要素を作成するヘルパー関数
     function createBindItem(name, type, container, playerIndex = 0) {
         const itemDiv = document.createElement('div');
         itemDiv.className = type === 'check' ? 'checkbox-label' : 'custom-bind-item';
@@ -868,7 +860,6 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(itemDiv);
     }
     
-    // ★★★ 修正箇所 ★★★ カスタム縛り実行ロジックを複数人対応に変更
     function executeCustomBinds() {
         initialize(); 
         mode = 'selected';
@@ -918,7 +909,6 @@ document.addEventListener('DOMContentLoaded', function() {
         startNextCustomBind();
     }
 
-    // ★★★ 追加 ★★★ カスタム縛り専用の次のステップに進む関数
     function startNextCustomBind() {
         if (currentBindIndex >= selectedBinds.length) {
             showResults();
@@ -930,7 +920,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setupRouletteForBind(currentBindName);
     }
     
-    // ★★★ 修正箇所 ★★★ `proceedToNext` をカスタム縛りモードに対応
     function proceedToNext() {
         if(mode === 'custom_selected') {
             currentBindIndex++;
