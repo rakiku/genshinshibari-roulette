@@ -142,10 +142,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り", "誕生月", "各1.1縛り"];
     
     const bindOrder = [
-        "国縛り", "モノ元素縛り", "武器種縛り",
+        // 優先度 1: キャラクター候補を大きく絞り込む縛り
+        "国縛り", "モノ元素縛り", "武器種縛り", "各1.1縛り",
+
+        // 優先度 2: キャラクターの性質に関する縛り
         "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "所持率100％縛り", "旅人縛り",
+
+        // 優先度 3: 最終的な武器を決定または絞り込む縛り
         "武器縛り",
-        "誕生月", "アルファベット縛り", "各1.1縛り",
+
+        // 優先度 4: 個人に適用される絞り込み縛り
+        "誕生月", "アルファベット縛り", 
+
+        // 優先度 5: 最終的なキャラクターを決定する縛り
         "キャラルーレット", "キャラ武器ルーレット"
     ];
 
@@ -562,6 +571,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setupRouletteForBind(lastResult);
         } else if (currentRoulette === 'sub') {
             const commonSubBinds = ["国縛り", "モノ元素縛り", "武器種縛り", "各1.1縛り"];
+            
             if (commonSubBinds.includes(currentBindName)) {
                 results.common[currentBindName] = lastResult;
                 proceedToNext();
@@ -608,7 +618,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // ★★★ 修正箇所 ★★★ 縛りルーレットの終了判定を修正
     function proceedToNext() {
+        if(mode === 'custom_selected') {
+            currentBindIndex++;
+            startNextCustomBind();
+            return;
+        }
+
         if (mode === 'all' && currentRoulette === 'boss') {
              currentRoulette = 'bind';
              items = getAvailableBinds();
@@ -622,8 +639,10 @@ document.addEventListener('DOMContentLoaded', function() {
             currentBindIndex++;
             startNextSelectedBind();
         } else {
-            const totalBinds = Object.keys(results.common).length + Object.values(results.players).reduce((acc, p) => acc + Object.keys(p).length, 0);
-            if (totalBinds < bindCount * playerCount + Object.keys(results.common).length) {
+            const commonBindsCount = Object.keys(results.common).filter(k => binds.includes(k)).length;
+            const playerBindsCount = results.players.reduce((sum, player) => sum + Object.keys(player).length, 0);
+            
+            if (commonBindsCount + playerBindsCount < bindCount) {
                 currentRoulette = 'bind';
                 items = getAvailableBinds();
                 document.getElementById('spinButton').disabled = false;
@@ -774,10 +793,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function backToStart() {
         spinning = false;
         showScreen('startScreen');
-        updatePlayerNameInputs();
         updateCurrentPlayerDisplay();
     }
-
+    
     function showCustomBindScreen() {
         initialize();
         mode = 'custom';
@@ -790,9 +808,9 @@ document.addEventListener('DOMContentLoaded', function() {
         commonButtonsContainer.innerHTML = '';
         playersContainer.innerHTML = '';
 
-        const commonSelectBinds = ['国縛り', 'モノ元素縛り', '武器種縛り'];
+        const commonSelectBinds = ['国縛り', 'モノ元素縛り', '武器種縛り', "各1.1縛り"];
         const commonCheckBinds = ['恒常☆５縛り', '☆４キャラ武器', '所持率100％縛り', '初期キャラのみ', '旅人縛り'];
-        const playerSelectBinds = ['誕生月', 'アルファベット縛り', '各1.1縛り'];
+        const playerSelectBinds = ['誕生月', 'アルファベット縛り'];
         const playerCheckBinds = ['武器縛り', 'キャラルーレット', 'キャラ武器ルーレット'];
 
         commonSelectBinds.forEach(name => createBindItem(name, 'select', commonGridContainer));
@@ -918,40 +936,6 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPlayer = bindInfo.player ? parseInt(bindInfo.player) : 1;
         setupRouletteForBind(currentBindName);
     }
-    
-    function proceedToNext() {
-        if(mode === 'custom_selected') {
-            currentBindIndex++;
-            startNextCustomBind();
-            return;
-        }
-
-        if (mode === 'all' && currentRoulette === 'boss') {
-             currentRoulette = 'bind';
-             items = getAvailableBinds();
-             document.getElementById('spinButton').disabled = false;
-             prerenderRouletteImage();
-             drawRoulette();
-             return;
-        }
-
-        if (mode === 'selected') {
-            currentBindIndex++;
-            startNextSelectedBind();
-        } else {
-            const totalBinds = Object.keys(results.common).length + Object.values(results.players).reduce((acc, p) => acc + Object.keys(p).length, 0);
-            if (totalBinds < bindCount * playerCount + Object.keys(results.common).length) {
-                currentRoulette = 'bind';
-                items = getAvailableBinds();
-                document.getElementById('spinButton').disabled = false;
-                prerenderRouletteImage();
-                drawRoulette();
-            } else {
-                showResults();
-            }
-        }
-    }
-
 
     updatePlayerNameInputs();
 });
