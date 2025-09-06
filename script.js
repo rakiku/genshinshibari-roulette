@@ -622,11 +622,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        const commonSubBinds = ["国縛り", "モノ元素縛り", "各1.1縛り"];
-        if (commonSubBinds.includes(currentBindName)) {
-            results.common[currentBindName] = lastResult;
+        if (currentRoulette === 'character' || currentRoulette === 'weapon') {
+            if (currentRoulette === 'weapon') {
+                results.players[currentPlayer - 1]['キャラ武器ルーレット'].weapon = lastResult;
+            } else if (currentBindName === 'キャラ武器ルーレット') {
+                results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: null };
+                currentRoulette = 'weapon';
+                const charData = characters.find(c => c.name === lastResult);
+                items = getFilteredWeapons(charData.weapon, charData.name);
+                updateCurrentPlayerDisplay();
+                prerenderRouletteImage();
+                drawRoulette();
+                document.getElementById('spinButton').disabled = false;
+                return;
+            } else {
+                results.players[currentPlayer - 1][currentBindName] = lastResult;
+            }
         } else if (playerBindTypes.includes(currentBindName)) {
             results.players[currentPlayer - 1][currentBindName] = lastResult;
+        } else {
+            results.common[currentBindName] = lastResult;
         }
 
         proceedToNext();
