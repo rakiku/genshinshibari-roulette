@@ -217,7 +217,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCurrentPlayerDisplay() {
         const nameDisplay = document.getElementById('currentPlayerNameDisplay');
-        const commonSubBinds = ["国縛り", "モノ元素縛り", "各1.1縛り"];
         
         let isPlayerTurn = playerBindTypes.includes(currentBindName);
 
@@ -283,18 +282,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function executeBinds() {
-        bindsToResolve = Array.from(document.querySelectorAll('#bindButtons input:checked')).map(cb => cb.value);
+        bindsToResolve = Array.from(document.querySelectorAll('#bindButtons input:checked')).map(cb => {
+            const bindName = cb.value;
+            if (playerBindTypes.includes(bindName)) {
+                const binds = [];
+                for (let i = 1; i <= playerCount; i++) {
+                    binds.push({ name: bindName, player: i });
+                }
+                return binds;
+            }
+            return { name: bindName, player: 0 };
+        }).flat();
+
         if (bindsToResolve.length === 0) {
             alert("縛りを1つ以上選択してください。");
             return;
         }
         
         bindsToResolve.sort((a, b) => {
-            const indexA = bindOrder.indexOf(a) !== -1 ? bindOrder.indexOf(a) : Infinity;
-            const indexB = bindOrder.indexOf(b) !== -1 ? bindOrder.indexOf(b) : Infinity;
+            const indexA = bindOrder.indexOf(a.name) !== -1 ? bindOrder.indexOf(a.name) : Infinity;
+            const indexB = bindOrder.indexOf(b.name) !== -1 ? bindOrder.indexOf(b.name) : Infinity;
             return indexA - indexB;
         });
-
+        
+        mode = 'selected';
         currentBindIndex = 0;
         startNextSelectedBind();
     }
@@ -304,8 +315,8 @@ document.addEventListener('DOMContentLoaded', function() {
             showResults();
             return;
         }
-        currentBindName = bindsToResolve[currentBindIndex];
-        setupRouletteForBind(currentBindName);
+        const bindInfo = bindsToResolve[currentBindIndex];
+        setupRouletteForBind(bindInfo.name, bindInfo.player || 1);
     }
     
     function startRoulette(type) {
@@ -355,20 +366,17 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (playerBindTypes.includes(bindName)) {
             currentRoulette = 'character';
             
-            if (bindName === 'キャラ武器ルーレット' && hasPlayerBind('キャラルーレット')) {
-                const charName = results.players[currentPlayer - 1]['キャラルーレット'];
+            if (bindName === 'キャラ武器ルーレット' && hasPlayerBind('キャラルーレット', player)) {
+                const charName = results.players[player - 1]['キャラルーレット'];
                 const charData = characters.find(c => c.name === charName);
                 currentRoulette = 'weapon';
                 items = getFilteredWeapons(charData.weapon, charName);
-                results.players[currentPlayer - 1][bindName] = { char: charName, weapon: null };
+                results.players[player - 1][bindName] = { char: charName, weapon: null };
             } else {
-                 items = getFilteredCharacters().map(c => c.name).sort(() => Math.random() - 0.5);
+                 items = getFilteredCharacters(null, player).map(c => c.name).sort(() => Math.random() - 0.5);
             }
         } else {
             results.common[bindName] = true;
-            if(bindName.includes("リロール")){
-                bindCount++;
-            }
             proceedToNext();
             return;
         }
@@ -565,18 +573,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (bindSelectionPhase) {
             bindsToResolve.push(lastResult);
-            if (bindsToResolve.length < bindCount * playerCount) {
+            if (bindsToResolve.length < bindCount) {
                 items = getAvailableBinds();
                 prerenderRouletteImage();
                 drawRoulette();
                 document.getElementById('spinButton').disabled = false;
             } else {
                 bindSelectionPhase = false;
-                bindsToResolve.sort((a, b) => {
-                    const indexA = bindOrder.indexOf(a) !== -1 ? bindOrder.indexOf(a) : Infinity;
-                    const indexB = bindOrder.indexOf(b) !== -1 ? bindOrder.indexOf(b) : Infinity;
+                
+                let fullBindsToResolve = [];
+                bindsToResolve.forEach(bindName => {
+                    if(playerBindTypes.includes(bindName)) {
+                        for(let i = 1; i <= playerCount; i++) {
+                            fullBindsToResolve.push({ name: bindName, player: i });
+                        }
+                    } else {
+                        fullBindsToResolve.push({ name: bindName, player: 0 });
+                    }
+                });
+
+                fullBindsToResolve.sort((a, b) => {
+                    const indexA = bindOrder.indexOf(a.name) !== -1 ? bindOrder.indexOf(a.name) : Infinity;
+                    const indexB = bindOrder.indexOf(b.name) !== -1 ? bindOrder.indexOf(b.name) : Infinity;
                     return indexA - indexB;
                 });
+                bindsToResolve = fullBindsToResolve;
                 currentBindIndex = 0;
                 startNextSelectedBind();
             }
@@ -644,7 +665,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function notOwned() {
         if(currentRoulette === 'character') {
             rerolledChars[currentPlayer].push(lastResult);
-            items = getFilteredCharacters().map(c => c.name).sort(() => Math.random() - 0.5);
+            items = getFilteredCharacters(null, currentPlayer).map(c => c.name).sort(() => Math.random() - 0.5);
         } else if (currentRoulette === 'weapon') {
             const charName = results.players[currentPlayer - 1]['キャラ武器ルーレット'].char;
             if (!rerolledWeapons[currentPlayer][charName]) rerolledWeapons[currentPlayer][charName] = [];
