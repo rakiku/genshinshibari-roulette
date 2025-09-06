@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             items = subItems.slice().sort(() => Math.random() - 0.5);
 
-        } else if (playerBindTypes.includes(bindName)) {
+        } else if (playerBindTypes.includes(bindName) && (bindName === 'キャラルーレット' || bindName === 'キャラ武器ルーレット')) {
             currentRoulette = 'character';
             
             if (bindName === 'キャラ武器ルーレット' && hasPlayerBind('キャラルーレット', player)) {
@@ -562,6 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('notOwnedButton').classList.add('hidden');
     }
 
+    // ★★★ 修正箇所: この関数全体を書き換え ★★★
     function processResult() {
         if (lastResult === '該当なし') {
             proceedToNext();
@@ -622,14 +623,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // ★★★ 修正箇所: この関数全体を書き換え ★★★
         const isPlayerSpecific = playerBindTypes.includes(currentBindName);
 
         if (isPlayerSpecific) {
-            // プレイヤー固有の縛りの処理
-            if (currentRoulette === 'weapon') {
-                results.players[currentPlayer - 1]['キャラ武器ルーレット'].weapon = lastResult;
-            } else if (currentBindName === 'キャラ武器ルーレット') {
+            if (currentBindName === 'キャラ武器ルーレット') {
                 if (currentRoulette === 'character') {
                     results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: null };
                     currentRoulette = 'weapon';
@@ -639,13 +636,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     prerenderRouletteImage();
                     drawRoulette();
                     document.getElementById('spinButton').disabled = false;
-                    return; // 次のステップに進まず、武器ルーレットを待機
+                    return;
+                } else if (currentRoulette === 'weapon') {
+                    results.players[currentPlayer - 1][currentBindName].weapon = lastResult;
                 }
             } else {
                 results.players[currentPlayer - 1][currentBindName] = lastResult;
             }
         } else {
-            // 共通の縛りの処理
             results.common[currentBindName] = lastResult;
         }
         
@@ -891,10 +889,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         target[bindName] = selectedValue;
                     }
                 } else {
-                     if (binds.includes(bindName) && !subRoulettes[bindName]) {
-                        target[bindName] = true;
-                     } else {
+                     if (subRoulettes[bindName] || playerBindTypes.includes(bindName)) {
                         bindsToResolve.push({ name: bindName, player: player });
+                     } else {
+                        target[bindName] = true;
                      }
                 }
             }
