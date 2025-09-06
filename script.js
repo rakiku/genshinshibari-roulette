@@ -194,6 +194,19 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('nextButton').addEventListener('click', nextStep);
     document.getElementById('notOwnedButton').addEventListener('click', notOwned);
     document.getElementById('backToStartButton').addEventListener('click', backToStart);
+    // ★★★ 説明モーダル用のイベントリスナーを追加 ★★★
+    document.getElementById('showAboutButton').addEventListener('click', () => {
+        document.getElementById('aboutScreen').classList.remove('hidden');
+    });
+    document.getElementById('closeAboutButton').addEventListener('click', () => {
+        document.getElementById('aboutScreen').classList.add('hidden');
+    });
+    document.getElementById('aboutScreen').addEventListener('click', (event) => {
+        if (event.target === document.getElementById('aboutScreen')) {
+            document.getElementById('aboutScreen').classList.add('hidden');
+        }
+    });
+
 
     function updatePlayerNameInputs() {
         const container = document.getElementById('playerNameInputsContainer');
@@ -338,10 +351,11 @@ document.addEventListener('DOMContentLoaded', function() {
         currentBindName = bindName;
         currentPlayer = player;
 
+        const currentFilters = {...results.common, ...results.players[currentPlayer - 1]};
+
         if (subRoulettes[bindName]) {
             currentRoulette = 'sub';
             let subItems = subRoulettes[bindName];
-            const currentFilters = {...results.common, ...results.players[currentPlayer - 1]};
 
             if (bindName === "武器縛り") {
                 const weaponTypeFilter = currentFilters["武器種縛り"];
@@ -360,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             items = subItems.slice().sort(() => Math.random() - 0.5);
 
-        } else if (playerBindTypes.includes(bindName) && (bindName === 'キャラルーレット' || bindName === 'キャラ武器ルーレット')) {
+        } else if (bindName === 'キャラルーレット' || bindName === 'キャラ武器ルーレット') {
             currentRoulette = 'character';
             
             if (bindName === 'キャラ武器ルーレット' && hasPlayerBind('キャラルーレット', player)) {
@@ -697,10 +711,7 @@ document.addEventListener('DOMContentLoaded', function() {
             rerolledCommonWeapons.push(lastResult);
             
             let filteredWeapons = subRoulettes['武器縛り'];
-            let filters = results.common;
-            if(playerBindTypes.includes(currentBindName)) {
-                filters = {...results.common, ...results.players[currentPlayer - 1]}
-            }
+            let filters = playerBindTypes.includes(currentBindName) ? {...results.common, ...results.players[currentPlayer - 1]} : results.common;
             
             const weaponTypeFilter = filters["武器種縛り"];
             if(weaponTypeFilter) {
@@ -872,7 +883,6 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(itemDiv);
     }
     
-    // ★★★ 修正箇所: この関数全体を書き換え ★★★
     function executeCustomBinds() {
         initialize(); 
         mode = 'custom_selected';
@@ -888,18 +898,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 const select = checkbox.closest('.custom-bind-item, .checkbox-label').querySelector('select');
                 
                 let target = player ? results.players[player - 1] : results.common;
-                let needsRoulette = subRoulettes[bindName] || playerBindTypes.includes(bindName);
+                let needsRoulette = subRoulettes[bindName] || bindName === 'キャラルーレット' || bindName === 'キャラ武器ルーレット';
 
                 if (select) { 
                     const selectedValue = select.value;
                     if (selectedValue === 'random') {
-                        bindsToResolve.push({ name: bindName, player: player });
+                        bindsToResolve.push({ name: bindName, player: player ? parseInt(player) : 0 });
                     } else {
                         target[bindName] = selectedValue;
                     }
                 } else {
                      if (needsRoulette) {
-                        bindsToResolve.push({ name: bindName, player: player });
+                        bindsToResolve.push({ name: bindName, player: player ? parseInt(player) : 0 });
                      } else {
                         target[bindName] = true;
                      }
@@ -928,7 +938,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         const bindInfo = bindsToResolve[currentBindIndex];
-        setupRouletteForBind(bindInfo.name, bindInfo.player ? parseInt(bindInfo.player) : 1);
+        setupRouletteForBind(bindInfo.name, bindInfo.player || 1);
     }
 
     updatePlayerNameInputs();
