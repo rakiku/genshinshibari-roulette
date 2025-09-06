@@ -626,6 +626,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const isPlayerSpecific = playerBindTypes.includes(currentBindName);
 
         if (isPlayerSpecific) {
+            // プレイヤー固有の縛りの処理
             if (currentBindName === 'キャラ武器ルーレット') {
                 if (currentRoulette === 'character') {
                     results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: null };
@@ -636,7 +637,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     prerenderRouletteImage();
                     drawRoulette();
                     document.getElementById('spinButton').disabled = false;
-                    return;
+                    return; // 次のステップに進まず、武器ルーレットを待機
                 } else if (currentRoulette === 'weapon') {
                     results.players[currentPlayer - 1][currentBindName].weapon = lastResult;
                 }
@@ -644,6 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 results.players[currentPlayer - 1][currentBindName] = lastResult;
             }
         } else {
+            // 共通の縛りの処理
             results.common[currentBindName] = lastResult;
         }
         
@@ -695,11 +697,16 @@ document.addEventListener('DOMContentLoaded', function() {
             rerolledCommonWeapons.push(lastResult);
             
             let filteredWeapons = subRoulettes['武器縛り'];
-            const weaponTypeFilter = results.common["武器種縛り"];
+            let filters = results.common;
+            if(playerBindTypes.includes(currentBindName)) {
+                filters = {...results.common, ...results.players[currentPlayer - 1]}
+            }
+            
+            const weaponTypeFilter = filters["武器種縛り"];
             if(weaponTypeFilter) {
                 filteredWeapons = allWeapons[weaponTypeFilter] || [];
             }
-            if(results.common["☆４キャラ武器"]) {
+            if(filters["☆４キャラ武器"]) {
                 filteredWeapons = filteredWeapons.filter(w => !star5Weapons.includes(w));
             }
 
@@ -865,6 +872,7 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(itemDiv);
     }
     
+    // ★★★ 修正箇所: この関数全体を書き換え ★★★
     function executeCustomBinds() {
         initialize(); 
         mode = 'custom_selected';
@@ -880,6 +888,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const select = checkbox.closest('.custom-bind-item, .checkbox-label').querySelector('select');
                 
                 let target = player ? results.players[player - 1] : results.common;
+                let needsRoulette = subRoulettes[bindName] || playerBindTypes.includes(bindName);
 
                 if (select) { 
                     const selectedValue = select.value;
@@ -889,7 +898,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         target[bindName] = selectedValue;
                     }
                 } else {
-                     if (subRoulettes[bindName] || playerBindTypes.includes(bindName)) {
+                     if (needsRoulette) {
                         bindsToResolve.push({ name: bindName, player: player });
                      } else {
                         target[bindName] = true;
