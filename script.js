@@ -217,13 +217,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCurrentPlayerDisplay() {
         const nameDisplay = document.getElementById('currentPlayerNameDisplay');
-        
-        let isPlayerTurn = playerBindTypes.includes(currentBindName);
-
-        if (isPlayerTurn && playerNames[currentPlayer - 1]) {
-            nameDisplay.textContent = `${playerNames[currentPlayer - 1]} のルーレット`;
-        } else if (bindSelectionPhase) {
+        if (bindSelectionPhase) {
             nameDisplay.textContent = '縛りの種類を選択中...';
+        } else if (playerBindTypes.includes(currentBindName) && playerNames[currentPlayer - 1]) {
+            nameDisplay.textContent = `${playerNames[currentPlayer - 1]} のルーレット`;
         } else {
             nameDisplay.textContent = ''; 
         }
@@ -573,6 +570,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (bindSelectionPhase) {
             bindsToResolve.push(lastResult);
+            if (lastResult.includes("リロール")) {
+                bindCount++;
+            }
+
             if (bindsToResolve.length < bindCount) {
                 items = getAvailableBinds();
                 prerenderRouletteImage();
