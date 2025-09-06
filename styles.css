@@ -276,7 +276,6 @@ canvas {
     text-align: center;
 }
 
-
 #currentPlayerNameDisplay {
     margin-top: 0;
     margin-bottom: 15px;
@@ -284,7 +283,7 @@ canvas {
     color: #f1c40f;
     min-height: 2.2em;
 }
-/* ▼▼▼ 説明ボタンとモーダルのスタイルを追記 ▼▼▼ */
+
 .about-button-container {
     margin-top: 25px;
     padding-top: 20px;
@@ -364,7 +363,6 @@ canvas {
 
 .close-button:hover {
     color: #c0392b;
-    transform: none; /* ボタンのhover効果を無効化 */
+    transform: none; 
     background-color: transparent;
 }
-/* ▲▲▲ 追記ここまで ▲▲▲ */
