@@ -584,8 +584,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 let fullBindsToResolve = [];
                 bindsToResolve.forEach(bindName => {
-                    if(playerBindTypes.includes(bindName)) {
-                        for(let i = 1; i <= playerCount; i++) {
+                    if (playerBindTypes.includes(bindName)) {
+                        for (let i = 1; i <= playerCount; i++) {
                             fullBindsToResolve.push({ name: bindName, player: i });
                         }
                     } else {
@@ -622,28 +622,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        if (currentRoulette === 'character' || currentRoulette === 'weapon') {
+        // ★★★ 修正箇所: この関数全体を書き換え ★★★
+        const isPlayerSpecific = playerBindTypes.includes(currentBindName);
+
+        if (isPlayerSpecific) {
+            // プレイヤー固有の縛りの処理
             if (currentRoulette === 'weapon') {
                 results.players[currentPlayer - 1]['キャラ武器ルーレット'].weapon = lastResult;
             } else if (currentBindName === 'キャラ武器ルーレット') {
-                results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: null };
-                currentRoulette = 'weapon';
-                const charData = characters.find(c => c.name === lastResult);
-                items = getFilteredWeapons(charData.weapon, charData.name);
-                updateCurrentPlayerDisplay();
-                prerenderRouletteImage();
-                drawRoulette();
-                document.getElementById('spinButton').disabled = false;
-                return;
+                if (currentRoulette === 'character') {
+                    results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: null };
+                    currentRoulette = 'weapon';
+                    const charData = characters.find(c => c.name === lastResult);
+                    items = getFilteredWeapons(charData.weapon, lastResult);
+                    prerenderRouletteImage();
+                    drawRoulette();
+                    document.getElementById('spinButton').disabled = false;
+                    return; // 次のステップに進まず、武器ルーレットを待機
+                }
             } else {
                 results.players[currentPlayer - 1][currentBindName] = lastResult;
             }
-        } else if (playerBindTypes.includes(currentBindName)) {
-            results.players[currentPlayer - 1][currentBindName] = lastResult;
         } else {
+            // 共通の縛りの処理
             results.common[currentBindName] = lastResult;
         }
-
+        
         proceedToNext();
     }
     
