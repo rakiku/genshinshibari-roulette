@@ -1,3 +1,5 @@
+// このファイルは前回の回答と同じ内容です。
+// キャラルーレットのバグを修正した最終版のコードを再度掲載します。
 document.addEventListener('DOMContentLoaded', function() {
 
 
@@ -194,7 +196,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('nextButton').addEventListener('click', nextStep);
     document.getElementById('notOwnedButton').addEventListener('click', notOwned);
     document.getElementById('backToStartButton').addEventListener('click', backToStart);
-    // ★★★ 説明モーダル用のイベントリスナーを追加 ★★★
     document.getElementById('showAboutButton').addEventListener('click', () => {
         document.getElementById('aboutScreen').classList.remove('hidden');
     });
@@ -576,7 +577,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('notOwnedButton').classList.add('hidden');
     }
 
-    // ★★★ 修正箇所: この関数全体を書き換え ★★★
     function processResult() {
         if (lastResult === '該当なし') {
             proceedToNext();
@@ -640,7 +640,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const isPlayerSpecific = playerBindTypes.includes(currentBindName);
 
         if (isPlayerSpecific) {
-            // プレイヤー固有の縛りの処理
             if (currentBindName === 'キャラ武器ルーレット') {
                 if (currentRoulette === 'character') {
                     results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: null };
@@ -651,7 +650,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     prerenderRouletteImage();
                     drawRoulette();
                     document.getElementById('spinButton').disabled = false;
-                    return; // 次のステップに進まず、武器ルーレットを待機
+                    return;
                 } else if (currentRoulette === 'weapon') {
                     results.players[currentPlayer - 1][currentBindName].weapon = lastResult;
                 }
@@ -659,7 +658,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 results.players[currentPlayer - 1][currentBindName] = lastResult;
             }
         } else {
-            // 共通の縛りの処理
             results.common[currentBindName] = lastResult;
         }
         
