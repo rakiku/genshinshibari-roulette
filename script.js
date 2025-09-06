@@ -635,6 +635,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentRoulette = 'weapon';
                     const charData = characters.find(c => c.name === lastResult);
                     items = getFilteredWeapons(charData.weapon, lastResult);
+                    updateCurrentPlayerDisplay();
                     prerenderRouletteImage();
                     drawRoulette();
                     document.getElementById('spinButton').disabled = false;
