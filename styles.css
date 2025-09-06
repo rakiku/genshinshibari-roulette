@@ -49,10 +49,11 @@ h2 + p {
     color: #bdc3c7;
 }
 
-
+/* ▼▼▼ ここを修正 ▼▼▼ */
 .hidden {
-    display: none;
+    display: none !important;
 }
+/* ▲▲▲ ここまで ▲▲▲ */
 
 .input-group {
     margin-bottom: 15px;
