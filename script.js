@@ -1,3 +1,4 @@
+// このファイルは前回の回答からバグを修正した最終版です。
 document.addEventListener('DOMContentLoaded', function() {
 
 
@@ -264,6 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         rerolledCommonWeapons = [];
         bindSelectionPhase = false;
         bindsToResolve = [];
+        updatePlayerNameInputs();
     }
 
     function showBindSelection() {
@@ -381,7 +383,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const charData = characters.find(c => c.name === charName);
                 currentRoulette = 'weapon';
                 items = getFilteredWeapons(charData.weapon, charName);
-                results.players[player - 1][bindName] = { char: charName, weapon: null };
             } else {
                  items = getFilteredCharacters(null, player).map(c => c.name).sort(() => Math.random() - 0.5);
             }
@@ -794,6 +795,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function backToStart() {
         spinning = false;
+        initialize();
         showScreen('startScreen');
         updateCurrentPlayerDisplay();
     }
