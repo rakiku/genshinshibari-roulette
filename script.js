@@ -1,5 +1,3 @@
-// このファイルは前回の回答と同じ内容です。
-// キャラルーレットのバグを修正した最終版のコードを再度掲載します。
 document.addEventListener('DOMContentLoaded', function() {
 
 
