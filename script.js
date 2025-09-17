@@ -195,6 +195,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('nextButton').addEventListener('click', nextStep);
     document.getElementById('notOwnedButton').addEventListener('click', notOwned);
     document.getElementById('backToStartButton').addEventListener('click', backToStart);
+    
+    // ▼▼▼ 説明モーダルのイベントリスナーをここに集約 ▼▼▼
     document.getElementById('showAboutButton').addEventListener('click', () => {
         document.getElementById('aboutScreen').classList.remove('hidden');
     });
@@ -797,7 +799,6 @@ document.addEventListener('DOMContentLoaded', function() {
         spinning = false;
         initialize();
         showScreen('startScreen');
-        updateCurrentPlayerDisplay();
     }
     
     function showCustomBindScreen() {
