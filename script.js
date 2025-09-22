@@ -557,19 +557,27 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('stopButton').disabled = true;
     };
     
-    function showPopup(text) {
+   function showPopup(text) {
         const popup = document.getElementById('popup');
-        popup.textContent = text;
-        popup.style.display = 'block';
-        const clickHandler = () => {
-            popup.style.display = 'none';
+        const popupText = document.getElementById('popupText');
+        const closeButton = document.getElementById('closePopupButton');
+
+        popupText.textContent = text;
+        popup.classList.remove('hidden');
+
+        // ポップアップを閉じる関数
+        const closePopup = () => {
+            popup.classList.add('hidden');
             document.getElementById('nextButton').classList.remove('hidden');
             if(currentRoulette === 'character' || currentRoulette === 'weapon' || (currentRoulette === 'sub' && currentBindName === '武器縛り')) {
                 document.getElementById('notOwnedButton').classList.remove('hidden');
             }
-            popup.removeEventListener('click', clickHandler);
+            // イベントリスナーを毎回削除して重複を防ぐ
+            closeButton.removeEventListener('click', closePopup);
         };
-        popup.addEventListener('click', clickHandler);
+
+        // 閉じるボタンにクリックイベントを設定
+        closeButton.addEventListener('click', closePopup);
     };
     
     function nextStep() {
