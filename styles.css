@@ -162,6 +162,17 @@ button:disabled {
     padding-top: 20px;
 }
 
+.custom-binds-section {
+    border-top: 2px solid #7f8c8d;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+.custom-binds-section:first-child {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+}
+
 
 .button-group-checkbox {
     display: grid;
@@ -223,7 +234,25 @@ canvas {
     z-index: 100;
     text-shadow: 2px 2px 5px #000;
     border: 2px solid #fff;
-    cursor: pointer;
+    cursor: default;
+}
+
+.close-popup-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 1.5em;
+    color: #fff;
+    background: none;
+    border: none;
+    padding: 5px;
+    line-height: 1;
+    font-weight: bold;
+}
+.close-popup-button:hover {
+    color: #c0392b;
+    background-color: transparent;
+    transform: none;
 }
 
 #results {
@@ -247,6 +276,15 @@ canvas {
     margin-bottom: 5px;
     padding: 10px;
     border-radius: 5px;
+}
+.reroll-player-button {
+    background-color: #e67e22;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    margin-left: 10px;
+}
+.reroll-player-button:hover {
+    background-color: #f39c12;
 }
 
 .char-list, .char-list-final {
@@ -407,40 +445,3 @@ canvas {
         width: 80%;
     }
 }
-/* ▼▼▼ ポップアップと閉じるボタンのスタイルを追記 ▼▼▼ */
-.popup {
-    display: flex; /* hiddenクラスで表示を切り替えるためflexに変更 */
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: default; /* 全体クリックは無効化するのでカーソルを戻す */
-}
-
-.popup.hidden {
-    display: none !important;
-}
-
-#popupText {
-    padding: 20px;
-}
-
-.close-popup-button {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 0.5em;
-    font-weight: bold;
-    color: #fff;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
-}
-
-.close-popup-button:hover {
-    color: #c0392b;
-    transform: none;
-    background-color: transparent;
-}
-/* ▲▲▲ 追記ここまで ▲▲▲ */
