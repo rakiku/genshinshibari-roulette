@@ -1,4 +1,3 @@
-// バグ修正と機能追加を反映した最終版です。
 document.addEventListener('DOMContentLoaded', function() {
 
 
@@ -293,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function executeBinds() {
-        initialize();
+        initialize(); // ★★★ この行を追加 ★★★
         bindsToResolve = Array.from(document.querySelectorAll('#bindButtons input:checked')).map(cb => {
             const bindName = cb.value;
             if (playerBindTypes.includes(bindName)) {
