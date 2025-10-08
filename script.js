@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function executeBinds() {
-        initialize(); 
+        initialize();
         bindsToResolve = Array.from(document.querySelectorAll('#bindButtons input:checked')).map(cb => {
             const bindName = cb.value;
             if (playerBindTypes.includes(bindName)) {
