@@ -1,4 +1,3 @@
-// バグ修正と機能追加を反映した最終版です。
 document.addEventListener('DOMContentLoaded', function() {
 
 
@@ -293,6 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function executeBinds() {
+        initialize();
         bindsToResolve = Array.from(document.querySelectorAll('#bindButtons input:checked')).map(cb => {
             const bindName = cb.value;
             if (playerBindTypes.includes(bindName)) {
@@ -694,13 +694,13 @@ document.addEventListener('DOMContentLoaded', function() {
                  });
             }
             return getFilteredCharacters({ ...tempFilters }).length > 0;
-        }).slice().sort(() => Math.random() - 0.5);
+        });
     }
     
     function notOwned() {
         if(currentRoulette === 'character') {
             rerolledChars[currentPlayer].push(lastResult);
-            items = getFilteredCharacters(null, currentPlayer).map(c => c.name).sort(() => Math.random() - 0.5);
+            items = getFilteredCharacters(null, currentPlayer).map(c => c.name);
         } else if (currentRoulette === 'weapon') {
             const charName = results.players[currentPlayer - 1]['キャラ武器ルーレット'].char;
             if (!rerolledWeapons[currentPlayer][charName]) rerolledWeapons[currentPlayer][charName] = [];
@@ -721,7 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 filteredWeapons = filteredWeapons.filter(w => !star5Weapons.includes(w));
             }
 
-            items = filteredWeapons.filter(w => !rerolledCommonWeapons.includes(w)).slice().sort(() => Math.random() - 0.5);
+            items = filteredWeapons.filter(w => !rerolledCommonWeapons.includes(w));
         }
         
         if (items.length === 0) {
