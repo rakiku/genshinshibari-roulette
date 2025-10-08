@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
 
+    // ▼▼▼ 新しい縛りのデータをキャラクター情報に追加 ▼▼▼
     const characters = [
         // モンド
         { name: "ジン", country: "モンド", weapon: "片手剣", element: "風", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒常☆５'], body: "長身女性", role: ["オフフィールドライフキーパー"], energy: 80, talent_boss: "無相の風", local_specialty: "蒲公英の種", ascension_stat: "与える治療効果"},
@@ -292,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function executeBinds() {
-        initialize(); // ★★★ この行を追加 ★★★
+        initialize();
         bindsToResolve = Array.from(document.querySelectorAll('#bindButtons input:checked')).map(cb => {
             const bindName = cb.value;
             if (playerBindTypes.includes(bindName)) {
