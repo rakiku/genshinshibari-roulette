@@ -1,4 +1,6 @@
+// バグ修正と機能追加を反映した最終版です。
 document.addEventListener('DOMContentLoaded', function() {
+
 
     const characters = [
         // モンド
@@ -92,24 +94,23 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "エミリエ", country: "フォンテーヌ", weapon: "長柄武器", element: "草", birth_month: "９月", version: "n.8", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドアタッカー"], energy: 50, talent_boss: "魔像レガトゥス", local_specialty: "湖光の鈴蘭", ascension_stat: "会心ダメージ", distributed: false },
         { name: "エスコフィエ", country: "フォンテーヌ", weapon: "長柄武器", element: "氷", birth_month: "６月", version: "n.6", rarity: ['☆５'], body: "長身女性", role: ["オフフィールドアタッカー", "オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 80, talent_boss: "秘源機兵・統御デバイス", local_specialty: "蒼晶螺", ascension_stat: "会心率", distributed: false },
         // ナタ
-        { name: "イアンサ", country: "ナタ", weapon: "長柄武器", element: "雷", birth_month: "８月", version: "n.5", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 70, talent_boss: "深淵なるミミック・パピラ", local_specialty: "琉鱗石", ascension_stat: "攻撃力", distributed: false },
+        { name: "イアンサ", country: "ナタ", weapon: "長柄武器", element: "雷", birth_month: "８月", version: "n.5", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 80, talent_boss: "深淵なるミミック・パピラ", local_specialty: "琉鱗石", ascension_stat: "攻撃力", distributed: false },
         { name: "チャスカ", country: "ナタ", weapon: "弓", element: "風", birth_month: "１２月", version: "n.2", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "深淵なるミミック・パピラ", local_specialty: "枯れ紫菖", ascension_stat: "会心率", distributed: false },
         { name: "ムアラニ", country: "ナタ", weapon: "法器", element: "水", birth_month: "８月", version: "n.0", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "暴君・金焔のクク竜", local_specialty: "波しぶきのエラ", ascension_stat: "会心率", distributed: false },
         { name: "オロルン", country: "ナタ", weapon: "弓", element: "雷", birth_month: "１０月", version: "n.2", rarity: ['☆４'], body: "長身男性", role: ["オフフィールドアタッカー"], energy: 60, talent_boss: "暴君・金焔のクク竜", local_specialty: "蛍光ツノキノコ", ascension_stat: "攻撃力", distributed: false },
         { name: "キィニチ", country: "ナタ", weapon: "両手剣", element: "草", birth_month: "１１月", version: "n.0", rarity: ['☆５'], body: "中身男性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "山の王・貪食のユムカ竜", local_specialty: "サウリアンサキュレント", ascension_stat: "会心ダメージ", distributed: false },
-        { name: "カチーナ", country: "ナタ", weapon: "長柄武器", element: "岩", birth_month: "４月", version: "n.0", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドアタッカー"], energy: 70, talent_boss: "山の王・貪食のユムカ竜", local_specialty: "ケネパベリー", ascension_stat: "岩元素ダメージ", distributed: true },
-        { name: "シトラリ", country: "ナタ", weapon: "法器", element: "氷", birth_month: "１月", version: "n.3", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 60, talent_boss: "迷える霊覚の修権者", local_specialty: "ケネパベリー", ascension_stat: "元素熟知", distributed: false },
+        { name: "カチーナ", country: "ナタ", weapon: "長柄武器", element: "岩", birth_month: "４月", version: "n.0", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドアタッカー"], energy: 80, talent_boss: "山の王・貪食のユムカ竜", local_specialty: "ケネパベリー", ascension_stat: "岩元素ダメージ", distributed: true },
+        { name: "シトラリ", country: "ナタ", weapon: "法器", element: "氷", birth_month: "１月", version: "n.3", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 80, talent_boss: "迷える霊覚の修権者", local_specialty: "ケネパベリー", ascension_stat: "元素熟知", distributed: false },
         { name: "マーヴィカ", country: "ナタ", weapon: "両手剣", element: "炎", birth_month: "８月", version: "n.3", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー", "オフフィールドアタッカー", "オンフィールドサポーター"], energy: 0, talent_boss: "シロネン", local_specialty: "枯れ紫菖", ascension_stat: "会心ダメージ", distributed: false },
         { name: "ヴァレサ", country: "ナタ", weapon: "法器", element: "雷", birth_month: "１１月", version: "n.5", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 30, talent_boss: "輝ける溶岩の龍像", local_specialty: "岩裂の花", ascension_stat: "会心率", distributed: false },
         { name: "イファ", country: "ナタ", weapon: "法器", element: "風", birth_month: "３月", version: "n.5", rarity: ['☆４'], body: "長身女性", role: ["オンフィールドライフキーパー"], energy: 60, talent_boss: "輝ける溶岩の龍像", local_specialty: "サウリアンサキュレント", ascension_stat: "元素熟知", distributed: false },
-        { name: "シロネン", country: "ナタ", weapon: "片手剣", element: "岩", birth_month: "３月", version: "n.1", rarity: ['☆５'], body: "長身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 60, talent_boss: "秘源機兵・機構デバイス", local_specialty: "シャクギク", ascension_stat: "防御力", distributed: false },
+        { name: "シロネン", country: "ナタ", weapon: "片手剣", element: "岩", birth_month: "３月", version: "n.1", rarity: ['☆５'], body: "長身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 80, talent_boss: "秘源機兵・機構デバイス", local_specialty: "シャクギク", ascension_stat: "防御力", distributed: false },
         // スネージナヤ
         { name: "タルタリヤ", country: "スネージナヤ", weapon: "弓", element: "水", birth_month: "７月", version: "n.1", rarity: ['☆５'], body: "長身男性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "純水精霊", local_specialty: "星螺", ascension_stat: "水元素ダメージ", distributed: false },
         { name: "アルレッキーノ", country: "スネージナヤ", weapon: "長柄武器", element: "炎", birth_month: "８月", version: "n.6", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "魔像レガトゥス", local_specialty: "レインボーローズ", ascension_stat: "会心ダメージ", distributed: false },
         // ナドクライ
-        { name: "イネファ", country: "ナドクライ", weapon: "長柄武器", element: "雷", birth_month: "４月", version: "n.8", rarity: ['☆５'], body: "長身女性", role: ["オフフィールドアタッカー", "オフフィールドライフキーパー"], energy: 60, talent_boss: "秘源機兵・統御デバイス", local_specialty: "蛍光ツノキノコ", ascension_stat: "会心率", distributed: false },
+        { name: "イネファ", country: "ナドクライ", weapon: "長柄武器", element: "雷", birth_month: "４月", version: "n.8", rarity: ['☆５'], body: "長身女性", role: ["オフフィールドアタッカー", "オフフィールドライフキーパー"], energy: 80, talent_boss: "秘源機兵・統御デバイス", local_specialty: "蛍光ツノキノコ", ascension_stat: "会心率", distributed: false },
         { name: "フリンズ", country: "ナドクライ", weapon: "長柄武器", element: "雷", birth_month: "１０月", version: "n.0", rarity: ['☆５'], body: "長身男性", role: ["オンフィールドアタッカー"], energy: 30, talent_boss: "ボコボコダック", local_specialty: "フロストランプ", ascension_stat: "会心ダメージ", distributed: false },
-        { name: "ネフェル", country: "ナドクライ", weapon: "法器", element: "草", birth_month: "５月", version: "n.1", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "霜夜の空を巡る霊主", local_specialty: "月落銀", ascension_stat: "会心ダメージ", distributed: false },
         { name: "アイノ", country: "ナドクライ", weapon: "両手剣", element: "水", birth_month: "９月", version: "n.0", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドサポーター"], energy: 50, talent_boss: "ボコボコダック", local_specialty: "蛍行型ベアリング", ascension_stat: "元素熟知", distributed: true },
         { name: "ラウマ", country: "ナドクライ", weapon: "法器", element: "草", birth_month: "３月", version: "n.0", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター"], energy: 60, talent_boss: "集光の幻月蝶", local_specialty: "月落銀", ascension_stat: "元素熟知", distributed: false },
         // 例外
@@ -118,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "アーロイ", country: "例外", weapon: "弓", element: "氷", birth_month: "４月", version: "n.2", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 40, talent_boss: "無相の氷", local_specialty: "晶化骨髄", ascension_stat: "氷元素ダメージ", distributed: true }
     ];
 
-    const star5Weapons = ["真言の匣","血染めの荒れ地","夜を紡ぐ天鏡","千烈の日輪", "ヴィヴィッド・ハート", "寝正月の初晴", "祭星者の眺め", "星鷲の紅き羽", "岩峰を巡る歌", "サーフィンタイム", "山の王の長牙", "ルミドゥースの挽歌", "赦罪", "白雨心弦", "赤月のシルエット", "有楽御簾切", "鶴鳴の余韻", "裁断", "静水流転の輝き", "凛流の監視者", "久遠流転の大典", "始まりの大魔術", "碧落の瓏", "葦海の標", "翠光の裁葉", "トゥライトゥーラの記憶", "千夜に浮かぶ夢", "聖顕の鍵", "赤砂の杖", "狩人の道", "若水", "飛来の鳴弦", "風鷹剣", "霧切の廻光", "アモスの弓", "赤角石塵滅砕", "破天の槍", "草薙の稲光", "蒼古なる自由への誓い", "終焉を嘆く詩", "神楽の真意", "盤岩結緑", "狼の末路", "波乱月白経津", "松韻の響く頃", "無工の剣", "斬山の刃", "護摩の杖", "息災", "天空の脊", "浮世の錠", "天空の翼", "天空の巻", "天空の刃", "天空の傲", "四風原典", "和璞鳶", "冬極の白星", "不滅の月華", "砕け散る光輪"];
+    const star5Weapons = ["血染めの荒れ地","夜を紡ぐ天鏡","千烈の日輪", "ヴィヴィッド・ハート", "寝正月の初晴", "祭星者の眺め", "星鷲の紅き羽", "岩峰を巡る歌", "サーフィンタイム", "山の王の長牙", "ルミドゥースの挽歌", "赦罪", "白雨心弦", "赤月のシルエット", "有楽御簾切", "鶴鳴の余韻", "裁断", "静水流転の輝き", "凛流の監視者", "久遠流転の大典", "始まりの大魔術", "碧落の瓏", "葦海の標", "翠光の裁葉", "トゥライトゥーラの記憶", "千夜に浮かぶ夢", "聖顕の鍵", "赤砂の杖", "狩人の道", "若水", "飛来の鳴弦", "風鷹剣", "霧切の廻光", "アモスの弓", "赤角石塵滅砕", "破天の槍", "草薙の稲光", "蒼古なる自由への誓い", "終焉を嘆く詩", "神楽の真意", "盤岩結緑", "狼の末路", "波乱月白経津", "松韻の響く頃", "無工の剣", "斬山の刃", "護摩の杖", "息災", "天空の脊", "浮世の錠", "天空の翼", "天空の巻", "天空の刃", "天空の傲", "四風原典", "和璞鳶", "冬極の白星", "不滅の月華", "砕け散る光輪"];
     // ▼▼▼ 武器データにascension_statとdistributedプロパティを追加 ▼▼▼
     const allWeapons = {
         "長柄武器": [
@@ -163,7 +164,6 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "死闘の槍", ascension_stat: "会心率", distributed: false }
         ], 
         "法器": [
-            { name: "真言の匣", ascension_stat: "会心ダメージ", distributed: false },
             { name: "夜を紡ぐ天鏡", ascension_stat: "元素熟知", distributed: false },
             { name: "天光のリュート", ascension_stat: "元素チャージ効率", distributed: true },
             { name: "烏髄の孤灯", ascension_stat: "元素熟知", distributed: false },
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const binds = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示＋リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止＋リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし", "武器縛り", "体型縛り", "役割縛り", "スキル禁止", "元素エネルギー縛り", "完凸禁止", "配布武器縛り", "配布キャラ縛り", "ボス素材縛り", "特産品縛り", "クラウン禁止", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)"];
     const initialCharacters = ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー"];
     const ownership100Characters = ["香菱", "旅人", "ガイア", "バーバラ", "コレイ", "ノエル", "リサ", "アンバー"];
-    const alphabetData = {"A": ["アイノ", "荒瀧一斗", "アルベド", "アルレッキーノ", "アルハイゼン", "アンバー", "アーロイ"], "B": ["バーバラ", "白朮", "ベネット", "北斗"], "C": ["キャンディス", "クロリンデ", "コレイ", "シャルロット", "シュヴルーズ", "シトラリ", "セノ", "千織", "チャスカ", "重雲"], "D": ["ドリー", "ディシア", "ディルック", "ディオナ", "ダリア"], "E": ["エミリエ", "エウルア", "エスコフィエ"], "F": ["フリンズ", "ファルザン", "フリーナ", "フレミネ", "フィッシュル"], "G": ["嘉明", "甘雨", "ゴロー"], "H": ["胡桃"], "I": ["イアンサ", "イファ", "イネファ"], "J": ["ジン"], "K": ["神里綾華", "神里綾人", "キィニチ", "綺良々", "久岐忍", "九条裟羅", "クレー", "刻晴", "カチーナ", "カーヴェ"], "L": ["ラウマ", "リサ", "リネ", "リネット", "レイラ", "藍硯"], "M": ["ミカ", "ムアラニ", "モナ", "マーヴィカ"], "N": ["ナヴィア", "ネフェル","ナヒーダ", "ニィロウ", "ヌヴィレット", "ノエル"], "O": ["オロルン"], "Q": ["七七"], "R": ["雷電将軍", "レザー", "ロサリア", "リオセスリ"], "S": ["早柚", "珊瑚宮心海", "鹿野院平蔵", "シグウィン", "申鶴", "スクロース", "セトス", "スカーク"], "T": ["旅人", "ティナリ", "タルタリヤ", "トーマ"], "V": ["ウェンティ", "ヴァレサ"], "W": ["放浪者"], "X": ["行秋", "魈", "香菱", "辛炎", "シロネン", "閑雲"], "Y": ["煙緋", "夜蘭", "雲菫", "八重神子", "宵宮", "ヨォーヨ", "夢見月瑞希"], "Z": ["鍾離"]};
+    const alphabetData = {"A": ["アイノ", "荒瀧一斗", "アルベド", "アルレッキーノ", "アルハイゼン", "アンバー", "アーロイ"], "B": ["バーバラ", "白朮", "ベネット", "北斗"], "C": ["キャンディス", "クロリンデ", "コレイ", "シャルロット", "シュヴルーズ", "シトラリ", "セノ", "千織", "チャスカ", "重雲"], "D": ["ドリー", "ディシア", "ディルック", "ディオナ", "ダリア"], "E": ["エミリエ", "エウルア", "エスコフィエ"], "F": ["フリンズ", "ファルザン", "フリーナ", "フレミネ", "フィッシュル"], "G": ["嘉明", "甘雨", "ゴロー"], "H": ["胡桃"], "I": ["イアンサ", "イファ", "イネファ"], "J": ["ジン"], "K": ["神里綾華", "神里綾人", "キィニチ", "綺良々", "久岐忍", "九条裟羅", "クレー", "刻晴", "カチーナ", "カーヴェ"], "L": ["ラウマ", "リサ", "リネ", "リネット", "レイラ", "藍硯"], "M": ["ミカ", "ムアラニ", "モナ", "マーヴィカ"], "N": ["ナヴィア", "ナヒーダ", "ニィロウ", "ヌヴィレット", "ノエル"], "O": ["オロルン"], "Q": ["七七"], "R": ["雷電将軍", "レザー", "ロサリア", "リオセスリ"], "S": ["早柚", "珊瑚宮心海", "鹿野院平蔵", "シグウィン", "申鶴", "スクロース", "セトス", "スカーク"], "T": ["旅人", "ティナリ", "タルタリヤ", "トーマ"], "V": ["ウェンティ", "ヴァレサ"], "W": ["放浪者"], "X": ["行秋", "魈", "香菱", "辛炎", "シロネン", "閑雲"], "Y": ["煙緋", "夜蘭", "雲菫", "八重神子", "宵宮", "ヨォーヨ", "夢見月瑞希"], "Z": ["鍾離"]};
 
     const countryOrder = ["モンド", "璃月", "稲妻", "スメール", "フォンテーヌ", "ナタ", "スネージナヤ", "ナドクライ", "例外"];
     const monthOrder = ["１月", "２月", "３月", "４月", "５月", "６月", "７月", "８月", "９月", "１０月", "１１月", "１２月"];
@@ -392,12 +392,12 @@ document.addEventListener('DOMContentLoaded', function() {
         "配布キャラ縛り": [...distributedCharacters, "周年配布☆５で選んだキャラ", "海灯祭で選んだキャラ"]
     };
     
-    // ▼▼▼ 新しい個人縛りを追加 ▼▼▼
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り", "誕生月", "武器種縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)", "配布キャラ縛り", "配布武器縛り"];
 
     const bindOrder = [
-        "国縛り", "モノ元素縛り", "各1.1縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)",
+        "国縛り", "モノ元素縛り", 
         "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "所持率100％縛り", "旅人縛り", "配布キャラ縛り",
+        "各1.1縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)",
         "武器種縛り", 
         "突破ステータス縛り(武器)", "配布武器縛り",
         "武器縛り",
@@ -839,381 +839,4 @@ document.addEventListener('DOMContentLoaded', function() {
         const clickHandler = () => {
             popup.style.display = 'none';
             document.getElementById('nextButton').classList.remove('hidden');
-            if(currentRoulette === 'character' || currentRoulette === 'weapon' || (currentRoulette === 'sub' && currentBindName === '武器縛り')) {
-                document.getElementById('notOwnedButton').classList.remove('hidden');
-            }
-            popup.removeEventListener('click', clickHandler);
-        };
-        popup.addEventListener('click', clickHandler);
-    };
-    
-    function nextStep() {
-        processResult();
-        document.getElementById('nextButton').classList.add('hidden');
-        document.getElementById('notOwnedButton').classList.add('hidden');
-    }
-
-    function processResult() {
-        if (lastResult === '該当なし') {
-            proceedToNext();
-            return;
-        }
-
-        if (bindSelectionPhase) {
-            bindsToResolve.push(lastResult);
-            if (lastResult.includes("リロール")) {
-                bindCount++;
-            }
-
-            if (bindsToResolve.length < bindCount) {
-                items = getAvailableBinds();
-                prerenderRouletteImage();
-                drawRoulette();
-                document.getElementById('spinButton').disabled = false;
-            } else {
-                bindSelectionPhase = false;
-                
-                let fullBindsToResolve = [];
-                bindsToResolve.forEach(bindName => {
-                    if (playerBindTypes.includes(bindName)) {
-                        for (let i = 1; i <= playerCount; i++) {
-                            fullBindsToResolve.push({ name: bindName, player: i });
-                        }
-                    } else {
-                        fullBindsToResolve.push({ name: bindName, player: 0 });
-                    }
-                });
-
-                fullBindsToResolve.sort((a, b) => {
-                    const indexA = bindOrder.indexOf(a.name) !== -1 ? bindOrder.indexOf(a.name) : Infinity;
-                    const indexB = bindOrder.indexOf(b.name) !== -1 ? bindOrder.indexOf(b.name) : Infinity;
-                    return indexA - indexB;
-                });
-                bindsToResolve = fullBindsToResolve;
-                currentBindIndex = 0;
-                startNextSelectedBind();
-            }
-            return;
-        }
-
-        if (currentRoulette === 'boss') {
-            results.boss = lastResult;
-            if (mode === 'boss') { 
-                showResults(); 
-                return;
-            } else if (mode === 'all') {
-                bindSelectionPhase = true;
-                currentRoulette = 'bind';
-                items = getAvailableBinds();
-                updateCurrentPlayerDisplay();
-                prerenderRouletteImage();
-                drawRoulette();
-                document.getElementById('spinButton').disabled = false;
-                return;
-            }
-        }
-        
-        const isPlayerSpecific = playerBindTypes.includes(currentBindName);
-
-        if (isPlayerSpecific) {
-            if (currentBindName === 'キャラ武器ルーレット') {
-                if (currentRoulette === 'character') {
-                    results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: null };
-                    currentRoulette = 'weapon';
-                    const charData = characters.find(c => c.name === lastResult);
-                    items = getFilteredWeapons(charData.weapon, lastResult);
-                    updateCurrentPlayerDisplay();
-                    prerenderRouletteImage();
-                    drawRoulette();
-                    document.getElementById('spinButton').disabled = false;
-                    return;
-                } else if (currentRoulette === 'weapon') {
-                    results.players[currentPlayer - 1][currentBindName].weapon = lastResult;
-                }
-            } else {
-                results.players[currentPlayer - 1][currentBindName] = lastResult;
-            }
-        } else {
-            results.common[currentBindName] = lastResult;
-        }
-        
-        proceedToNext();
-    }
-    
-    function hasPlayerBind(bindName, player = currentPlayer) {
-        return !!results.players[player - 1][bindName];
-    }
-    
-    function proceedToNext() {
-        if (mode === 'selected' || mode === 'custom_selected' || (mode === 'all' && !bindSelectionPhase) || (mode === 'bind' && !bindSelectionPhase)) {
-            currentBindIndex++;
-            startNextSelectedBind();
-        } else {
-            showResults();
-        }
-    }
-
-    function getAvailableBinds() {
-        let available = [...binds];
-        const allSelectedBinds = [...Object.keys(results.common), ...bindsToResolve, ...Object.keys(results.players.flat().reduce((acc, obj) => ({...acc, ...obj}), {}))];
-        
-        available = available.filter(b => !allSelectedBinds.includes(b));
-        
-        return available.filter(bind => {
-            const tempFilters = { ...results.common };
-            if (subRoulettes[bind]) {
-                 return subRoulettes[bind].some(option => {
-                     const tempSubFilters = {...tempFilters, [bind]: option};
-                     return characters.some(char => checkCharEligibility(char, tempSubFilters));
-                 });
-            }
-            return getFilteredCharacters({ ...tempFilters }).length > 0;
-        });
-    }
-    
-    function notOwned() {
-        if(currentRoulette === 'character') {
-            rerolledChars[currentPlayer].push(lastResult);
-            items = getFilteredCharacters(null, currentPlayer).map(c => c.name);
-        } else if (currentRoulette === 'weapon') {
-            const charName = results.players[currentPlayer - 1]['キャラ武器ルーレット'].char;
-            if (!rerolledWeapons[currentPlayer][charName]) rerolledWeapons[currentPlayer][charName] = [];
-            rerolledWeapons[currentPlayer][charName].push(lastResult);
-            const weaponType = characters.find(c => c.name === charName).weapon;
-            items = getFilteredWeapons(weaponType, charName);
-        } else if (currentRoulette === 'sub' && currentBindName === '武器縛り') {
-            rerolledCommonWeapons.push(lastResult);
-            
-            let filteredWeapons = subRoulettes['武器縛り'];
-            let filters = playerBindTypes.includes(currentBindName) ? {...results.common, ...results.players[currentPlayer - 1]} : results.common;
-            
-            const weaponTypeFilter = filters["武器種縛り"];
-            if(weaponTypeFilter) {
-                filteredWeapons = allWeapons[weaponTypeFilter].map(w => w.name);
-            }
-            if(filters["☆４キャラ武器"]) {
-                filteredWeapons = filteredWeapons.filter(w => !star5Weapons.includes(w));
-            }
-
-            items = filteredWeapons.filter(w => !rerolledCommonWeapons.includes(w));
-        }
-        
-        if (items.length === 0) {
-            alert("候補がいなくなりました！");
-            proceedToNext();
-            return;
-        }
-        document.getElementById('notOwnedButton').classList.add('hidden');
-        document.getElementById('nextButton').classList.add('hidden');
-        document.getElementById('spinButton').disabled = false;
-        prerenderRouletteImage();
-        drawRoulette();
-    }
-
-    function showResults() {
-        showScreen('resultScreen');
-        const resultsDiv = document.getElementById('results');
-        let html = `<h2>ボス：${results.boss || "未選択"}</h2>`;
-        
-        const commonKeys = Object.keys(results.common);
-        if (commonKeys.length > 0) {
-            html += `<h3>共通の縛り：</h3><ul>`;
-            commonKeys.forEach(key => {
-                let resultText = key;
-                const resultValue = results.common[key];
-                if (resultValue !== true) resultText += `：${resultValue}`;
-                html += `<li>${resultText}</li>`;
-            });
-            html += `</ul>`;
-        }
-
-        for (let i = 0; i < playerCount; i++) {
-            const playerBinds = results.players[i];
-            const playerBindKeys = Object.keys(playerBinds);
-            if (playerBindKeys.length > 0) {
-                html += `<h3>${playerNames[i]}の縛り：</h3><ul>`;
-                playerBindKeys.forEach(bindName => {
-                    const resultDetail = playerBinds[bindName];
-                    let detailHtml = '';
-                    if (bindName === "キャラ武器ルーレット") {
-                        const char = resultDetail.char || "未選択";
-                        let weapon = resultDetail.weapon || playerBinds['武器縛り'] || "未選択";
-                        if (results.common['☆１、聖遺物なし']) weapon = "☆１武器";
-                        detailHtml = `${char} - ${weapon}`;
-                    } else {
-                        detailHtml = resultDetail || "未選択";
-                    }
-                    html += `<li>${bindName}：${detailHtml}</li>`;
-                });
-                html += `</ul>`;
-            }
-
-            let finalChars;
-            const playerHasCharRoulette = hasPlayerBind('キャラルーレット', i + 1);
-            const playerHasCharWeaponRoulette = hasPlayerBind('キャラ武器ルーレット', i + 1);
-
-            if (playerHasCharRoulette || playerHasCharWeaponRoulette) {
-                const charName = playerBinds['キャラルーレット'] || (playerBinds['キャラ武器ルーレット'] ? playerBinds['キャラ武器ルーレット'].char : null);
-                finalChars = charName ? [{ name: charName }] : [];
-            } else {
-                finalChars = getFilteredCharacters(null, i + 1);
-            }
-            
-            html += `<h3>${playerNames[i]}の対象キャラクター (${finalChars.length}人)：</h3>`;
-            if(finalChars.length > 0){
-                html += `<p class="char-list-final">${finalChars.map(c => c.name).join('、')}</p>`;
-            } else {
-                html += `<p>条件を満たすキャラクターはいません</p>`;
-            }
-        }
-
-        resultsDiv.innerHTML = html;
-    }
-    
-    function backToStart() {
-        spinning = false;
-        initialize();
-        showScreen('startScreen');
-    }
-    
-    function showCustomBindScreen() {
-        initialize();
-        mode = 'custom';
-        showScreen('customBindScreen');
-        const commonGridContainer = document.getElementById('customBindGrid');
-        const commonButtonsContainer = document.getElementById('customBindButtonsCommon');
-        const playersContainer = document.getElementById('customBindsPlayersContainer');
-
-        commonGridContainer.innerHTML = '';
-        commonButtonsContainer.innerHTML = '';
-        playersContainer.innerHTML = '';
-
-        const commonSelectBinds = ['国縛り', 'モノ元素縛り'];
-        const commonCheckBinds = ['恒常☆５縛り', '☆４キャラ武器', '初期キャラのみ', '所持率100％縛り', '旅人縛り', 'スキル禁止', '完凸禁止', 'クラウン禁止', '配布武器縛り'];
-        const playerSelectBinds = ['各1.1縛り', '体型縛り', '役割縛り', '元素エネルギー縛り', 'ボス素材縛り', '特産品縛り', '突破ステータス縛り(キャラ)', '突破ステータス縛り(武器)', '武器種縛り', '誕生月', 'アルファベット縛り'];
-        const playerCheckBinds = ['武器縛り', 'キャラルーレット', 'キャラ武器ルーレット', '配布キャラ縛り'];
-
-        commonSelectBinds.forEach(name => createBindItem(name, 'select', commonGridContainer));
-        commonCheckBinds.forEach(name => createBindItem(name, 'check', commonButtonsContainer));
-
-        for (let i = 1; i <= playerCount; i++) {
-            const playerDiv = document.createElement('div');
-            playerDiv.className = 'custom-bind-player-section';
-            playerDiv.innerHTML = `<h3>${playerNames[i-1]}の縛り</h3>`;
-            
-            const playerGrid = document.createElement('div');
-            playerGrid.className = 'custom-bind-grid';
-            playerSelectBinds.forEach(name => createBindItem(name, 'select', playerGrid, i));
-            
-            const playerButtons = document.createElement('div');
-            playerButtons.className = 'button-group-checkbox';
-            playerCheckBinds.forEach(name => createBindItem(name, 'check', playerButtons, i));
-            
-            playerDiv.appendChild(playerGrid);
-            playerDiv.appendChild(playerButtons);
-            playersContainer.appendChild(playerDiv);
-        }
-    }
-
-    function createBindItem(name, type, container, playerIndex = 0) {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = type === 'check' ? 'checkbox-label' : 'custom-bind-item';
-        
-        const label = document.createElement('label');
-        label.className = 'checkbox-label-main';
-        
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.dataset.bindName = name;
-        if(playerIndex > 0) checkbox.dataset.player = playerIndex;
-        
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(` ${name}`));
-        itemDiv.appendChild(label);
-
-        if (type === 'select') {
-            const select = document.createElement('select');
-            select.dataset.detailFor = name;
-            if(playerIndex > 0) select.dataset.player = playerIndex;
-            select.style.display = 'none'; 
-            
-            const randomOption = document.createElement('option');
-            randomOption.value = 'random';
-            randomOption.textContent = 'ランダム';
-            select.appendChild(randomOption);
-
-            subRoulettes[name].forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt;
-                option.textContent = opt;
-                select.appendChild(option);
-            });
-            itemDiv.appendChild(select);
-            
-            checkbox.addEventListener('change', (e) => {
-                select.style.display = e.target.checked ? 'inline-block' : 'none';
-            });
-        }
-        container.appendChild(itemDiv);
-    }
-    
-    function executeCustomBinds() {
-        initialize(); 
-        mode = 'custom_selected';
-        bindsToResolve = [];
-        results.players = Array(playerCount).fill(0).map(() => ({}));
-        
-        const bindItems = document.querySelectorAll('#customBindScreen input[type="checkbox"]');
-
-        bindItems.forEach(checkbox => {
-            if (checkbox.checked) {
-                const bindName = checkbox.dataset.bindName;
-                const player = checkbox.dataset.player;
-                const select = checkbox.closest('.custom-bind-item, .checkbox-label').querySelector('select');
-                
-                let target = player ? results.players[player - 1] : results.common;
-                let needsRoulette = subRoulettes[bindName] || bindName === 'キャラルーレット' || bindName === 'キャラ武器ルーレット';
-
-                if (select) { 
-                    const selectedValue = select.value;
-                    if (selectedValue === 'random') {
-                        bindsToResolve.push({ name: bindName, player: player ? parseInt(player) : 0 });
-                    } else {
-                        target[bindName] = selectedValue;
-                    }
-                } else {
-                     if (needsRoulette) {
-                        bindsToResolve.push({ name: bindName, player: player ? parseInt(player) : 0 });
-                     } else {
-                        target[bindName] = true;
-                     }
-                }
-            }
-        });
-
-        if (results.common['恒常☆５縛り'] && results.common['☆４キャラ武器']) {
-             alert('「恒常☆５縛り」と「☆４キャラ武器」は同時に選択できません。');
-             return;
-        }
-
-        bindsToResolve.sort((a, b) => {
-            const indexA = bindOrder.indexOf(a.name) !== -1 ? bindOrder.indexOf(a.name) : Infinity;
-            const indexB = bindOrder.indexOf(b.name) !== -1 ? bindOrder.indexOf(b.name) : Infinity;
-            return indexA - indexB;
-        });
-        
-        currentBindIndex = 0;
-        startNextCustomBind();
-    }
-
-    function startNextCustomBind() {
-        if (currentBindIndex >= bindsToResolve.length) {
-            showResults();
-            return;
-        }
-        const bindInfo = bindsToResolve[currentBindIndex];
-        setupRouletteForBind(bindInfo.name, bindInfo.player || 1);
-    }
-
-    updatePlayerNameInputs();
-});
+            if(currentRoulette === 'character' || currentRoulette === 'weapon' || (currentRoulette === 'sub' && currentBindName === '武器
