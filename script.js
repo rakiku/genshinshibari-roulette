@@ -1,4 +1,3 @@
-// 全てのバグ修正と新機能追加を反映した最終版です。
 document.addEventListener('DOMContentLoaded', function() {
 
 
@@ -160,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "配布キャラ縛り": [...distributedCharacters, "周年配布☆５で選んだキャラ", "海灯祭で選んだキャラ"]
     };
     
+    // ▼▼▼ 新しい個人縛りを追加 ▼▼▼
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り", "誕生月", "武器種縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)", "配布キャラ縛り"];
 
     const bindOrder = [
@@ -461,8 +461,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     break;
                 case "武器縛り": {
-                    const weaponType = Object.keys(allWeapons).find(type => allWeapons[type].some(w => w.name === value));
-                    if (char.weapon === weaponType) match = true;
+                    const weaponData = Object.values(allWeapons).flat().find(w => w.name === value);
+                    if (weaponData) {
+                        const weaponType = Object.keys(allWeapons).find(type => allWeapons[type].includes(weaponData));
+                        match = (char.weapon === weaponType);
+                    }
                     break;
                 }
                 case "恒常☆５縛り": match = char.rarity.includes('恒常☆５'); break;
