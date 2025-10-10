@@ -373,6 +373,14 @@ canvas {
     padding-top: 15px;
 }
 
+.reroll-player-button {
+    background-color: #9b59b6;
+    margin-top: 10px;
+}
+.reroll-player-button:hover {
+    background-color: #8e44ad;
+}
+
 
 /* ▼▼▼ スマホ対応（レスポンシブデザイン） ▼▼▼ */
 @media (max-width: 768px) {
