@@ -116,7 +116,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // 例外
         { name: "旅人", country: "例外", weapon: "片手剣", element: "その他", birth_month: "その他", version: "n.0", rarity: ['☆５'], body: ["中身男性", "中身女性"], role: ["オンフィールドアタッカー", "オフフィールドアタッカー"], energy: [60, 80, 70], talent_boss: "", local_specialty: "風車アスター", ascension_stat: "攻撃力", displayNames: ["空", "蛍", "風旅人", "水旅人", "草旅人", "炎旅人", "雷旅人"], distributed: true},
         { name: "スカーク", country: "例外", weapon: "片手剣", element: "氷", birth_month: "１１月", version: "n.7", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー"], energy: 0, talent_boss: "輝ける溶岩の龍像", local_specialty: "岩裂の花", ascension_stat: "会心ダメージ", distributed: false },
+        { name: "ドール", country: "例外", weapon: "片手剣", element: "その他", birth_month: "その他", version: "n.2", rarity: ['☆５'], body: ["中身男性", "中身女性"], role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "", local_specialty: "", ascension_stat: "攻撃力", distributed: false },
         { name: "アーロイ", country: "例外", weapon: "弓", element: "氷", birth_month: "４月", version: "n.2", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 40, talent_boss: "無相の氷", local_specialty: "晶化骨髄", ascension_stat: "氷元素ダメージ", distributed: true }
+        
     ];
 
     // ▼▼▼ 修正: 詳細な武器データに置き換え ▼▼▼
