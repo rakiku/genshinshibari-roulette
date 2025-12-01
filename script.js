@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "エウルア", country: "モンド", weapon: "両手剣", element: "氷", birth_month: "１０月", version: "n.5", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー"], energy: 80, talent_boss: "無相の氷", local_specialty: "蒲公英の種", ascension_stat: "会心ダメージ", distributed: false },
         { name: "ミカ", country: "モンド", weapon: "長柄武器", element: "氷", birth_month: "８月", version: "n.5", rarity: ['☆４'], body: "中身男性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 70, talent_boss: "風食ウェネト", local_specialty: "ググプラム", ascension_stat: "HP", distributed: false },
         { name: "ダリア", country: "モンド", weapon: "片手剣", element: "水", birth_month: "５月", version: "n.7", rarity: ['☆４'], body: "中身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 80, talent_boss: "秘源機兵・統御デバイス", local_specialty: "", ascension_stat: "HP", distributed: false },
+        { name: "ドゥリン", country: "モンド", weapon: "片手剣", element: "炎", birth_month: "３月", version: "n.3", rarity: ['☆５'], body: "中身男性", role: ["オフフィールドアタッカー"], energy: 70, talent_boss: "重量級陸巡艦「バトルシップ」", local_specialty: "フロストランプ", ascension_stat: "会心ダメージ", distributed: false },
         // 璃月
         { name: "魈", country: "璃月", weapon: "長柄武器", element: "風", birth_month: "４月", version: "n.4", rarity: ['☆５'], body: "中身男性", role: ["オンフィールドアタッカー"], energy: 70, talent_boss: "エンシェントヴィシャップ・岩", local_specialty: "清心", ascension_stat: "会心率", distributed: false },
         { name: "北斗", country: "璃月", weapon: "両手剣", element: "雷", birth_month: "２月", version: "n.0", rarity: ['☆４'], body: "長身女性", role: ["オフフィールドアタッカー", "オフフィールドライフキーパー"], energy: 80, talent_boss: "無相の雷", local_specialty: "夜泊石", ascension_stat: "雷元素ダメージ", distributed: true },
@@ -113,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "アイノ", country: "ナドクライ", weapon: "両手剣", element: "水", birth_month: "９月", version: "n.0", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドサポーター"], energy: 50, talent_boss: "ボコボコダック", local_specialty: "蛍行型ベアリング", ascension_stat: "元素熟知", distributed: true },
         { name: "ラウマ", country: "ナドクライ", weapon: "法器", element: "草", birth_month: "３月", version: "n.0", rarity: ['☆５'], body: "長身女性", role: ["オフフィールドサポーター"], energy: 60, talent_boss: "集光の幻月蝶", local_specialty: "月落銀", ascension_stat: "元素熟知", distributed: false },
         { name: "ネフェル", country: "ナドクライ", weapon: "法器", element: "草", birth_month: "５月", version: "n.1", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "霜夜の空を巡る霊主", local_specialty: "月落銀", ascension_stat: "会心ダメージ", distributed: false },
+        { name: "ヤフォダ", country: "ナドクライ", weapon: "弓", element: "風", birth_month: "１月", version: "n.3", rarity: ['☆４'], body: "中身女性", role: ["オフフィールドヒーラー"], energy: 70, talent_boss: "集光の幻月蝶", local_specialty: "携行型ベアリング", ascension_stat: "与える治療効果", distributed: false },
         // 例外
         { name: "旅人", country: "例外", weapon: "片手剣", element: "その他", birth_month: "その他", version: "n.0", rarity: ['☆５'], body: ["中身男性", "中身女性"], role: ["オンフィールドアタッカー", "オフフィールドアタッカー"], energy: [60, 80, 70], talent_boss: "", local_specialty: "風車アスター", ascension_stat: "攻撃力", displayNames: ["空", "蛍", "風旅人", "水旅人", "草旅人", "炎旅人", "雷旅人"], distributed: true},
         { name: "スカーク", country: "例外", weapon: "片手剣", element: "氷", birth_month: "１１月", version: "n.7", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー"], energy: 0, talent_boss: "輝ける溶岩の龍像", local_specialty: "岩裂の花", ascension_stat: "会心ダメージ", distributed: false },
@@ -217,6 +219,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "万国諸海の図譜", rarity: 4, type: "法器", ascension_stat: "元素熟知", is_distributed: false }
         ],
         "弓": [
+            { name: "暁を告げる歴史", rarity: 5, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false },
+            { name: "虹蛇の雨弦", rarity: 4, type: "弓", ascension_stat: "元素チャージ効率", is_distributed: true },
             { name: "羅網の針", rarity: 4, type: "弓", ascension_stat: "元素チャージ効率", is_distributed: false },
             { name: "冷寂の音", rarity: 4, type: "弓", ascension_stat: "HP", is_distributed: true },
             { name: "星鷲の紅き羽", rarity: 5, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false },
@@ -306,6 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "理屈責め", rarity: 3, type: "両手剣", ascension_stat: "攻撃力", is_distributed: false }
         ],
         "片手剣": [
+            { name: "黒蝕", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "月紡ぎの曙光", rarity: 4, type: "片手剣", ascension_stat: "攻撃力", is_distributed: false },
             { name: "静謐の笛", rarity: 4, type: "片手剣", ascension_stat: "元素チャージ効率", is_distributed: false },
             { name: "厄水の災い", rarity: 4, type: "片手剣", ascension_stat: "攻撃力", is_distributed: true },
