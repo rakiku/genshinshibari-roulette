@@ -1,3 +1,4 @@
+/* 全体設定 */
 body {
     font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
     background-image: url('background.jpg.png');
@@ -16,6 +17,7 @@ body {
     box-sizing: border-box;
 }
 
+/* ホームボタン（固定配置） */
 .home-button {
     position: fixed;
     top: 15px;
@@ -28,6 +30,7 @@ body {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
+/* メインコンテナ */
 .container {
     background-color: rgba(44, 62, 80, 0.9);
     padding: 20px 40px;
@@ -49,11 +52,11 @@ h2 + p {
     color: #bdc3c7;
 }
 
-
 .hidden {
     display: none !important;
 }
 
+/* 入力グループ */
 .input-group {
     margin-bottom: 15px;
     display: flex;
@@ -77,6 +80,7 @@ h2 + p {
     text-align: center;
 }
 
+/* ボタン共通設定 */
 .button-group {
     display: flex;
     flex-wrap: wrap;
@@ -114,12 +118,13 @@ button:disabled {
 #stopButton:not(:disabled):hover {
     background-color: #e74c3c;
 }
+
 #executeCustomBindsButton {
     margin-top: 10px;
     width: 100%;
 }
 
-
+/* カスタム縛り設定画面 */
 .custom-bind-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -142,9 +147,6 @@ button:disabled {
     cursor: pointer;
     user-select: none;
 }
-.custom-bind-item .checkbox-label-main input {
-    margin-right: 8px;
-}
 
 .custom-bind-item select {
     width: 100%;
@@ -162,7 +164,6 @@ button:disabled {
     padding-top: 20px;
 }
 
-
 .button-group-checkbox {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -179,23 +180,16 @@ button:disabled {
     cursor: pointer;
     transition: background-color 0.3s;
 }
+
 .checkbox-label:hover {
     background-color: #4a6fa5;
 }
+
 .checkbox-label input {
     margin-right: 10px;
 }
-.checkbox-label.disabled {
-    background-color: #2c3e50;
-    color: #7f8c8d;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-.checkbox-label.disabled input {
-    cursor: not-allowed;
-}
 
-
+/* ルーレット表示部分 */
 .roulette-container {
     margin: 20px auto;
     position: relative;
@@ -208,24 +202,37 @@ canvas {
     height: 100%;
 }
 
+/* ポップアップ（修正：×ボタン対応） */
 .popup {
     display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(0, 0, 0, 0.9);
     color: #fff;
-    padding: 30px 50px;
+    padding: 40px 60px;
     border-radius: 10px;
     font-size: 2.5em;
     font-weight: bold;
-    z-index: 100;
+    z-index: 1000;
     text-shadow: 2px 2px 5px #000;
     border: 2px solid #fff;
     cursor: pointer;
 }
 
+/* ポップアップの左上の×ボタン */
+.popup-close {
+    position: absolute;
+    top: 8px;
+    left: 15px;
+    font-size: 0.5em;
+    color: #bdc3c7;
+    line-height: 1;
+    font-weight: normal;
+}
+
+/* 結果画面 */
 #results {
     text-align: left;
     background-color: #34495e;
@@ -233,15 +240,19 @@ canvas {
     border-radius: 10px;
     margin-bottom: 20px;
 }
+
 #results h3 {
     margin-top: 15px;
     border-bottom: 1px solid #7f8c8d;
     padding-bottom: 5px;
+    color: #f1c40f;
 }
+
 #results ul {
     list-style: none;
     padding-left: 0;
 }
+
 #results li {
     background-color: #2c3e50;
     margin-bottom: 5px;
@@ -249,14 +260,19 @@ canvas {
     border-radius: 5px;
 }
 
-.char-list, .char-list-final {
-    font-size: 0.8em;
-    color: #bdc3c7;
-    margin-left: 8px;
+.char-list-final {
+    font-size: 0.9em;
+    color: #ecf0f1;
+    background-color: #2c3e50;
+    padding: 12px;
+    border-radius: 5px;
     display: block;
-    margin-top: 5px;
+    margin-top: 8px;
+    line-height: 1.6;
+    border-left: 4px solid #f1c40f;
 }
 
+/* 名前入力欄 */
 #playerNameInputsContainer {
     margin-top: 20px;
     display: flex;
@@ -284,6 +300,7 @@ canvas {
     min-height: 2.2em;
 }
 
+/* Aboutモーダル */
 .about-button-container {
     margin-top: 25px;
     padding-top: 20px;
@@ -292,10 +309,6 @@ canvas {
 
 .about-button {
     background-color: #3498db;
-}
-
-.about-button:hover {
-    background-color: #5dade2;
 }
 
 .modal-overlay {
@@ -324,29 +337,6 @@ canvas {
     border: 2px solid #7f8c8d;
 }
 
-.modal-content h3 {
-    color: #f1c40f;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #7f8c8d;
-    padding-bottom: 5px;
-}
-
-.modal-content p {
-    line-height: 1.6;
-    margin-bottom: 15px;
-}
-
-.modal-content a {
-    color: #3498db;
-    text-decoration: none;
-    word-break: break-all;
-}
-
-.modal-content a:hover {
-    text-decoration: underline;
-}
-
 .close-button {
     position: absolute;
     top: 10px;
@@ -357,14 +347,6 @@ canvas {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0;
-    line-height: 1;
-}
-
-.close-button:hover {
-    color: #c0392b;
-    transform: none; 
-    background-color: transparent;
 }
 
 .custom-bind-player-section {
@@ -377,47 +359,24 @@ canvas {
     background-color: #9b59b6;
     margin-top: 10px;
 }
-.reroll-player-button:hover {
-    background-color: #8e44ad;
-}
 
-
-/* ▼▼▼ スマホ対応（レスポンシブデザイン） ▼▼▼ */
+/* スマホ対応 */
 @media (max-width: 768px) {
     .container {
         padding: 15px;
         width: 100%;
-        height: 100%;
         border-radius: 0;
-        box-sizing: border-box;
     }
-
-    h1 {
-        font-size: 1.8em;
-    }
-
     .roulette-container {
         width: 90vw;
         height: 90vw;
-        max-width: 500px;
-        max-height: 500px;
     }
-
-    .button-group {
-        flex-direction: column;
-    }
-
     .custom-bind-grid {
         grid-template-columns: 1fr;
     }
-
-    .modal-content {
-        padding: 15px;
-    }
-
     .popup {
         font-size: 1.5em;
-        padding: 20px 30px;
+        padding: 20px;
         width: 80%;
     }
 }
