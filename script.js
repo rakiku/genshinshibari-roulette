@@ -375,7 +375,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const initialCharacters = ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー"];
     const ownership100Characters = ["香菱", "旅人", "ガイア", "バーバラ", "コレイ", "ノエル", "リサ", "アンバー"];
     const alphabetData = {"A": ["アイノ", "荒瀧一斗", "アルベド", "アルレッキーノ", "アルハイゼン", "アンバー", "アーロイ"], "B": ["バーバラ", "白朮", "ベネット", "北斗"], "C": ["コロンビーナ","キャンディス", "クロリンデ", "コレイ", "シャルロット", "シュヴルーズ", "シトラリ", "セノ", "千織", "チャスカ", "重雲"], "D": ["ドリー", "ディシア", "ディルック", "ディオナ", "ダリア"], "E": ["エミリエ", "エウルア", "エスコフィエ"], "F": ["フリンズ", "ファルザン", "フリーナ", "フレミネ", "フィッシュル"], "G": ["嘉明", "甘雨", "ゴロー"], "H": ["胡桃"], "I": ["イルーガ","イアンサ", "イファ", "イネファ"], "J": ["ジン"], "K": ["神里綾華", "神里綾人", "キィニチ", "綺良々", "久岐忍", "九条裟羅", "クレー", "刻晴", "カチーナ", "カーヴェ"], "L": ["ラウマ", "リサ", "リネ", "リネット", "レイラ", "藍硯"], "M": ["ミカ", "ムアラニ", "モナ", "マーヴィカ"], "N": ["ネフェル","ナヴィア", "ナヒーダ", "ニィロウ", "ヌヴィレット", "ノエル"], "O": ["オロルン"], "Q": ["七七"], "R": ["雷電将軍", "レザー", "ロサリア", "リオセスリ"], "S": ["早柚", "珊瑚宮心海", "鹿野院平蔵", "シグウィン", "申鶴", "スクロース", "セトス", "スカーク"], "T": ["旅人", "ティナリ", "タルタリヤ", "トーマ"], "V": ["ウェンティ", "ヴァレサ"], "W": ["放浪者"], "X": ["行秋", "魈", "香菱", "辛炎", "シロネン", "閑雲"], "Y": ["煙緋", "夜蘭", "雲菫", "八重神子", "宵宮", "ヨォーヨ", "夢見月瑞希"], "Z": ["兹白","鍾離"]};
-
     const countryOrder = ["モンド", "璃月", "稲妻", "スメール", "フォンテーヌ", "ナタ", "スネージナヤ", "ナドクライ", "例外"];
     const monthOrder = ["１月", "２月", "３月", "４月", "５月", "６月", "７月", "８月", "９月", "１０月", "１１月", "１２月"];
 
@@ -406,7 +405,8 @@ document.addEventListener('DOMContentLoaded', function() {
         "配布キャラ縛り": [...distributedCharacters, "周年配布☆５で選んだキャラ", "海灯祭で選んだキャラ"]
     };
     
-    const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り", "誕生月", "武器種縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)", "配布キャラ縛り"];
+    // 修正: 配布武器縛りを追加
+    const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り", "誕生月", "武器種縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)", "配布キャラ縛り", "配布武器縛り"];
 
     const bindOrder = ["国縛り", "モノ元素縛り", "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "所持率100％縛り", "旅人縛り", "配布キャラ縛り", "各1.1縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)", "武器種縛り", "突破ステータス縛り(武器)", "配布武器縛り", "武器縛り", "誕生月", "アルファベット縛り", "キャラルーレット", "キャラ武器ルーレット"];
 
@@ -582,7 +582,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function checkCharEligibility(char, filters) {
         for (const bindName in filters) {
-            const value = filters[bindName]; if (!value) continue;
+            const value = filters[bindName];
+            // 修正: value が 0 の時もスキップしないようにする (元素エネルギー0対応)
+            if (value === undefined || value === null || value === "") continue;
+            
             let match = false;
             switch(bindName) {
                 case "国縛り": match = (char.country === value); break;
@@ -740,6 +743,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (currentRoulette === 'character') {
                     results.players[currentPlayer - 1][currentBindName] = { char: lastResult, weapon: null };
                     currentRoulette = 'weapon'; items = getFilteredWeapons(characters.find(c => c.name === lastResult).weapon, lastResult);
+                    prerenderedRoulette = null; // 強制再描画
                     prerenderRouletteImage(); drawRoulette(); document.getElementById('spinButton').disabled = false; return;
                 } else results.players[currentPlayer - 1][currentBindName].weapon = lastResult;
             } else results.players[currentPlayer - 1][currentBindName] = lastResult;
@@ -777,6 +781,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         if (items.length === 0) { alert("候補がいなくなりました！"); proceedToNext(); return; }
+        prerenderedRoulette = null;
         prerenderRouletteImage(); drawRoulette(); document.getElementById('spinButton').disabled = false;
     }
 
@@ -798,14 +803,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const wepBinds = ["武器種縛り", "配布武器縛り", "武器縛り", "突破ステータス縛り(武器)", "☆１、聖遺物なし", "☆４キャラ武器"];
             if (wepBinds.some(b => f[b])) {
                 let weps = []; const types = [...new Set(chars.map(c => c.weapon))];
-                types.forEach(t => weps = weps.concat(allWeapons[t].filter(w => {
-                    if (f["☆４キャラ武器"] && w.rarity>=5) return false;
-                    if (f["配布武器縛り"] && (typeof f["配布武器縛り"]==='string' ? w.name!==f["配布武器縛り"] : !w.is_distributed)) return false;
-                    if (f["武器縛り"] && w.name!==f["武器縛り"]) return false;
-                    if (f["突破ステータス縛り(武器)"] && w.ascension_stat!==f["突破ステータス縛り(武器)"]) return false;
-                    if (f["☆１、聖遺物なし"] && w.rarity!==1) return false;
-                    return true;
-                }).map(w => w.name)));
+                types.forEach(t => {
+                    if(!allWeapons[t]) return;
+                    weps = weps.concat(allWeapons[t].filter(w => {
+                        if (f["☆４キャラ武器"] && w.rarity>=5) return false;
+                        if (f["配布武器縛り"] && (typeof f["配布武器縛り"]==='string' ? w.name!==f["配布武器縛り"] : !w.is_distributed)) return false;
+                        if (f["武器縛り"] && w.name!==f["武器縛り"]) return false;
+                        if (f["突破ステータス縛り(武器)"] && w.ascension_stat!==f["突破ステータス縛り(武器)"]) return false;
+                        if (f["☆１、聖遺物なし"] && w.rarity!==1) return false;
+                        return true;
+                    }).map(w => w.name));
+                });
                 html += `<h4>使用可能武器:</h4><p class="char-list-final">${[...new Set(weps)].join('、')||'なし'}</p>`;
             }
             html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'条件不一致'}</p>`;
@@ -829,13 +837,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const cg = document.getElementById('customBindGrid'), cb = document.getElementById('customBindButtonsCommon'), pc = document.getElementById('customBindsPlayersContainer');
         cg.innerHTML = ''; cb.innerHTML = ''; pc.innerHTML = '';
         ['国縛り', 'モノ元素縛り'].forEach(n => createBindItem(n, 'select', cg));
-        ['恒常☆５縛り', '☆４キャラ武器', '初期キャラのみ', '所持率100％縛り', '旅人縛り', 'スキル禁止', '完凸禁止', 'クラウン禁止', '配布武器縛り', '回復禁止'].forEach(n => createBindItem(n, 'check', cb));
+        // 修正: 配布武器縛りをここから削除
+        ['恒常☆５縛り', '☆４キャラ武器', '初期キャラのみ', '所持率100％縛り', '旅人縛り', 'スキル禁止', '完凸禁止', 'クラウン禁止', '回復禁止'].forEach(n => createBindItem(n, 'check', cb));
         for (let i = 1; i <= playerCount; i++) {
             const d = document.createElement('div'); d.className = 'custom-bind-player-section'; d.innerHTML = `<h3>${playerNames[i-1]}</h3>`;
             const g = document.createElement('div'); g.className = 'custom-bind-grid';
             ['各1.1縛り', '体型縛り', '役割縛り', '元素エネルギー縛り', 'ボス素材縛り', '特産品縛り', '突破ステータス縛り(キャラ)', '突破ステータス縛り(武器)', '武器種縛り', '誕生月', 'アルファベット縛り'].forEach(n => createBindItem(n, 'select', g, i));
             const b = document.createElement('div'); b.className = 'button-group-checkbox';
-            ['武器縛り', 'キャラルーレット', 'キャラ武器ルーレット', '配布キャラ縛り'].forEach(n => createBindItem(n, 'check', b, i));
+            // 修正: 配布武器縛りをここに追加
+            ['武器縛り', 'キャラルーレット', 'キャラ武器ルーレット', '配布キャラ縛り', '配布武器縛り'].forEach(n => createBindItem(n, 'check', b, i));
             d.appendChild(g); d.appendChild(b); pc.appendChild(d);
         }
     }
