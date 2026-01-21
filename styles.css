@@ -54,6 +54,10 @@ p {
     background-color: rgba(0, 0, 0, 0.6);
     border: 1px solid #fff;
     padding: 8px 15px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 button {
@@ -66,6 +70,7 @@ button {
     font-size: 1em;
     font-weight: bold;
     transition: all 0.2s ease;
+    margin: 5px;
 }
 
 button:hover {
@@ -129,6 +134,7 @@ button:disabled {
     text-align: center;
 }
 
+/* プレイヤー名入力エリア（以前の見やすい設定に修正） */
 #playerNameInputsContainer {
     margin-top: 20px;
     display: flex;
@@ -138,12 +144,13 @@ button:disabled {
 }
 
 .playerNameInput {
-    width: 250px;
-    padding: 10px;
+    width: 200px;
+    padding: 8px;
     border-radius: 5px;
     border: 1px solid #7f8c8d;
     background-color: #34495e;
     color: #ecf0f1;
+    font-size: 1em;
     text-align: center;
 }
 
@@ -171,7 +178,7 @@ canvas {
     height: 100%;
 }
 
-/* ポップアップ：×ボタンを大きく調整 */
+/* ポップアップ：×ボタンを大きく赤色に調整 */
 .popup {
     display: none;
     position: fixed;
@@ -192,15 +199,15 @@ canvas {
     text-align: center;
 }
 
-/* ポップアップの×ボタン（見やすく大きく改善） */
 .popup-close {
     position: absolute;
-    top: 10px;
+    top: 5px;
     left: 15px;
-    font-size: 45px; /* 大きく調整 */
-    color: #e74c3c; /* 閉じることが分かりやすいよう赤色系に */
+    font-size: 60px;
+    color: #e74c3c;
     line-height: 1;
     font-family: Arial, sans-serif;
+    font-weight: bold;
     text-shadow: none;
 }
 
@@ -297,7 +304,7 @@ canvas {
 
 .char-list-final {
     font-size: 1em;
-    color: #fff;
+    color: #f1c40f;
     background-color: #1a252f;
     padding: 15px;
     border-radius: 8px;
@@ -305,6 +312,7 @@ canvas {
     margin-top: 10px;
     border: 1px solid #7f8c8d;
     word-break: break-all;
+    display: block;
 }
 
 /* --- Aboutモーダル --- */
@@ -331,12 +339,14 @@ canvas {
     overflow-y: auto;
     position: relative;
     border: 2px solid #3498db;
+    text-align: left;
 }
 
 .modal-content h3 {
     color: #f1c40f;
     border-bottom: 1px solid #f1c40f;
     padding-bottom: 5px;
+    margin-top: 25px;
 }
 
 .close-button {
@@ -381,6 +391,7 @@ canvas {
     }
 
     .popup-close {
-        font-size: 40px;
+        font-size: 45px;
+        top: 10px;
     }
 }
