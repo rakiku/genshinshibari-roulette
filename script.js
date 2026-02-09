@@ -743,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else showResults();
     }
 
-    function showCustomBindScreen() {
+       function showCustomBindScreen() {
         initialize(); mode = 'custom'; showScreen('customBindScreen');
         const bSel = document.getElementById('customBossSelect');
         bSel.innerHTML = '<option value="random">ランダム</option>' + jpSort(bosses).map(b => `<option value="${b}">${b}</option>`).join('');
@@ -785,7 +785,15 @@ document.addEventListener('DOMContentLoaded', function() {
             else bindsToResolve.push({ name: n, player: p });
         });
         bindsToResolve.sort((a, b) => (bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name)));
-        if (!results.boss) { currentRoulette = 'boss'; items = bosses; showScreen('rouletteScreen'); updateDisplayInfo(); prerenderRouletteImage(); drawRoulette(); }
+        if (!results.boss) { 
+            currentRoulette = 'boss'; 
+            items = bosses; 
+            showScreen('rouletteScreen'); 
+            updateDisplayInfo(); 
+            prerenderRouletteImage(); 
+            drawRoulette();
+            document.getElementById('spinButton').disabled = false;
+        }
         else { startNextSelectedBind(); }
     }
 
@@ -820,6 +828,97 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('executeSelectionButton').addEventListener('click', executeBinds);
     document.getElementById('showCustomBindScreenButton').addEventListener('click', showCustomBindScreen);
     document.getElementById('executeCustomBindsButton').addEventListener('click', executeCustomBinds);
+
+    function startRoulette(rouletteMode) {
+        initialize();
+        mode = rouletteMode;
+        
+        if (mode === 'all' || mode === 'boss') {
+            currentRoulette = 'boss';
+            items = bosses;
+            updateDisplayInfo();
+            prerenderRouletteImage();
+            showScreen('rouletteScreen');
+            drawRoulette();
+            document.getElementById('spinButton').disabled = false;
+        } else if (mode === 'bind') {
+            bindSelectionPhase = true;
+            items = getAvailableBinds();
+            currentRoulette = 'bind';
+            updateDisplayInfo();
+            prerenderRouletteImage();
+            showScreen('rouletteScreen');
+            drawRoulette();
+            document.getElementById('spinButton').disabled = false;
+        }
+    }
+
+    function showBindSelection() {
+        initialize();
+        mode = 'selection';
+        
+        // bindButtonsに縛り選択チェックボックスを生成
+        const bindButtonsDiv = document.getElementById('bindButtons');
+        bindButtonsDiv.innerHTML = '';
+        
+        binds.forEach(bindName => {
+            const label = document.createElement('label');
+            label.className = 'checkbox-label';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.dataset.bindName = bindName;
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(' ' + bindName));
+            bindButtonsDiv.appendChild(label);
+        });
+        
+        showScreen('bindSelection');
+    }
+
+    function startNextSelectedBind() {
+        if (currentBindIndex >= bindsToResolve.length) {
+            showResults();
+            return;
+        }
+        
+        const bindItem = bindsToResolve[currentBindIndex];
+        const bindName = bindItem.name;
+        const player = bindItem.player || currentPlayer;
+        
+        if (player > 0) {
+            currentPlayer = player;
+        }
+        
+        setupRouletteForBind(bindName, player > 0 ? player : currentPlayer);
+    }
+
+    function executeBinds() {
+        initialize();
+        mode = 'selected';
+        
+        const checkboxes = document.querySelectorAll('#bindButtons input[type="checkbox"]:checked');
+        bindsToResolve = [];
+        
+        checkboxes.forEach(checkbox => {
+            const bindName = checkbox.dataset.bindName;
+            bindsToResolve.push({ name: bindName, player: 0 });
+        });
+        
+        if (bindsToResolve.length === 0) {
+            alert('縛りを選択してください');
+            return;
+        }
+        
+        bindsToResolve.sort((a, b) => bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name));
+        
+        currentRoulette = 'boss';
+        items = bosses;
+        showScreen('rouletteScreen');
+        updateDisplayInfo();
+        prerenderRouletteImage();
+        drawRoulette();
+        document.getElementById('spinButton').disabled = false;
+    }
 
     updatePlayerNameInputs();
 });
