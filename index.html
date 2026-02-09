@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- 最初に戻るボタン -->
+    <!-- 画面固定用ホームボタン -->
     <button id="homeButton" class="home-button">最初に戻る</button>
 
     <div class="container">
@@ -58,29 +58,30 @@
         <!-- 2. カスタム縛り設定画面 -->
         <div id="customBindScreen" class="hidden">
             <h2>カスタム縛り設定</h2>
+            <p>実行したい縛りにチェックを入れ、詳細を設定してください。</p>
             
             <div class="custom-section">
                 <h3>ボスの選択</h3>
                 <select id="customBossSelect">
-                    <!-- JavaScriptでボス一覧が生成されます -->
+                    <!-- JavaScriptでボス一覧が五十音順に生成されます -->
                 </select>
             </div>
 
             <div id="customBindsCommon">
                 <h3>共通の縛り</h3>
                 <div id="customBindGrid" class="custom-bind-grid">
-                    <!-- JavaScriptで内容が生成されます -->
+                    <!-- JS: 国縛り、モノ元素縛り -->
                 </div>
                 <div class="custom-bind-checkboxes">
                     <h3>追加ルール</h3>
                     <div id="customBindButtonsCommon" class="button-group-checkbox">
-                        <!-- JavaScriptで内容が生成されます -->
+                        <!-- JS: 各種チェックボックス縛り -->
                     </div>
                 </div>
             </div>
 
             <div id="customBindsPlayersContainer">
-                <!-- JavaScriptでプレイヤーごとの設定が生成されます -->
+                <!-- JS: プレイヤーごとの個別設定 -->
             </div>
             
             <button id="executeCustomBindsButton">この条件で実行</button>
@@ -106,7 +107,7 @@
                 <button id="nextButton" class="hidden">次へ</button>
                 <button id="notOwnedButton" class="hidden">持っていない（リロール）</button>
             </div>
-            <!-- ポップアップ：JavaScriptで×ボタンと結果が挿入されます -->
+            <!-- ポップアップ：JSで大型×ボタンと結果が挿入されます -->
             <div id="popup" class="popup"></div>
         </div>
 
@@ -130,8 +131,8 @@
             
             <div id="possessionTabs" class="hidden">
                 <div class="tab-buttons">
-                    <button class="tab-btn active" onclick="showTab('charTab')">キャラクター</button>
-                    <button class="tab-btn" onclick="showTab('weaponTab')">武器</button>
+                    <button class="tab-btn active" id="tab-char" onclick="showTab('charTab')">キャラクター</button>
+                    <button class="tab-btn" id="tab-weapon" onclick="showTab('weaponTab')">武器</button>
                 </div>
 
                 <div id="charTab" class="tab-content">
@@ -155,15 +156,14 @@
         </div>
     </div>
 
-    <!-- 7. このルーレットについて（モーダル） -->
+    <!-- 7. Aboutモーダル -->
     <div id="aboutScreen" class="modal-overlay hidden">
         <div class="modal-content">
             <button id="closeAboutButton" class="close-button">&times;</button>
             
             <h3>～このルーレットについて～</h3>
             <p>
-                このルーレットは、普段遊んでいるサーバーでやっている縛り原神の縛りの抽選が大変だったのでそれをスムーズに作成者がいなくても誰でもできるようにしたい！という理念のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。<br>
-                このルーレットを使用してる動画：<a href="https://www.youtube.com/@%E5%A6%82%E6%9C%88%E3%82%89%E3%81%8D%E3%81%8F" target="_blank" rel="noopener noreferrer">YouTubeチャンネルはこちら</a>
+                このルーレットは、普段遊んでいるサーバーでやっている縛り原神の縛りの抽選が大変だったのでそれをスムーズに作成者がいなくても誰でもできるようにしたい！という理念のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。
             </p>
             
             <h3>～使い方～</h3>
@@ -260,19 +260,18 @@
             <h3>～Q＆A～</h3>
             <p><strong>Q: 所持していない武器が出たら？</strong><br>
                 A: 「持っていない」ボタンでその武器を削除してもう一度ルーレットを回せます。</p>
-            <p><strong>Q: 各1.1縛りってなに？</strong><br>
-                A: 各キャラクターが実装されたバージョンの小数点第１位の値で縛るルーレットになっています。</p>
+            <p><strong>Q:各1.1縛りってなに？</strong><br>
+                A:各キャラクターが実装されたバージョンの小数点第１位の値で縛るルーレットになっています。各バージョンで縛るよりバラエティに富んだキャラクターが引けるのでこっちのほうが楽しいという判断でこうなりました。</p>
             <p><strong>Q: 縛りの重複はどう処理？</strong><br>
                 A: 重複しないようになっています。</p>
             <p><strong>Q: 条件の矛盾が出た場合は？</strong><br>
                 A: 出ないようになっています。</p>
             <p><strong>Q: データミスを見つけたらどうすればいい？</strong><br>
                 A: Twitter：<a href="https://x.com/rakiku_genshin" target="_blank" rel="noopener noreferrer">@rakiku_genshin</a> にDMでご報告ください。</p>
-            
 
             <h3>～注意事項～</h3>
             <p>
-                これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。作者がプログラムを組むのはこれが初めてなのでバグがめちゃくちゃあるかもしれませんがご容赦ください。<br>
+                これは非公式のファンメイドツールです。アップデートは作者が随時行います。作者がプログラムを組むのはこれが初めてなのでバグがめちゃくちゃあるかもしれませんがご容赦ください。<br>
                 製作者Twitter:<a href="https://x.com/rakiku_genshin" target="_blank" rel="noopener noreferrer">@rakiku_genshin</a>
             </p>
         </div>
