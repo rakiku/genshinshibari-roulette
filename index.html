@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- 画面固定用ホームボタン -->
+    <!-- 画面固定ホームボタン -->
     <button id="homeButton" class="home-button">最初に戻る</button>
 
     <div class="container">
@@ -35,7 +35,7 @@
             </div>
             
             <div id="playerNameInputsContainer">
-                <!-- JavaScriptによって名前入力欄がここに表示されます -->
+                <!-- JSで生成 -->
             </div>
 
             <div class="button-group">
@@ -63,27 +63,19 @@
             <div class="custom-section">
                 <h3>ボスの選択</h3>
                 <select id="customBossSelect">
-                    <!-- JavaScriptでボス一覧が五十音順に生成されます -->
+                    <!-- JSで五十音順に生成 -->
                 </select>
             </div>
 
             <div id="customBindsCommon">
                 <h3>共通の縛り</h3>
-                <div id="customBindGrid" class="custom-bind-grid">
-                    <!-- JS: 国縛り、モノ元素縛り -->
-                </div>
+                <div id="customBindGrid" class="custom-bind-grid"></div>
                 <div class="custom-bind-checkboxes">
                     <h3>追加ルール</h3>
-                    <div id="customBindButtonsCommon" class="button-group-checkbox">
-                        <!-- JS: 各種チェックボックス縛り -->
-                    </div>
+                    <div id="customBindButtonsCommon" class="button-group-checkbox"></div>
                 </div>
             </div>
-
-            <div id="customBindsPlayersContainer">
-                <!-- JS: プレイヤーごとの個別設定 -->
-            </div>
-            
+            <div id="customBindsPlayersContainer"></div>
             <button id="executeCustomBindsButton">この条件で実行</button>
         </div>
  
@@ -97,7 +89,6 @@
         <!-- 4. ルーレット実行画面 -->
         <div id="rouletteScreen" class="hidden">
             <h2 id="currentPlayerNameDisplay"></h2>
-            
             <div class="roulette-container">
                 <canvas id="rouletteCanvas" width="500" height="500"></canvas>
             </div>
@@ -107,7 +98,6 @@
                 <button id="nextButton" class="hidden">次へ</button>
                 <button id="notOwnedButton" class="hidden">持っていない（リロール）</button>
             </div>
-            <!-- ポップアップ：JSで大型×ボタンと結果が挿入されます -->
             <div id="popup" class="popup"></div>
         </div>
 
@@ -124,46 +114,44 @@
         <div class="modal-content large">
             <button class="close-button" id="closeMemberSettings">&times;</button>
             <h2>メンバーの所持・完凸設定</h2>
-            <div class="member-select-row">
-                <input type="text" id="settingPlayerName" placeholder="設定するプレイヤー名">
-                <button id="loadPlayerData">読み込み/新規作成</button>
+            <div class="member-select-row" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="settingPlayerName" placeholder="設定するプレイヤー名" style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #7f8c8d; background: #34495e; color: white;">
+                <button id="loadPlayerData">読込/新規</button>
             </div>
-            
             <div id="possessionTabs" class="hidden">
-                <div class="tab-buttons">
+                <div class="tab-buttons" style="display: flex; gap: 5px; margin-bottom: 15px;">
                     <button class="tab-btn active" id="tab-char" onclick="showTab('charTab')">キャラクター</button>
                     <button class="tab-btn" id="tab-weapon" onclick="showTab('weaponTab')">武器</button>
                 </div>
-
                 <div id="charTab" class="tab-content">
-                    <div class="tab-actions">
+                    <div class="tab-actions" style="margin-bottom: 10px;">
                         <button onclick="bulkCheck('char', true)">全所持</button>
                         <button onclick="bulkCheck('char', false)">全解除</button>
                     </div>
                     <div id="charSettingList" class="possession-grid"></div>
                 </div>
-
                 <div id="weaponTab" class="tab-content hidden">
-                    <div class="tab-actions">
+                    <div class="tab-actions" style="margin-bottom: 10px;">
                         <button onclick="bulkCheck('weapon', true)">全所持</button>
                         <button onclick="bulkCheck('weapon', false)">全解除</button>
                     </div>
                     <div id="weaponSettingList" class="possession-grid"></div>
                 </div>
-
-                <button id="savePlayerData" class="save-btn">この名前で保存する</button>
+                <button id="savePlayerData" class="save-btn" style="width: 100%; padding: 15px; background: #27ae60; margin-top: 20px;">この名前で保存する</button>
             </div>
         </div>
     </div>
 
-    <!-- 7. Aboutモーダル -->
+    <!-- 7. About画面 -->
     <div id="aboutScreen" class="modal-overlay hidden">
         <div class="modal-content">
             <button id="closeAboutButton" class="close-button">&times;</button>
-            
             <h3>～このルーレットについて～</h3>
             <p>
                 このルーレットは、普段遊んでいるサーバーでやっている縛り原神の縛りの抽選が大変だったのでそれをスムーズに作成者がいなくても誰でもできるようにしたい！という理念のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。
+            </p>
+            <h3>～使い方～</h3>
+              このルーレットは、普段遊んでいるサーバーでやっている縛り原神の縛りの抽選が大変だったのでそれをスムーズに作成者がいなくても誰でもできるようにしたい！という理念のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。
             </p>
             
             <h3>～使い方～</h3>
@@ -271,7 +259,7 @@
 
             <h3>～注意事項～</h3>
             <p>
-                これは非公式のファンメイドツールです。アップデートは作者が随時行います。作者がプログラムを組むのはこれが初めてなのでバグがめちゃくちゃあるかもしれませんがご容赦ください。<br>
+                これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。作者がプログラムを組むのはこれが初めてなのでバグがめちゃくちゃあるかもしれませんがご容赦ください。<br>
                 製作者Twitter:<a href="https://x.com/rakiku_genshin" target="_blank" rel="noopener noreferrer">@rakiku_genshin</a>
             </p>
         </div>
