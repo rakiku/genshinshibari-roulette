@@ -1107,9 +1107,17 @@ function bulkCheck(type, state) {
     document.getElementById('showCustomBindScreenButton').addEventListener('click', showCustomBindScreen);
     document.getElementById('executeCustomBindsButton').addEventListener('click', executeCustomBinds);
     document.getElementById('showMemberSettingsButton').addEventListener('click', showMemberSettings);
-    document.getElementById('closeMemberSettings').addEventListener('click', closeMemberSettings);
-    document.getElementById('loadPlayerData').addEventListener('click', loadPlayerData);
-    document.getElementById('savePlayerData').addEventListener('click', savePlayerData);
+    
+    const closeMemberSettingsBtn = document.getElementById('closeMemberSettings');
+    if (closeMemberSettingsBtn) {
+        closeMemberSettingsBtn.addEventListener('click', closeMemberSettings);
+    }
+    
+    const savePlayerDataBtn = document.getElementById('savePlayerData');
+    if (savePlayerDataBtn) {
+        savePlayerDataBtn.addEventListener('click', savePlayerData);
+    }
+    
     document.getElementById('showAboutButton').addEventListener('click', showAbout);
     document.getElementById('closeAboutButton').addEventListener('click', closeAbout);
 
