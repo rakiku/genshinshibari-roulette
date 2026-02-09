@@ -366,13 +366,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const binds = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示+リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止+リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし", "武器縛り", "体型縛り", "役割縛り", "スキル禁止", "元素エネルギー縛り", "完凸禁止", "配布武器縛り", "配布キャラ縛り", "ボス素材縛り", "特産品縛り", "クラウン禁止", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)"];
 
-   // ソート用ヘルパー
+// --- 補助関数 ---
     const jpSort = (list) => [...list].sort((a, b) => String(a).localeCompare(String(b), 'ja'));
 
-    const jpSubRoulettes = {};
-    Object.keys(subRoulettes).forEach(key => {
-        jpSubRoulettes[key] = (key === "誕生月" || key === "元素エネルギー縛り") ? subRoulettes[key] : jpSort(subRoulettes[key]);
-    });
+    const subRoulettes = {
+        "国縛り": jpSort([...new Set(characters.map(c => c.country))]),
+        "モノ元素縛り": jpSort([...new Set(characters.filter(c => c.element !== "その他").map(c => c.element))]),
+        "武器種縛り": jpSort(Object.keys(allWeapons)),
+        "誕生月": ["１月", "２月", "３月", "４月", "５月", "６月", "７月", "８月", "９月", "１０月", "１１月", "１２月"],
+        "各1.1縛り": jpSort([...new Set(characters.map(c => c.version))].filter(v => v !== 'その他')),
+        "アルファベット縛り": Object.keys(alphabetData).sort(),
+        "武器縛り": jpSort(Object.values(allWeapons).flat().map(w => w.name)),
+        "体型縛り": ["長身男性", "長身女性", "中身男性", "中身女性", "ロリ"],
+        "役割縛り": ["オンフィールドアタッカー", "オンフィールドサポーター", "オンフィールドライフキーパー", "オフフィールドアタッカー", "オフフィールドサポーター", "オフフィールドライフキーパー"],
+        "元素エネルギー縛り": [0, 40, 50, 60, 70, 80, 90],
+        "ボス素材縛り": jpSort([...new Set(characters.map(c => c.talent_boss).filter(b => b))]),
+        "特産品縛り": jpSort([...new Set(characters.map(c => c.local_specialty).filter(l => l))]),
+        "突破ステータス縛り(キャラ)": jpSort([...new Set(characters.map(c => c.ascension_stat).filter(s => s))]),
+        "突破ステータス縛り(武器)": jpSort([...new Set(Object.values(allWeapons).flat().map(w => w.ascension_stat).filter(s => s))]),
+        "配布武器縛り": jpSort(Object.values(allWeapons).flat().filter(w => w.is_distributed).map(w => w.name)),
+        "配布キャラ縛り": jpSort([...characters.filter(c => c.distributed).map(c => c.name), "周年配布☆５で選んだキャラ", "海灯祭で選んだキャラ"])
+    };
+
+    const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り", "誕生月", "武器種縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)", "配布キャラ縛り", "配布武器縛り"];
+    const bindOrder = ["国縛り", "モノ元素縛り", "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "所持率100％縛り", "旅人縛り", "配布キャラ縛り", "各1.1縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)", "武器種縛り", "突破ステータス縛り(武器)", "配布武器縛り", "武器縛り", "誕生月", "アルファベット縛り", "キャラルーレット", "キャラ武器ルーレット"];
 
     let playerCount, bindCount, mode, currentRoulette, currentBindName, currentBindIndex, items, angle = 0, spinning = false, results = {}, currentPlayer = 1, lastResult;
     let rerolledChars, rerolledWeapons, rerolledCommonWeapons, playerNames = [], bindSelectionPhase, bindsToResolve, excludedSubItems = {};
@@ -380,7 +397,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
-    const defaultColors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
 
     // --- 所持状況管理 (LocalStorage) ---
     let playerPossession = JSON.parse(localStorage.getItem('genshin_roulette_possession') || '{}');
@@ -441,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
+        document.getElementById('tab-' + (id === 'charTab' ? 'char' : 'weapon')).classList.add('active');
     };
     window.bulkCheck = (type, state) => {
         document.querySelectorAll(`#${type}Tab input[type="checkbox"]`).forEach(cb => cb.checked = state);
@@ -591,12 +607,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function drawRoulette() {
+        ctx.clearRect(0, 0, 500, 500);
+        if (!prerenderedRoulette) return;
+        ctx.save(); ctx.translate(250, 250); ctx.rotate(angle);
+        ctx.drawImage(prerenderedRoulette, -250, -250); ctx.restore();
+        ctx.beginPath(); ctx.moveTo(480, 235); ctx.lineTo(480, 265); ctx.lineTo(450, 250);
+        ctx.fillStyle = '#FF0000'; ctx.fill();
+    }
+
     function setupRouletteForBind(bindName, player = 1) {
         currentBindName = bindName; currentPlayer = player;
         const currentFilters = {...results.common, ...results.players[currentPlayer - 1]};
-        if (jpSubRoulettes[bindName]) {
+        if (subRoulettes[bindName]) {
             currentRoulette = 'sub';
-            let subItems = jpSubRoulettes[bindName];
+            let subItems = subRoulettes[bindName];
             const exList = excludedSubItems[bindName + "_" + player] || [];
             subItems = subItems.filter(si => !exList.includes(si));
             if (bindName === "武器縛り") {
@@ -671,8 +696,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (Object.keys(results.common).length > 0) html += `<h3>共通の縛り：</h3><ul>` + Object.keys(results.common).map(k => `<li>${k}${results.common[k]===true?'':': '+results.common[k]}</li>`).join('') + `</ul>`;
         for (let i = 0; i < playerCount; i++) {
             const pb = results.players[i];
-            html += `<div style="border-top:1px solid #7f8c8d; padding:15px 0;"><h3>${playerNames[i]}の結果</h3><ul>`;
-            Object.keys(pb).forEach(k => html += `<li>${k}: ${k==='キャラ武器ルーレット'?pb[k].char+' - '+(pb[k].weapon||'未選択'):pb[k]}</li>`);
+            html += `<div style="border-top:2px solid #7f8c8d; padding:15px 0;"><h3>${playerNames[i]}の結果</h3><ul>`;
+            Object.keys(pb).forEach(k => {
+                let val = pb[k];
+                if (k === 'キャラ武器ルーレット') val = `${pb[k].char} - ${pb[k].weapon || '未選択'}`;
+                html += `<li>${k}: ${val}</li>`;
+            });
             html += `</ul>`;
             const f = {...results.common, ...pb};
             let chars = (pb['キャラルーレット']||(pb['キャラ武器ルーレット']&&pb['キャラ武器ルーレット'].char)) ? [{name:pb['キャラルーレット']||pb['キャラ武器ルーレット'].char}] : characters.filter(c => checkCharEligibility(c, f, i + 1));
@@ -680,7 +709,10 @@ document.addEventListener('DOMContentLoaded', function() {
             let wepText = "すべて";
             if (f["武器種縛り"]) wepText = f["武器種縛り"];
             if (f["☆４キャラ武器"]) wepText = "☆４" + (f["武器種縛り"] || "武器");
-            if (f["配布武器縛り"]) wepText = jpSort(allWeapons[chars[0]?.weapon || "片手剣"].filter(w => w.is_distributed).map(w => w.name)).join('、');
+            if (f["配布武器縛り"]) {
+                const charWeaponType = characters.find(cd => cd.name === chars[0]?.name)?.weapon;
+                wepText = jpSort(allWeapons[charWeaponType || "片手剣"].filter(w => w.is_distributed).map(w => w.name)).join('、') || "なし";
+            }
             if (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) wepText = pb["キャラ武器ルーレット"].weapon;
             else if (f["武器縛り"]) wepText = f["武器縛り"];
 
@@ -702,7 +734,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } else showResults();
     }
 
-    // --- その他イベント ---
     document.getElementById('stopButton').addEventListener('click', stopRoulette);
     document.getElementById('spinButton').addEventListener('click', spinRoulette);
     document.getElementById('nextButton').addEventListener('click', nextStep);
@@ -733,6 +764,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (spinning || !items || items.length === 0) return;
         spinning = true; spinSpeed = 0.2 + Math.random() * 0.1;
         document.getElementById('spinButton').disabled = true; document.getElementById('stopButton').disabled = false;
+        document.getElementById('nextButton').classList.add('hidden'); document.getElementById('notOwnedButton').classList.add('hidden');
         (function anim() { if (spinning) { angle += spinSpeed; drawRoulette(); requestAnimationFrame(anim); } })();
     }
 
@@ -776,7 +808,7 @@ document.addEventListener('DOMContentLoaded', function() {
         l.appendChild(cb); l.appendChild(document.createTextNode(' '+n)); item.appendChild(l);
         if (t === 'select') {
             const s = document.createElement('select'); s.style.display = 'none';
-            s.innerHTML = '<option value="random">ランダム</option>' + jpSubRoulettes[n].map(o => `<option value="${o}">${o}</option>`).join('');
+            s.innerHTML = '<option value="random">ランダム</option>' + subRoulettes[n].map(o => `<option value="${o}">${o}</option>`).join('');
             item.appendChild(s); cb.addEventListener('change', e => s.style.display = e.target.checked ? 'block' : 'none');
         }
         c.appendChild(item);
@@ -801,18 +833,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const selected = [...Object.keys(results.common), ...bindsToResolve.map(b => typeof b === 'object' ? b.name : b)];
         return binds.filter(b => !selected.includes(b)).filter(b => {
             const filters = { ...results.common };
-            if (jpSubRoulettes[b]) return jpSubRoulettes[b].some(opt => characters.some(c => checkCharEligibility(c, {...filters, [b]: opt}, 1)));
+            if (subRoulettes[b]) return subRoulettes[b].some(opt => characters.some(c => checkCharEligibility(c, {...filters, [b]: opt}, 1)));
             return characters.some(c => checkCharEligibility(c, filters, 1));
         });
     }
 
-    function drawRoulette() {
-        ctx.clearRect(0, 0, 500, 500);
-        if (!prerenderedRoulette) return;
-        ctx.save(); ctx.translate(250, 250); ctx.rotate(angle);
-        ctx.drawImage(prerenderedRoulette, -250, -250); ctx.restore();
-        ctx.beginPath(); ctx.moveTo(480, 235); ctx.lineTo(480, 265); ctx.lineTo(450, 250);
-        ctx.fillStyle = '#FF0000'; ctx.fill();
+    function proceedToNext() { 
+        currentBindIndex++; 
+        if (currentBindIndex >= bindsToResolve.length) showResults();
+        else startNextSelectedBind(); 
     }
 
     updatePlayerNameInputs();
