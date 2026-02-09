@@ -94,7 +94,7 @@ button:disabled {
 #notOwnedButton { background-color: #e67e22; }
 .reroll-player-button { background-color: #9b59b6; margin-top: 15px; }
 
-/* 所持状況設定ボタン */
+/* メンバー設定ボタン */
 .member-settings-button {
     background-color: #34495e;
     border: 1px solid #3498db;
@@ -123,6 +123,12 @@ button:disabled {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
+    border: 1px solid #7f8c8d;
+}
+
+.count-btn:active {
+    background-color: #1a252f;
 }
 
 .number-controls input {
@@ -134,6 +140,12 @@ button:disabled {
     color: white;
     font-weight: bold;
     pointer-events: none;
+}
+
+/* スピナーを消す */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; margin: 0; 
 }
 
 /* --- 入力エリア --- */
@@ -154,7 +166,7 @@ button:disabled {
 }
 
 .playerNameInput {
-    width: 250px;
+    width: 200px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #7f8c8d;
@@ -209,8 +221,8 @@ canvas { width: 100%; height: 100%; }
     position: absolute;
     top: 5px;
     left: 15px;
-    font-size: 60px; /* 超大型で見やすく */
-    color: #e74c3c; /* 閉じることが分かりやすい赤色 */
+    font-size: 60px;
+    color: #e74c3c;
     line-height: 1;
     font-family: Arial, sans-serif;
     font-weight: bold;
@@ -362,10 +374,13 @@ canvas { width: 100%; height: 100%; }
 .tab-btn {
     flex: 1;
     background-color: #34495e;
+    padding: 10px;
+    border: 1px solid #7f8c8d;
 }
 
 .tab-btn.active {
     background-color: #3498db;
+    border-color: #fff;
 }
 
 .save-btn {
