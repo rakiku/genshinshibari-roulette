@@ -901,7 +901,6 @@ function goToSettingsScreen() {
     if (possessionTabs) possessionTabs.classList.remove('hidden');
     
     // Load data for this player
-    editingPlayer = playerName;
     loadPlayerData(playerName);
 }
 
