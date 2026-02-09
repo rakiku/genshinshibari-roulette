@@ -1,6 +1,19 @@
+// 数値調整用（HTMLのonclickから呼ばれるためDOMContentLoadedの外に定義）
+window.adjustCount = function(id, diff) {
+    const input = document.getElementById(id);
+    if (!input) return;
+    let val = parseInt(input.value) + diff;
+    if (val < 1) val = 1; 
+    if (val > 4) val = 4;
+    input.value = val;
+    // プレイヤー名入力欄の数を更新するイベントを発火
+    const event = new Event('input');
+    input.dispatchEvent(event);
+};
+
 document.addEventListener('DOMContentLoaded', function() {
 
-    // --- データベース（2026/02/09版、指示に基づきトワリン除外） ---
+    // --- データベース（2026/02/09版、トワリン除外） ---
     const characters = [
         { name: "ジン", country: "モンド", weapon: "片手剣", element: "風", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒常☆５'], body: "長身女性", role: ["オフフィールドライフキーパー"], energy: 80, talent_boss: "無相の風", local_specialty: "蒲公英の種", ascension_stat: "与える治療効果", distributed: false },
         { name: "アンバー", country: "モンド", weapon: "弓", element: "炎", birth_month: "８月", version: "n.0", rarity: ['☆４'], body: "中身女性", role: ["オフフィールドアタッカー"], energy: 40, talent_boss: "爆炎樹", local_specialty: "イグサ", ascension_stat: "攻撃力", distributed: true },
@@ -47,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "兹白", country: "璃月", weapon: "片手剣", element: "岩", birth_month: "５月", version: "n.4", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "昏き魘夢の主", local_specialty: "瑠璃百合", ascension_stat: "会心ダメージ", distributed: false },
         { name: "神里綾華", country: "稲妻", weapon: "片手剣", element: "氷", birth_month: "９月", version: "n.0", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 80, talent_boss: "恒常からくり陣形", local_specialty: "緋櫻毬", ascension_stat: "会心ダメージ", distributed: false },
         { name: "神里綾人", country: "稲妻", weapon: "片手剣", element: "水", birth_month: "３月", version: "n.6", rarity: ['☆５'], body: "長身男性", role: ["オンフィールドアタッカー"], energy: 80, talent_boss: "無相の水", local_specialty: "緋櫻毬", ascension_stat: "会心ダメージ", distributed: false },
-        { name: "楓原万葉", country: "稲妻", weapon: "片手剣", element: "風", birth_month: "１０月", version: "n.６", rarity: ['☆５'], body: "中身男性", role: ["オフフィールドサポーター"], energy: 60, talent_boss: "魔偶剣鬼", local_specialty: "ウミレイシ", ascension_stat: "元素熟知", distributed: false },
+        { name: "楓原万葉", country: "稲妻", weapon: "片手剣", element: "風", birth_month: "１０月", version: "n.6", rarity: ['☆５'], body: "中身男性", role: ["オフフィールドサポーター"], energy: 60, talent_boss: "魔偶剣鬼", local_specialty: "ウミレイシ", ascension_stat: "元素熟知", distributed: false },
         { name: "宵宮", country: "稲妻", weapon: "弓", element: "炎", birth_month: "６月", version: "n.0", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "無相の炎", local_specialty: "鳴草", ascension_stat: "会心率", distributed: false },
         { name: "早柚", country: "稲妻", weapon: "両手剣", element: "風", birth_month: "１０月", version: "n.0", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドライフキーパー"], energy: 80, talent_boss: "魔偶剣鬼", local_specialty: "晶化骨髄", ascension_stat: "元素熟知", distributed: false },
         { name: "雷電将軍", country: "稲妻", weapon: "長柄武器", element: "雷", birth_month: "６月", version: "n.1", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー", "オンフィールドサポーター"], energy: 90, talent_boss: "雷音権現", local_specialty: "天雲草の実", ascension_stat: "元素チャージ効率", distributed: false },
@@ -72,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "レイラ", country: "スメール", weapon: "片手剣", element: "氷", birth_month: "１２月", version: "n.2", rarity: ['☆４'], body: "中身女性", role: ["オフフィールドライフキーパー"], energy: 40, talent_boss: "兆載永劫ドレイク", local_specialty: "ササウリアンサキュレント", ascension_stat: "HP", distributed: false },
         { name: "放浪者", country: "スメール", weapon: "法器", element: "風", birth_month: "１月", version: "n.3", rarity: ['☆５'], body: "中身男性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "兆載永劫ドレイク", local_specialty: "ルッカデヴァータダケ", ascension_stat: "会心率", distributed: false },
         { name: "ファルザン", country: "スメール", weapon: "弓", element: "風", birth_month: "８月", version: "n.3", rarity: ['☆４'], body: "中身女性", role: ["オフフィールドサポーター"], energy: 80, talent_boss: "半永久統制マトリックス", local_specialty: "赤念の実", ascension_stat: "攻撃力", distributed: true },
-        { name: "アルハイゼン", country: "スメール", weapon: "片手剣", element: "草", birth_month: "２月", version: "n.４", rarity: ['☆５'], body: "長身男性", role: ["オンフィールドアタッカー"], energy: 70, talent_boss: "風食ウェネト", local_specialty: "砂脂蛹", ascension_stat: "草元素ダメージ", distributed: false },
+        { name: "アルハイゼン", country: "スメール", weapon: "片手剣", element: "草", birth_month: "２月", version: "n.4", rarity: ['☆５'], body: "長身男性", role: ["オンフィールドアタッカー"], energy: 70, talent_boss: "風食ウェネト", local_specialty: "砂脂蛹", ascension_stat: "草元素ダメージ", distributed: false },
         { name: "ディシア", country: "スメール", weapon: "両手剣", element: "炎", birth_month: "４月", version: "n.5", rarity: ['☆５', '恒常☆５'], body: "長身女性", role: ["オフフィールドアタッカー", "オフフィールドライフキーパー"], energy: 70, talent_boss: "半永久統制マトリックス", local_specialty: "砂脂蛹", ascension_stat: "HP", distributed: false },
         { name: "カーヴェ", country: "スメール", weapon: "両手剣", element: "草", birth_month: "７月", version: "n.6", rarity: ['☆４'], body: "長身男性", role: ["オンフィールドアタッカー"], energy: 80, talent_boss: "無相の草", local_specialty: "悼霊花", ascension_stat: "元素熟知", distributed: false },
         { name: "セトス", country: "スメール", weapon: "弓", element: "雷", birth_month: "５月", version: "n.7", rarity: ['☆４'], body: "中身男性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "山隠れの猊獣", local_specialty: "サングイト", ascension_stat: "元素熟知", distributed: false },
@@ -96,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "キィニチ", country: "ナタ", weapon: "両手剣", element: "草", birth_month: "１１月", version: "n.0", rarity: ['☆５'], body: "中身男性", role: ["オンフィールドアタッカー"], energy: 70, talent_boss: "山の王・貪食のユムカ竜", local_specialty: "ササウリアンサキュレント", ascension_stat: "会心ダメージ", distributed: false },
         { name: "カチーナ", country: "ナタ", weapon: "長柄武器", element: "岩", birth_month: "４月", version: "n.0", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドアタッカー"], energy: 70, talent_boss: "山の王・貪食のユムカ竜", local_specialty: "ケネパベリー", ascension_stat: "岩元素ダメージ", distributed: true },
         { name: "シトラリ", country: "ナタ", weapon: "法器", element: "氷", birth_month: "１１月", version: "n.3", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 60, talent_boss: "迷える霊覚の修権者", local_specialty: "ケネパベリー", ascension_stat: "元素熟知", distributed: false },
-        { name: "マーヴィカ", country: "ナタ", weapon: "両手剣", element: "炎", birth_month: "８月", version: "n.3", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー", "オフフィールドアタッカー", "オンフィールドサポーター"], energy: 0, talent_boss: "秘源機兵・機構デバイス"", local_specialty: "枯れ紫菖", ascension_stat: "会心ダメージ", distributed: false },
+        { name: "マーヴィカ", country: "ナタ", weapon: "両手剣", element: "炎", birth_month: "８月", version: "n.3", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー", "オフフィールドアタッカー", "オンフィールドサポーター"], energy: 0, talent_boss: "シロネン", local_specialty: "枯れ紫菖", ascension_stat: "会心ダメージ", distributed: false },
         { name: "ヴァレサ", country: "ナタ", weapon: "法器", element: "雷", birth_month: "１１月", version: "n.5", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 70, talent_boss: "輝ける溶岩の龍像", local_specialty: "岩裂の花", ascension_stat: "会心率", distributed: false },
         { name: "イファ", country: "ナタ", weapon: "法器", element: "風", birth_month: "３月", version: "n.5", rarity: ['☆４'], body: "長身男性", role: ["オンフィールドライフキーパー"], energy: 60, talent_boss: "輝ける溶岩の龍像", local_specialty: "サウリアンサキュレント", ascension_stat: "元素熟知", distributed: false },
         { name: "シロネン", country: "ナタ", weapon: "片手剣", element: "岩", birth_month: "３月", version: "n.1", rarity: ['☆５'], body: "長身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 60, talent_boss: "秘源機兵・機構デバイス", local_specialty: "シャクギク", ascension_stat: "防御力", distributed: false },
@@ -367,7 +380,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const binds = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示+リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止+リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし", "武器縛り", "体型縛り", "役割縛り", "スキル禁止", "元素エネルギー縛り", "完凸禁止", "配布武器縛り", "配布キャラ縛り", "ボス素材縛り", "特産品縛り", "クラウン禁止", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)"];
     
-    // --- 補助関数 ---
     const jpSort = (list) => [...list].sort((a, b) => String(a).localeCompare(String(b), 'ja'));
 
     const subRoulettes = {
@@ -400,17 +412,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const ctx = canvas.getContext('2d');
     const defaultColors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
 
-    // --- 所持状況管理 ---
     let playerPossession = JSON.parse(localStorage.getItem('genshin_roulette_possession') || '{}');
     let editingPlayer = "";
-
-    window.adjustCount = function(id, diff) {
-        const input = document.getElementById(id);
-        let val = parseInt(input.value) + diff;
-        if (val < 1) val = 1; if (val > 4) val = 4;
-        input.value = val;
-        if (id === 'playerCount') updatePlayerNameInputs();
-    };
 
     function updatePlayerNameInputs() {
         const container = document.getElementById('playerNameInputsContainer');
@@ -426,67 +429,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    document.getElementById('showMemberSettingsButton').addEventListener('click', () => {
-        document.getElementById('memberSettingsModal').classList.remove('hidden');
-    });
-    document.getElementById('closeMemberSettings').addEventListener('click', () => {
-        document.getElementById('memberSettingsModal').classList.add('hidden');
-    });
-    document.getElementById('loadPlayerData').addEventListener('click', () => {
-        const name = document.getElementById('settingPlayerName').value.trim();
-        if(!name) return alert("名前を入力してください");
-        editingPlayer = name;
-        if(!playerPossession[name]) playerPossession[name] = { chars: {}, weapons: {} };
-        renderPossessionLists();
-        document.getElementById('possessionTabs').classList.remove('hidden');
-    });
-    document.getElementById('savePlayerData').addEventListener('click', () => {
-        const name = editingPlayer;
-        characters.forEach(c => {
-            const has = document.getElementById(`pos_c_${c.name}`).checked;
-            const c6 = document.getElementById(`pos_c6_${c.name}`).checked;
-            playerPossession[name].chars[c.name] = { owned: has, c6: c6 };
+    function showScreen(screenId) {
+        ['startScreen', 'bindSelection', 'rouletteScreen', 'resultScreen', 'customBindScreen'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.classList.add('hidden');
         });
-        Object.values(allWeapons).flat().forEach(w => {
-            const has = document.getElementById(`pos_w_${w.name}`).checked;
-            playerPossession[name].weapons[w.name] = has;
-        });
-        localStorage.setItem('genshin_roulette_possession', JSON.stringify(playerPossession));
-        alert("保存しました");
-    });
-
-    window.showTab = (id) => {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + (id === 'charTab' ? 'char' : 'weapon')).classList.add('active');
-    };
-    window.bulkCheck = (type, state) => {
-        document.querySelectorAll(`#${type}Tab input[type="checkbox"]`).forEach(cb => cb.checked = state);
-    };
-
-    function renderPossessionLists() {
-        const cList = document.getElementById('charSettingList');
-        const wList = document.getElementById('weaponSettingList');
-        cList.innerHTML = ''; wList.innerHTML = '';
-        characters.forEach(c => {
-            const data = playerPossession[editingPlayer].chars[c.name] || { owned: true, c6: false };
-            const div = document.createElement('div'); div.className = 'possession-item';
-            div.innerHTML = `<strong>${c.name}</strong><br>
-                <label><input type="checkbox" id="pos_c_${c.name}" ${data.owned!==false?'checked':''}> 所持</label>
-                <label><input type="checkbox" id="pos_c6_${c.name}" ${data.c6?'checked':''}> 完凸</label>`;
-            cList.appendChild(div);
-        });
-        Object.values(allWeapons).flat().forEach(w => {
-            const has = playerPossession[editingPlayer].weapons[w.name] !== false;
-            const div = document.createElement('div'); div.className = 'possession-item';
-            div.innerHTML = `<label><input type="checkbox" id="pos_w_${w.name}" ${has?'checked':''}> ${w.name}</label>`;
-            wList.appendChild(div);
-        });
+        const target = document.getElementById(screenId);
+        if(target) target.classList.remove('hidden');
     }
-
-    // --- ロジックコア ---
-
+    
     function initialize() {
         playerCount = parseInt(document.getElementById('playerCount').value) || 1;
         bindCount = parseInt(document.getElementById('bindCount').value) || 1;
@@ -499,12 +450,19 @@ document.addEventListener('DOMContentLoaded', function() {
         bindSelectionPhase = false; bindsToResolve = [];
     }
 
+    function updateDisplayInfo() {
+        const d = document.getElementById('currentPlayerNameDisplay');
+        if (bindSelectionPhase) d.textContent = '縛りカテゴリーを抽選中...';
+        else if (currentRoulette === 'boss') d.textContent = 'ボスを抽選中...';
+        else if (playerBindTypes.includes(currentBindName)) d.textContent = `${playerNames[currentPlayer-1]} の ${currentBindName} 抽選`;
+        else d.textContent = `全員共通: ${currentBindName} 抽選`;
+    }
+
     function checkCharEligibility(char, filters, playerIdx) {
         const pName = playerNames[playerIdx - 1];
         const pData = playerPossession[pName];
         if (pData && pData.chars[char.name] && pData.chars[char.name].owned === false) return false;
         if (filters["完凸禁止"] && pData && pData.chars[char.name] && pData.chars[char.name].c6 === true) return false;
-
         for (const bindName in filters) {
             const value = filters[bindName];
             if (value === undefined || value === null || value === "") continue;
@@ -624,7 +582,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (subRoulettes[bindName]) {
             currentRoulette = 'sub';
             let subItems = subRoulettes[bindName];
-            const exList = excludedSubItems[bindName + "_" + player] || [];
+            const exKey = bindName + "_" + player;
+            const exList = excludedSubItems[exKey] || [];
             subItems = subItems.filter(si => !exList.includes(si));
             if (bindName === "武器縛り") {
                 const wt = currentFilters["武器種縛り"];
@@ -757,7 +716,6 @@ document.addEventListener('DOMContentLoaded', function() {
             html += `</ul>`;
             const f = {...results.common, ...pb};
             let chars = (pb['キャラルーレット']||(pb['キャラ武器ルーレット']&&pb['キャラ武器ルーレット'].char)) ? [{name:pb['キャラルーレット']||pb['キャラ武器ルーレット'].char}] : characters.filter(c => checkCharEligibility(c, f, i + 1));
-            
             let wepText = "すべて";
             if (f["武器種縛り"]) wepText = f["武器種縛り"];
             if (f["☆４キャラ武器"]) wepText = "☆４" + (f["武器種縛り"] || "武器");
@@ -767,9 +725,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) wepText = pb["キャラ武器ルーレット"].weapon;
             else if (f["武器縛り"]) wepText = f["武器縛り"];
-
             html += `<h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
-            html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'なし'}</p>`;
+            html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'条件不一致'}</p>`;
             html += `<button class="reroll-player-button" data-player-index="${i+1}">再抽選</button></div>`;
         }
         resDiv.innerHTML = html;
@@ -793,7 +750,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const cg = document.getElementById('customBindGrid'), cb = document.getElementById('customBindButtonsCommon'), pc = document.getElementById('customBindsPlayersContainer');
         cg.innerHTML = ''; cb.innerHTML = ''; pc.innerHTML = '';
         ['国縛り', 'モノ元素縛り'].forEach(n => createBindItem(n, 'select', cg));
-        ['恒常☆５縛り', '☆４キャラ武器', '初期キャラのみ', '所持率100％縛り', '旅人縛り', 'スキル禁止', '完凸禁止', 'クラウン禁止', '回復禁止'].forEach(n => createBindItem(n, 'check', cb));
+        ['恒常☆５縛り', '☆４キャラ武器', '初期キャラのみ', '所持率100％縛り', '旅人縛り', 'スキル禁止', '完凸禁止', 'クラウン禁止', '配布武器縛り', '回復禁止'].forEach(n => createBindItem(n, 'check', cb));
         for (let i = 1; i <= playerCount; i++) {
             const d = document.createElement('div'); d.className = 'custom-bind-player-section'; d.innerHTML = `<h3>${playerNames[i-1]}の縛り</h3>`;
             const g = document.createElement('div'); g.className = 'custom-bind-grid';
@@ -849,6 +806,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function backToStart() { spinning = false; initialize(); showScreen('startScreen'); }
 
+    document.getElementById('stopButton').addEventListener('click', stopRoulette);
+    document.getElementById('spinButton').addEventListener('click', spinRoulette);
+    document.getElementById('nextButton').addEventListener('click', nextStep);
+    document.getElementById('notOwnedButton').addEventListener('click', notOwned);
+    document.getElementById('homeButton').addEventListener('click', backToStart);
+    document.getElementById('backToStartButton').addEventListener('click', backToStart);
+
     document.getElementById('startAllButton').addEventListener('click', () => startRoulette('all'));
     document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
     document.getElementById('startBindButton').addEventListener('click', () => startRoulette('bind'));
@@ -856,12 +820,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('executeSelectionButton').addEventListener('click', executeBinds);
     document.getElementById('showCustomBindScreenButton').addEventListener('click', showCustomBindScreen);
     document.getElementById('executeCustomBindsButton').addEventListener('click', executeCustomBinds);
-    document.getElementById('spinButton').addEventListener('click', spinRoulette);
-    document.getElementById('stopButton').addEventListener('click', stopRoulette);
-    document.getElementById('nextButton').addEventListener('click', nextStep);
-    document.getElementById('notOwnedButton').addEventListener('click', notOwned);
-    document.getElementById('homeButton').addEventListener('click', backToStart);
-    document.getElementById('backToStartButton').addEventListener('click', backToStart);
 
     updatePlayerNameInputs();
 });
