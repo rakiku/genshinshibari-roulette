@@ -8,18 +8,30 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- 最初に戻るボタン -->
     <button id="homeButton" class="home-button">最初に戻る</button>
 
     <div class="container">
+        <!-- 1. スタート画面 -->
         <div id="startScreen">
             <h1>原神縛りルーレット</h1>
+            
             <div class="input-group">
-                <label for="playerCount">プレイヤー数：</label>
-                <input type="number" id="playerCount" value="1" min="1" max="4">
+                <label>プレイヤー数：</label>
+                <div class="number-controls">
+                    <button type="button" class="count-btn" onclick="adjustCount('playerCount', -1)">－</button>
+                    <input type="number" id="playerCount" value="1" min="1" max="4" readonly>
+                    <button type="button" class="count-btn" onclick="adjustCount('playerCount', 1)">＋</button>
+                </div>
             </div>
+            
             <div class="input-group">
-                <label for="bindCount">縛りの数：</label>
-                <input type="number" id="bindCount" value="1" min="1" max="4">
+                <label>縛りの数：</label>
+                <div class="number-controls">
+                    <button type="button" class="count-btn" onclick="adjustCount('bindCount', -1)">－</button>
+                    <input type="number" id="bindCount" value="1" min="1" max="4" readonly>
+                    <button type="button" class="count-btn" onclick="adjustCount('bindCount', 1)">＋</button>
+                </div>
             </div>
             
             <div id="playerNameInputsContainer">
@@ -34,39 +46,54 @@
                 <button id="showCustomBindScreenButton">カスタム縛り設定</button>
             </div>
 
+            <div class="settings-group">
+                <button id="showMemberSettingsButton" class="member-settings-button">メンバーの所持状況設定</button>
+            </div>
+
             <div class="about-button-container">
                 <button id="showAboutButton" class="about-button">このルーレットについて</button>
             </div>
         </div>
 
+        <!-- 2. カスタム縛り設定画面 -->
         <div id="customBindScreen" class="hidden">
             <h2>カスタム縛り設定</h2>
-            <p>実行したい縛りにチェックを入れ、詳細を設定してください。</p>
+            
+            <div class="custom-section">
+                <h3>ボスの選択</h3>
+                <select id="customBossSelect">
+                    <!-- JavaScriptでボス一覧が生成されます -->
+                </select>
+            </div>
 
             <div id="customBindsCommon">
                 <h3>共通の縛り</h3>
                 <div id="customBindGrid" class="custom-bind-grid">
+                    <!-- JavaScriptで内容が生成されます -->
                 </div>
                 <div class="custom-bind-checkboxes">
                     <h3>追加ルール</h3>
                     <div id="customBindButtonsCommon" class="button-group-checkbox">
+                        <!-- JavaScriptで内容が生成されます -->
                     </div>
                 </div>
             </div>
 
             <div id="customBindsPlayersContainer">
+                <!-- JavaScriptでプレイヤーごとの設定が生成されます -->
             </div>
             
             <button id="executeCustomBindsButton">この条件で実行</button>
         </div>
  
+        <!-- 3. 詳細縛り選択画面 -->
         <div id="bindSelection" class="hidden">
             <h2>縛りを選択してください</h2>
             <div id="bindButtons" class="button-group-checkbox"></div>
             <button id="executeSelectionButton">選択した縛りで実行</button>
         </div>
 
-
+        <!-- 4. ルーレット実行画面 -->
         <div id="rouletteScreen" class="hidden">
             <h2 id="currentPlayerNameDisplay"></h2>
             
@@ -79,10 +106,11 @@
                 <button id="nextButton" class="hidden">次へ</button>
                 <button id="notOwnedButton" class="hidden">持っていない（リロール）</button>
             </div>
+            <!-- ポップアップ：JavaScriptで×ボタンと結果が挿入されます -->
             <div id="popup" class="popup"></div>
         </div>
 
-
+        <!-- 5. 結果表示画面 -->
         <div id="resultScreen" class="hidden">
             <h1>結果</h1>
             <div id="results"></div>
@@ -90,6 +118,44 @@
         </div>
     </div>
 
+    <!-- 6. 所持状況設定モーダル -->
+    <div id="memberSettingsModal" class="modal-overlay hidden">
+        <div class="modal-content large">
+            <button class="close-button" id="closeMemberSettings">&times;</button>
+            <h2>メンバーの所持・完凸設定</h2>
+            <div class="member-select-row">
+                <input type="text" id="settingPlayerName" placeholder="設定するプレイヤー名">
+                <button id="loadPlayerData">読み込み/新規作成</button>
+            </div>
+            
+            <div id="possessionTabs" class="hidden">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('charTab')">キャラクター</button>
+                    <button class="tab-btn" onclick="showTab('weaponTab')">武器</button>
+                </div>
+
+                <div id="charTab" class="tab-content">
+                    <div class="tab-actions">
+                        <button onclick="bulkCheck('char', true)">全所持</button>
+                        <button onclick="bulkCheck('char', false)">全解除</button>
+                    </div>
+                    <div id="charSettingList" class="possession-grid"></div>
+                </div>
+
+                <div id="weaponTab" class="tab-content hidden">
+                    <div class="tab-actions">
+                        <button onclick="bulkCheck('weapon', true)">全所持</button>
+                        <button onclick="bulkCheck('weapon', false)">全解除</button>
+                    </div>
+                    <div id="weaponSettingList" class="possession-grid"></div>
+                </div>
+
+                <button id="savePlayerData" class="save-btn">この名前で保存する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. このルーレットについて（モーダル） -->
     <div id="aboutScreen" class="modal-overlay hidden">
         <div class="modal-content">
             <button id="closeAboutButton" class="close-button">&times;</button>
@@ -97,7 +163,7 @@
             <h3>～このルーレットについて～</h3>
             <p>
                 このルーレットは、普段遊んでいるサーバーでやっている縛り原神の縛りの抽選が大変だったのでそれをスムーズに作成者がいなくても誰でもできるようにしたい！という理念のもと作成しています。できることはボスの抽選、縛りプレイの抽選、縛りの内容の抽選です。プレイ人数は原神のマルチできる人数1～4人、縛りの数は現実的に可能な4つまでとしています。<br>
-                このルーレットを使用してる動画：<a href="#" target="_blank" rel="noopener noreferrer">動画URLはこちら</a>
+                このルーレットを使用してる動画：<a href="https://www.youtube.com/@%E5%A6%82%E6%9C%88%E3%82%89%E3%81%8D%E3%81%8F" target="_blank" rel="noopener noreferrer">YouTubeチャンネルはこちら</a>
             </p>
             
             <h3>～使い方～</h3>
@@ -172,9 +238,9 @@
                 突破に必要なボス素材で縛ります。</p>
             <p><strong>特産品縛り</strong><br>
                 突破に必要な特産品で縛ります。</p>
-            <p><strong>突破ステータス縛り（キャラ）</strong><br>
+            <p><strong>突破ステータス縛り(キャラ)</strong><br>
                 キャラクターの突破ステータスで縛ります。</p>
-            <p><strong>突破ステータス縛り（武器）</strong><br>
+            <p><strong>突破ステータス縛り(武器)</strong><br>
                 武器の突破ステータスで縛ります。</p>
             <p><strong>武器種縛り</strong><br>
                 キャラクターの使える武器種でしばります。（法器、片手剣など）</p>
@@ -194,38 +260,20 @@
             <h3>～Q＆A～</h3>
             <p><strong>Q: 所持していない武器が出たら？</strong><br>
                 A: 「持っていない」ボタンでその武器を削除してもう一度ルーレットを回せます。</p>
-            <p><strong>Q:各1.1縛りってなに？</strong><br>
-                A:各キャラクターが実装されたバージョンの小数点第１位の値で縛るルーレットになっています。各バージョンで縛るよりバラエティに富んだキャラクターが引けるのでこっちのほうが楽しいという判断でこうなりました。</p>
+            <p><strong>Q: 各1.1縛りってなに？</strong><br>
+                A: 各キャラクターが実装されたバージョンの小数点第１位の値で縛るルーレットになっています。</p>
             <p><strong>Q: 縛りの重複はどう処理？</strong><br>
                 A: 重複しないようになっています。</p>
             <p><strong>Q: 条件の矛盾が出た場合は？</strong><br>
                 A: 出ないようになっています。</p>
-            <p><strong>Q: ルーレットの結果を保存できますか？</strong><br>
-                A: 保存機能はありません。必要であればスクショを撮ることをおすすめします。</p>
-            <p><strong>Q: モバイルでも使えますか？</strong><br>
-                A: はい、スマホでもプレイは可能ですがUIが少し歪になってしまいます。→一応対応しました。</p>
-            <p><strong>Q: 縛り数が4つに制限されているのはなぜ？</strong><br>
-                A: 普段遊んでいてできる範囲でMAXなのが4つだったのでそこを上限にしました。</p>
-            <p><strong>Q: ボスや縛りを自分で選べますか？</strong><br>
-                A: 「縛りを選ぶ」モードで縛りを手動選択可能。ボスはランダムのみとなっています。</p>
-            <p><strong>Q: アーロイや旅人の扱いは？</strong><br>
-                A: 基本的には例外扱いとしていますが、抽選される可能性があります。（国＝例外、旅人のみ誕生日なし）</p>
             <p><strong>Q: データミスを見つけたらどうすればいい？</strong><br>
                 A: Twitter：<a href="https://x.com/rakiku_genshin" target="_blank" rel="noopener noreferrer">@rakiku_genshin</a> にDMでご報告ください。</p>
-            <p><strong>Q: マルチプレイでの縛りは全員同じ？</strong><br>
-                A: 共通縛りと個別の縛りがあります。例えば、回復禁止などは共通ですがキャラルーレットは全員個別でキャラを抽選します。</p>
-            <p><strong>Q:ナドクライのバージョンはなに？</strong><br>
-                A:認識としては「Luna I」ですが各1.1縛りにおいては新しく項目を作るのは大変なので6.nということにしています。そのため、ラウマ、フリンズ、アイノは各1.1縛りにおいてはn.0に登場します。</p>
-             <p><strong>Q:もしミスをしてルーレットを進めてしまったら？</strong><br>
-                A:一番最後にルーレットをやり直すボタンがあるので、それを押すともう一度回しなおすことができます。</p>
             
 
             <h3>～注意事項～</h3>
             <p>
-                これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。作者がプログラムを組むのはこれが初めてなのでAIの力借りたり、Youtube見たりしながら頑張ったので、バグがめちゃくちゃあるかもしれませんがご容赦ください<br>
-                製作者Twitter:<a href="https://x.com/rakiku_genshin" target="_blank" rel="noopener noreferrer">https://x.com/rakiku_genshin</a><br>
-                製作者Youtube:<a href="https://www.youtube.com/@%E5%A6%82%E6%9C%88%E3%82%89%E3%81%8D%E3%81%8F" target="_blank" rel="noopener noreferrer">如月らきく</a><br>
-                製作者HoyoLab：<a href="https://www.hoyolab.com/accountCenter/postList?id=30941982" target="_blank" rel="noopener noreferrer">HoyoLabはこちら</a>
+                これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。作者がプログラムを組むのはこれが初めてなのでバグがめちゃくちゃあるかもしれませんがご容赦ください。<br>
+                製作者Twitter:<a href="https://x.com/rakiku_genshin" target="_blank" rel="noopener noreferrer">@rakiku_genshin</a>
             </p>
         </div>
     </div>
