@@ -34,6 +34,25 @@ window.updatePlayerNameInputs = function() {
     }
 };
 
+// タブ切り替え機能（HTMLのonclickから呼ばれるためグローバルに定義）
+window.showTab = function(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    document.getElementById(tabName).classList.remove('hidden');
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    if (tabName === 'charTab') document.getElementById('tab-char').classList.add('active');
+    if (tabName === 'weaponTab') document.getElementById('tab-weapon').classList.add('active');
+};
+
+// 一括チェック機能（HTMLのonclickから呼ばれるためグローバルに定義）
+window.bulkCheck = function(type, state) {
+    if (type === 'char') {
+        document.querySelectorAll('.char-owned').forEach(cb => cb.checked = state);
+    } else if (type === 'weapon') {
+        document.querySelectorAll('.weapon-owned').forEach(cb => cb.checked = state);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- データベース（2026/02/09版、トワリン除外） ---
@@ -430,6 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let playerCount, bindCount, mode, currentRoulette, currentBindName, currentBindIndex, items, angle = 0, spinning = false, results = {}, currentPlayer = 1, lastResult;
     let rerolledChars, rerolledWeapons, rerolledCommonWeapons, playerNames = [], bindSelectionPhase, bindsToResolve, excludedSubItems = {};
     let prerenderedRoulette = null, spinSpeed = 0, visualItems = [];
+    let isWeeklyBossMode = false;
 
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
@@ -513,7 +533,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (!match) return false;
         }
-        if (results.boss && weeklyBosses.includes(results.boss)) {
+        // Weekly boss mode check - prevent duplicate characters
+        if (isWeeklyBossMode) {
             for (let i = 0; i < playerIdx - 1; i++) {
                 const pRes = results.players[i];
                 const pChar = pRes['キャラルーレット'] || (pRes['キャラ武器ルーレット'] ? pRes['キャラ武器ルーレット'].char : null);
@@ -829,43 +850,62 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('memberSettingsModal');
     if (modal) modal.classList.remove('hidden');
     
-    // プレイヤー選択エリアを生成
-    const memberSelectRow = document.querySelector('.member-select-row');
-    memberSelectRow.innerHTML = '';
-    
-    playerNames.forEach((name, idx) => {
-        const label = document.createElement('label');
-        label.style.display = 'flex';
-        label.style.gap = '10px';
-        label.style.alignItems = 'center';
-        
-        const radio = document.createElement('input');
-        radio.type = 'radio';
-        radio.name = 'playerSelection';
-        radio.value = idx;
-        radio.checked = idx === 0;
-        radio.addEventListener('change', () => loadPlayerData(idx));
-        
-        label.appendChild(radio);
-        label.appendChild(document.createTextNode(name));
-        memberSelectRow.appendChild(label);
-    });
-    
-    // possessionTabsを表示
-    const possessionTabs = document.getElementById('possessionTabs');
-    if (possessionTabs) possessionTabs.classList.remove('hidden');
-    
-    // 最初のプレイヤーのデータを読み込む
-    loadPlayerData(0);
+    // Show player name input screen initially
+    document.getElementById('playerNameInputScreen').classList.remove('hidden');
+    document.querySelector('.member-select-row').classList.add('hidden');
+    document.getElementById('possessionTabs').classList.add('hidden');
 }
 
 function closeMemberSettings() {
     const modal = document.getElementById('memberSettingsModal');
     if (modal) modal.classList.add('hidden');
+    // Reset the modal to initial state
+    document.getElementById('playerNameInputScreen').classList.remove('hidden');
+    document.querySelector('.member-select-row').classList.add('hidden');
+    document.getElementById('possessionTabs').classList.add('hidden');
 }
 
-function loadPlayerData(playerIdx = 0) {
-    const playerName = playerNames[playerIdx];
+function goToSettingsScreen() {
+    const playerName = document.getElementById('modalPlayerNameInput').value.trim();
+    if (!playerName) {
+        alert('プレイヤー名を入力してください');
+        return;
+    }
+    
+    // Hide player name input screen
+    document.getElementById('playerNameInputScreen').classList.add('hidden');
+    
+    // Show player selection area (for switching between players if needed)
+    const memberSelectRow = document.querySelector('.member-select-row');
+    memberSelectRow.classList.remove('hidden');
+    memberSelectRow.innerHTML = '';
+    
+    // Add radio button for current player
+    const label = document.createElement('label');
+    label.style.display = 'flex';
+    label.style.gap = '10px';
+    label.style.alignItems = 'center';
+    
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'playerSelection';
+    radio.value = 0;
+    radio.checked = true;
+    
+    label.appendChild(radio);
+    label.appendChild(document.createTextNode(playerName));
+    memberSelectRow.appendChild(label);
+    
+    // Show possession tabs
+    const possessionTabs = document.getElementById('possessionTabs');
+    if (possessionTabs) possessionTabs.classList.remove('hidden');
+    
+    // Load data for this player
+    editingPlayer = playerName;
+    loadPlayerData(playerName);
+}
+
+function loadPlayerData(playerName) {
     editingPlayer = playerName;
     
     if (!playerPossession[playerName]) {
@@ -876,39 +916,63 @@ function loadPlayerData(playerIdx = 0) {
     const charList = document.getElementById('charSettingList');
     const weaponList = document.getElementById('weaponSettingList');
     
+    // Group characters by country
     charList.innerHTML = '';
-    characters.forEach(char => {
-        const div = document.createElement('div');
-        div.className = 'possession-item';
-        const owned = pData.chars[char.name] ? pData.chars[char.name].owned !== false : true;
-        const c6 = pData.chars[char.name] ? pData.chars[char.name].c6 : false;
+    const countries = [...new Set(characters.map(c => c.country))];
+    countries.forEach(country => {
+        const countryHeader = document.createElement('h3');
+        countryHeader.textContent = country;
+        countryHeader.style.marginTop = '15px';
+        countryHeader.style.marginBottom = '10px';
+        countryHeader.style.borderBottom = '2px solid #3498db';
+        charList.appendChild(countryHeader);
         
-        div.innerHTML = `
-            <label>
-                <input type="checkbox" class="char-owned" data-char="${char.name}" ${owned ? 'checked' : ''}>
-                ${char.name}
-            </label>
-            <label style="margin-left: 10px;">
-                <input type="checkbox" class="char-c6" data-char="${char.name}" ${c6 ? 'checked' : ''}>
-                完凸
-            </label>
-        `;
-        charList.appendChild(div);
+        const countryChars = characters.filter(c => c.country === country);
+        countryChars.forEach(char => {
+            const div = document.createElement('div');
+            div.className = 'possession-item';
+            const owned = pData.chars[char.name] ? pData.chars[char.name].owned !== false : true;
+            const c6 = pData.chars[char.name] ? pData.chars[char.name].c6 : false;
+            
+            div.innerHTML = `
+                <label>
+                    <input type="checkbox" class="char-owned" data-char="${char.name}" ${owned ? 'checked' : ''}>
+                    ${char.name}
+                </label>
+                <label style="margin-left: 10px;">
+                    <input type="checkbox" class="char-c6" data-char="${char.name}" ${c6 ? 'checked' : ''}>
+                    完凸
+                </label>
+            `;
+            charList.appendChild(div);
+        });
     });
     
+    // Group weapons by type
     weaponList.innerHTML = '';
-    Object.values(allWeapons).flat().forEach(weapon => {
-        const div = document.createElement('div');
-        div.className = 'possession-item';
-        const owned = pData.weapons[weapon.name] !== false;
+    const weaponTypes = Object.keys(allWeapons);
+    weaponTypes.forEach(weaponType => {
+        const typeHeader = document.createElement('h3');
+        typeHeader.textContent = weaponType;
+        typeHeader.style.marginTop = '15px';
+        typeHeader.style.marginBottom = '10px';
+        typeHeader.style.borderBottom = '2px solid #3498db';
+        weaponList.appendChild(typeHeader);
         
-        div.innerHTML = `
-            <label>
-                <input type="checkbox" class="weapon-owned" data-weapon="${weapon.name}" ${owned ? 'checked' : ''}>
-                ${weapon.name}
-            </label>
-        `;
-        weaponList.appendChild(div);
+        const weaponsOfType = allWeapons[weaponType];
+        weaponsOfType.forEach(weapon => {
+            const div = document.createElement('div');
+            div.className = 'possession-item';
+            const owned = pData.weapons[weapon.name] !== false;
+            
+            div.innerHTML = `
+                <label>
+                    <input type="checkbox" class="weapon-owned" data-weapon="${weapon.name}" ${owned ? 'checked' : ''}>
+                    ${weapon.name}
+                </label>
+            `;
+            weaponList.appendChild(div);
+        });
     });
 }
 
@@ -1101,12 +1165,26 @@ function bulkCheck(type, state) {
 
     document.getElementById('startAllButton').addEventListener('click', () => startRoulette('all'));
     document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
-    document.getElementById('startBindButton').addEventListener('click', () => startRoulette('bind'));
+    document.getElementById('startBindButton').addEventListener('click', () => {
+        isWeeklyBossMode = document.getElementById('weeklyBossModeBindOnly').checked;
+        startRoulette('bind');
+    });
     document.getElementById('showBindSelectionButton').addEventListener('click', showBindSelection);
-    document.getElementById('executeSelectionButton').addEventListener('click', executeBinds);
+    document.getElementById('executeSelectionButton').addEventListener('click', () => {
+        isWeeklyBossMode = document.getElementById('weeklyBossModeSelection').checked;
+        executeBinds();
+    });
     document.getElementById('showCustomBindScreenButton').addEventListener('click', showCustomBindScreen);
-    document.getElementById('executeCustomBindsButton').addEventListener('click', executeCustomBinds);
+    document.getElementById('executeCustomBindsButton').addEventListener('click', () => {
+        isWeeklyBossMode = document.getElementById('weeklyBossModeCustom').checked;
+        executeCustomBinds();
+    });
     document.getElementById('showMemberSettingsButton').addEventListener('click', showMemberSettings);
+    
+    const goToSettingsBtn = document.getElementById('goToSettingsButton');
+    if (goToSettingsBtn) {
+        goToSettingsBtn.addEventListener('click', goToSettingsScreen);
+    }
     
     const closeMemberSettingsBtn = document.getElementById('closeMemberSettings');
     if (closeMemberSettingsBtn) {

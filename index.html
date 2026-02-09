@@ -46,6 +46,13 @@
                 <button id="showCustomBindScreenButton">カスタム縛り設定</button>
             </div>
 
+            <div style="margin-top: 10px; text-align: center;">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="weeklyBossModeBindOnly">
+                    週ボスモード（キャラルーレットで同じキャラが選ばれない）
+                </label>
+            </div>
+
             <div class="settings-group">
                 <button id="showMemberSettingsButton" class="member-settings-button">メンバーの所持状況設定</button>
             </div>
@@ -73,6 +80,10 @@
                 <div class="custom-bind-checkboxes">
                     <h3>追加ルール</h3>
                     <div id="customBindButtonsCommon" class="button-group-checkbox"></div>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="weeklyBossModeCustom">
+                        週ボスモード（キャラルーレットで同じキャラが選ばれない）
+                    </label>
                 </div>
             </div>
             <div id="customBindsPlayersContainer"></div>
@@ -83,6 +94,12 @@
         <div id="bindSelection" class="hidden">
             <h2>縛りを選択してください</h2>
             <div id="bindButtons" class="button-group-checkbox"></div>
+            <div style="margin-top: 20px;">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="weeklyBossModeSelection">
+                    週ボスモード（キャラルーレットで同じキャラが選ばれない）
+                </label>
+            </div>
             <button id="executeSelectionButton">選択した縛りで実行</button>
         </div>
 
@@ -115,8 +132,17 @@
             <button class="close-button" id="closeMemberSettings">&times;</button>
             <h2>メンバーの所持・完凸設定</h2>
             
-            <!-- プレイヤー選択エリア -->
-            <div class="member-select-row" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+            <!-- プレイヤー名入力画面 -->
+            <div id="playerNameInputScreen">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px;">プレイヤー名を入力してください：</label>
+                    <input type="text" id="modalPlayerNameInput" placeholder="プレイヤー名" style="width: 100%; padding: 10px; box-sizing: border-box;">
+                </div>
+                <button id="goToSettingsButton" style="width: 100%; padding: 15px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">次へ</button>
+            </div>
+            
+            <!-- プレイヤー選択エリア（非表示） -->
+            <div class="member-select-row hidden" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
                 <!-- JSで各プレイヤーのセレクトボックスを生成 -->
             </div>
             
