@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // --- データベース（2026/02/09版） ---
+    // --- データベース（2026/02/09版、指示に基づきトワリン除外） ---
     const characters = [
         { name: "ジン", country: "モンド", weapon: "片手剣", element: "風", birth_month: "３月", version: "n.0", rarity: ['☆５', '恒常☆５'], body: "長身女性", role: ["オフフィールドライフキーパー"], energy: 80, talent_boss: "無相の風", local_specialty: "蒲公英の種", ascension_stat: "与える治療効果", distributed: false },
         { name: "アンバー", country: "モンド", weapon: "弓", element: "炎", birth_month: "８月", version: "n.0", rarity: ['☆４'], body: "中身女性", role: ["オフフィールドアタッカー"], energy: 40, talent_boss: "爆炎樹", local_specialty: "イグサ", ascension_stat: "攻撃力", distributed: true },
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "キィニチ", country: "ナタ", weapon: "両手剣", element: "草", birth_month: "１１月", version: "n.0", rarity: ['☆５'], body: "中身男性", role: ["オンフィールドアタッカー"], energy: 70, talent_boss: "山の王・貪食のユムカ竜", local_specialty: "ササウリアンサキュレント", ascension_stat: "会心ダメージ", distributed: false },
         { name: "カチーナ", country: "ナタ", weapon: "長柄武器", element: "岩", birth_month: "４月", version: "n.0", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドアタッカー"], energy: 70, talent_boss: "山の王・貪食のユムカ竜", local_specialty: "ケネパベリー", ascension_stat: "岩元素ダメージ", distributed: true },
         { name: "シトラリ", country: "ナタ", weapon: "法器", element: "氷", birth_month: "１１月", version: "n.3", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 60, talent_boss: "迷える霊覚の修権者", local_specialty: "ケネパベリー", ascension_stat: "元素熟知", distributed: false },
-        { name: "マーヴィカ", country: "ナタ", weapon: "両手剣", element: "炎", birth_month: "８月", version: "n.3", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー", "オンフィールドアタッカー", "オンフィールドサポーター"], energy: 0, talent_boss: "秘源機兵・機構デバイス", local_specialty: "枯れ紫菖", ascension_stat: "会心ダメージ", distributed: false },
+        { name: "マーヴィカ", country: "ナタ", weapon: "両手剣", element: "炎", birth_month: "８月", version: "n.3", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー", "オフフィールドアタッカー", "オンフィールドサポーター"], energy: 0, talent_boss: "秘源機兵・機構デバイス"", local_specialty: "枯れ紫菖", ascension_stat: "会心ダメージ", distributed: false },
         { name: "ヴァレサ", country: "ナタ", weapon: "法器", element: "雷", birth_month: "１１月", version: "n.5", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 70, talent_boss: "輝ける溶岩の龍像", local_specialty: "岩裂の花", ascension_stat: "会心率", distributed: false },
         { name: "イファ", country: "ナタ", weapon: "法器", element: "風", birth_month: "３月", version: "n.5", rarity: ['☆４'], body: "長身男性", role: ["オンフィールドライフキーパー"], energy: 60, talent_boss: "輝ける溶岩の龍像", local_specialty: "サウリアンサキュレント", ascension_stat: "元素熟知", distributed: false },
         { name: "シロネン", country: "ナタ", weapon: "片手剣", element: "岩", birth_month: "３月", version: "n.1", rarity: ['☆５'], body: "長身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 60, talent_boss: "秘源機兵・機構デバイス", local_specialty: "シャクギク", ascension_stat: "防御力", distributed: false },
@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const alphabetData = {"A": ["アイノ", "荒瀧一斗", "アルベド", "アルレッキーノ", "アルハイゼン", "アンバー", "アーロイ"], "B": ["バーバラ", "白朮", "ベネット", "北斗"], "C": ["キャンディス", "クロリンデ", "コレイ", "シャルロット", "シュヴルーズ", "シトラリ", "セノ", "千織", "チャスカ", "重雲"], "D": ["ドリー", "ディシア", "ディルック", "ディオナ", "ダリア"], "E": ["エミリエ", "エウルア", "エスコフィエ"], "F": ["フリンズ", "ファルザン", "フリーナ", "フレミネ", "フィッシュル"], "G": ["嘉明", "甘雨", "ゴロー"], "H": ["胡桃"], "I": ["イアンサ", "イファ", "イネファ"], "J": ["ジン"], "K": ["神里綾華", "神里綾人", "キィニチ", "綺良々", "久岐忍", "九条裟羅", "クレー", "刻晴", "カチーナ", "カーヴェ"], "L": ["ラウマ", "リサ", "リネ", "リネット", "レイラ", "藍硯"], "M": ["ミカ", "ムアラニ", "モナ", "マーヴィカ"], "N": ["ネフェル","ナヴィア", "ナヒーダ", "ニィロウ", "ヌヴィレット", "ノエル"], "O": ["オロルン"], "Q": ["七七"], "R": ["雷電将軍", "レザー", "ロサリア", "リオセスリ"], "S": ["早柚", "珊瑚宮心海", "鹿野院平蔵", "シグウィン", "申鶴", "スクロース", "セトス", "スカーク"], "T": ["旅人", "ティナリ", "タルタリヤ", "トーマ"], "V": ["ウェンティ", "ヴァレサ"], "W": ["放浪者"], "X": ["行秋", "魈", "香菱", "辛炎", "シロネン", "閑雲"], "Y": ["煙緋", "夜蘭", "雲菫", "八重神子", "宵宮", "ヨォーヨ", "夢見月瑞希"], "Z": ["鍾離"]};
 
     const binds = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示+リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止+リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし", "武器縛り", "体型縛り", "役割縛り", "スキル禁止", "元素エネルギー縛り", "完凸禁止", "配布武器縛り", "配布キャラ縛り", "ボス素材縛り", "特産品縛り", "クラウン禁止", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)"];
-
+    
     // --- 補助関数 ---
     const jpSort = (list) => [...list].sort((a, b) => String(a).localeCompare(String(b), 'ja'));
 
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const ctx = canvas.getContext('2d');
     const defaultColors = ['#00c0fe', '#36d6a0', '#fe6640', '#8dcc06', '#74E4E2', '#cc85ff', '#F3AC11'];
 
-    // --- 所持状況管理 (LocalStorage) ---
+    // --- 所持状況管理 ---
     let playerPossession = JSON.parse(localStorage.getItem('genshin_roulette_possession') || '{}');
     let editingPlayer = "";
 
@@ -485,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- コアロジック ---
+    // --- ロジックコア ---
 
     function initialize() {
         playerCount = parseInt(document.getElementById('playerCount').value) || 1;
@@ -609,6 +609,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function drawRoulette() {
+        ctx.clearRect(0, 0, 500, 500);
+        if (!prerenderedRoulette) return;
+        ctx.save(); ctx.translate(250, 250); ctx.rotate(angle);
+        ctx.drawImage(prerenderedRoulette, -250, -250); ctx.restore();
+        ctx.beginPath(); ctx.moveTo(480, 235); ctx.lineTo(480, 265); ctx.lineTo(450, 250);
+        ctx.fillStyle = '#FF0000'; ctx.fill();
+    }
+
     function setupRouletteForBind(bindName, player = 1) {
         currentBindName = bindName; currentPlayer = player;
         const currentFilters = {...results.common, ...results.players[currentPlayer - 1]};
@@ -647,6 +656,39 @@ document.addEventListener('DOMContentLoaded', function() {
         else { prerenderedRoulette = null; prerenderRouletteImage(); document.getElementById('spinButton').disabled = false; showScreen('rouletteScreen'); drawRoulette(); }
     }
 
+    function spinRoulette() {
+        if (spinning || !items || items.length === 0) return;
+        spinning = true; spinSpeed = 0.2 + Math.random() * 0.1;
+        document.getElementById('spinButton').disabled = true; document.getElementById('stopButton').disabled = false;
+        (function anim() { if (spinning) { angle += spinSpeed; drawRoulette(); requestAnimationFrame(anim); } })();
+    }
+
+    function stopRoulette() {
+        const si = setInterval(() => {
+            spinSpeed *= 0.96; angle += spinSpeed;
+            if (Math.abs(spinSpeed) < 0.001) {
+                spinning = false; clearInterval(si);
+                let idx = Math.floor(((2 * Math.PI - (angle % (2 * Math.PI))) % (2 * Math.PI)) / (2 * Math.PI / visualItems.length));
+                lastResult = visualItems[idx]; showPopup(lastResult);
+            } else drawRoulette();
+        }, 20);
+        document.getElementById('stopButton').disabled = true;
+    }
+
+    function showPopup(text) {
+        const p = document.getElementById('popup');
+        p.innerHTML = `<span class="popup-close" onclick="this.parentElement.click()">×</span>${text}`; p.style.display = 'block';
+        const cb = () => {
+            p.style.display = 'none'; document.getElementById('nextButton').classList.remove('hidden');
+            if(currentRoulette === 'character' || currentRoulette === 'weapon' || currentRoulette === 'sub')
+                document.getElementById('notOwnedButton').classList.remove('hidden');
+            p.removeEventListener('click', cb);
+        };
+        p.addEventListener('click', cb);
+    }
+
+    function nextStep() { processResult(); document.getElementById('nextButton').classList.add('hidden'); document.getElementById('notOwnedButton').classList.add('hidden'); }
+
     function processResult() {
         if (bindSelectionPhase) {
             bindsToResolve.push(lastResult); if (lastResult.includes("リロール")) bindCount++;
@@ -681,6 +723,23 @@ document.addEventListener('DOMContentLoaded', function() {
             } else results.players[currentPlayer - 1][currentBindName] = lastResult;
         } else results.common[currentBindName] = lastResult;
         proceedToNext();
+    }
+
+    function notOwned() {
+        if(currentRoulette === 'character') { rerolledChars[currentPlayer].push(lastResult); items = getFilteredCharacters(null, currentPlayer).map(c => c.name); }
+        else if (currentRoulette === 'weapon') {
+            const cn = results.players[currentPlayer - 1]['キャラ武器ルーレット'].char;
+            if (!rerolledWeapons[currentPlayer][cn]) rerolledWeapons[currentPlayer][cn] = [];
+            rerolledWeapons[currentPlayer][cn].push(lastResult);
+            items = getFilteredWeapons(characters.find(c => c.name === cn).weapon, cn);
+        } else if (currentRoulette === 'sub') {
+            const exKey = currentBindName + "_" + currentPlayer;
+            if (!excludedSubItems[exKey]) excludedSubItems[exKey] = [];
+            excludedSubItems[exKey].push(lastResult);
+            setupRouletteForBind(currentBindName, currentPlayer); return;
+        }
+        if (items.length === 0) { alert("候補がいなくなりました"); proceedToNext(); return; }
+        prerenderRouletteImage(); drawRoulette(); document.getElementById('spinButton').disabled = false;
     }
 
     function showResults() {
@@ -727,55 +786,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } else showResults();
     }
 
-    document.getElementById('stopButton').addEventListener('click', stopRoulette);
-    document.getElementById('spinButton').addEventListener('click', spinRoulette);
-    document.getElementById('nextButton').addEventListener('click', nextStep);
-    document.getElementById('notOwnedButton').addEventListener('click', notOwned);
-    document.getElementById('homeButton').addEventListener('click', backToStart);
-    document.getElementById('backToStartButton').addEventListener('click', backToStart);
-
-    function startRoulette(type) {
-        initialize(); mode = type; showScreen('rouletteScreen');
-        if (type === 'all' || type === 'boss') { currentRoulette = 'boss'; items = bosses; }
-        else if (type === 'bind') { bindSelectionPhase = true; currentRoulette = 'bind'; items = getAvailableBinds(); }
-        updateDisplayInfo(); prerenderRouletteImage(); drawRoulette();
-    }
-
-    function stopRoulette() {
-        const si = setInterval(() => {
-            spinSpeed *= 0.96; angle += spinSpeed;
-            if (Math.abs(spinSpeed) < 0.001) {
-                spinning = false; clearInterval(si);
-                let idx = Math.floor(((2 * Math.PI - (angle % (2 * Math.PI))) % (2 * Math.PI)) / (2 * Math.PI / visualItems.length));
-                lastResult = visualItems[idx]; showPopup(lastResult);
-            } else drawRoulette();
-        }, 20);
-        document.getElementById('stopButton').disabled = true;
-    }
-
-    function spinRoulette() {
-        if (spinning || !items || items.length === 0) return;
-        spinning = true; spinSpeed = 0.2 + Math.random() * 0.1;
-        document.getElementById('spinButton').disabled = true; document.getElementById('stopButton').disabled = false;
-        document.getElementById('nextButton').classList.add('hidden'); document.getElementById('notOwnedButton').classList.add('hidden');
-        (function anim() { if (spinning) { angle += spinSpeed; drawRoulette(); requestAnimationFrame(anim); } })();
-    }
-
-    function showPopup(text) {
-        const p = document.getElementById('popup');
-        p.innerHTML = `<span class="popup-close" onclick="this.parentElement.click()">×</span>${text}`; p.style.display = 'block';
-        const cb = () => {
-            p.style.display = 'none'; document.getElementById('nextButton').classList.remove('hidden');
-            if(currentRoulette === 'character' || currentRoulette === 'weapon' || currentRoulette === 'sub')
-                document.getElementById('notOwnedButton').classList.remove('hidden');
-            p.removeEventListener('click', cb);
-        };
-        p.addEventListener('click', cb);
-    }
-
-    function nextStep() { processResult(); document.getElementById('nextButton').classList.add('hidden'); document.getElementById('notOwnedButton').classList.add('hidden'); }
-    function backToStart() { spinning = false; initialize(); showScreen('startScreen'); }
-
     function showCustomBindScreen() {
         initialize(); mode = 'custom'; showScreen('customBindScreen');
         const bSel = document.getElementById('customBossSelect');
@@ -783,7 +793,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const cg = document.getElementById('customBindGrid'), cb = document.getElementById('customBindButtonsCommon'), pc = document.getElementById('customBindsPlayersContainer');
         cg.innerHTML = ''; cb.innerHTML = ''; pc.innerHTML = '';
         ['国縛り', 'モノ元素縛り'].forEach(n => createBindItem(n, 'select', cg));
-        ['恒常☆５縛り', '☆４キャラ武器', '初期キャラのみ', '所持率100％縛り', '旅人縛り', 'スキル禁止', '完凸禁止', 'クラウン禁止', '配布武器縛り', '回復禁止'].forEach(n => createBindItem(n, 'check', cb));
+        ['恒常☆５縛り', '☆４キャラ武器', '初期キャラのみ', '所持率100％縛り', '旅人縛り', 'スキル禁止', '完凸禁止', 'クラウン禁止', '回復禁止'].forEach(n => createBindItem(n, 'check', cb));
         for (let i = 1; i <= playerCount; i++) {
             const d = document.createElement('div'); d.className = 'custom-bind-player-section'; d.innerHTML = `<h3>${playerNames[i-1]}の縛り</h3>`;
             const g = document.createElement('div'); g.className = 'custom-bind-grid';
@@ -818,7 +828,7 @@ document.addEventListener('DOMContentLoaded', function() {
             else bindsToResolve.push({ name: n, player: p });
         });
         bindsToResolve.sort((a, b) => (bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name)));
-        if (!results.boss && mode !== 'boss') { currentRoulette = 'boss'; items = bosses; showScreen('rouletteScreen'); updateDisplayInfo(); prerenderRouletteImage(); drawRoulette(); }
+        if (!results.boss) { currentRoulette = 'boss'; items = bosses; showScreen('rouletteScreen'); updateDisplayInfo(); prerenderRouletteImage(); drawRoulette(); }
         else { startNextSelectedBind(); }
     }
 
@@ -836,6 +846,22 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentBindIndex >= bindsToResolve.length) showResults();
         else startNextSelectedBind(); 
     }
+
+    function backToStart() { spinning = false; initialize(); showScreen('startScreen'); }
+
+    document.getElementById('startAllButton').addEventListener('click', () => startRoulette('all'));
+    document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
+    document.getElementById('startBindButton').addEventListener('click', () => startRoulette('bind'));
+    document.getElementById('showBindSelectionButton').addEventListener('click', showBindSelection);
+    document.getElementById('executeSelectionButton').addEventListener('click', executeBinds);
+    document.getElementById('showCustomBindScreenButton').addEventListener('click', showCustomBindScreen);
+    document.getElementById('executeCustomBindsButton').addEventListener('click', executeCustomBinds);
+    document.getElementById('spinButton').addEventListener('click', spinRoulette);
+    document.getElementById('stopButton').addEventListener('click', stopRoulette);
+    document.getElementById('nextButton').addEventListener('click', nextStep);
+    document.getElementById('notOwnedButton').addEventListener('click', notOwned);
+    document.getElementById('homeButton').addEventListener('click', backToStart);
+    document.getElementById('backToStartButton').addEventListener('click', backToStart);
 
     updatePlayerNameInputs();
 });
