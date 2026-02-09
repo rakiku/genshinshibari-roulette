@@ -494,6 +494,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const pData = playerPossession[pName];
         if (pData && pData.chars[char.name] && pData.chars[char.name].owned === false) return false;
         if (filters["完凸禁止"] && pData && pData.chars[char.name] && pData.chars[char.name].c6 === true) return false;
+        if (filters["無凸縛り"] && pData && pData.chars[char.name] && pData.chars[char.name].c0 !== true) return false;
         for (const bindName in filters) {
             const value = filters[bindName];
             if (value === undefined || value === null || value === "") continue;
@@ -926,21 +927,38 @@ function loadPlayerData(playerName) {
         countryHeader.style.borderBottom = '2px solid #3498db';
         charList.appendChild(countryHeader);
         
-        const countryChars = characters.filter(c => c.country === country);
+        // Filter and sort characters: ☆5 first, then ☆4
+        const countryChars = characters
+            .filter(c => c.country === country)
+            .sort((a, b) => {
+                // Check if character has ☆5 in their rarity array
+                const aIsFiveStar = a.rarity.some(r => r.includes('☆５'));
+                const bIsFiveStar = b.rarity.some(r => r.includes('☆５'));
+                
+                if (aIsFiveStar && !bIsFiveStar) return -1;
+                if (!aIsFiveStar && bIsFiveStar) return 1;
+                return 0; // Keep original order within same rarity
+            });
+            
         countryChars.forEach(char => {
             const div = document.createElement('div');
             div.className = 'possession-item';
             const owned = pData.chars[char.name] ? pData.chars[char.name].owned !== false : true;
             const c6 = pData.chars[char.name] ? pData.chars[char.name].c6 : false;
+            const c0 = pData.chars[char.name] ? pData.chars[char.name].c0 : false;
             
             div.innerHTML = `
-                <label>
+                <label style="display: block; margin-bottom: 5px;">
                     <input type="checkbox" class="char-owned" data-char="${char.name}" ${owned ? 'checked' : ''}>
                     ${char.name}
                 </label>
-                <label style="margin-left: 10px;">
+                <label style="display: block; margin-bottom: 5px; margin-left: 10px;">
                     <input type="checkbox" class="char-c6" data-char="${char.name}" ${c6 ? 'checked' : ''}>
                     完凸
+                </label>
+                <label style="display: block; margin-left: 10px;">
+                    <input type="checkbox" class="char-c0" data-char="${char.name}" ${c0 ? 'checked' : ''}>
+                    無凸
                 </label>
             `;
             charList.appendChild(div);
@@ -996,6 +1014,12 @@ function savePlayerData() {
         pData.chars[charName].c6 = cb.checked;
     });
     
+    document.querySelectorAll('.char-c0').forEach(cb => {
+        const charName = cb.dataset.char;
+        if (!pData.chars[charName]) pData.chars[charName] = {};
+        pData.chars[charName].c0 = cb.checked;
+    });
+    
     document.querySelectorAll('.weapon-owned').forEach(cb => {
         const weaponName = cb.dataset.weapon;
         pData.weapons[weaponName] = cb.checked;
@@ -1043,6 +1067,12 @@ function bulkCheck(type, state) {
             const charName = cb.dataset.char;
             if (!pData.chars[charName]) pData.chars[charName] = {};
             pData.chars[charName].c6 = cb.checked;
+        });
+        
+        document.querySelectorAll('.char-c0').forEach(cb => {
+            const charName = cb.dataset.char;
+            if (!pData.chars[charName]) pData.chars[charName] = {};
+            pData.chars[charName].c0 = cb.checked;
         });
         
         document.querySelectorAll('.weapon-owned').forEach(cb => {
@@ -1165,7 +1195,6 @@ function bulkCheck(type, state) {
     document.getElementById('startAllButton').addEventListener('click', () => startRoulette('all'));
     document.getElementById('startBossButton').addEventListener('click', () => startRoulette('boss'));
     document.getElementById('startBindButton').addEventListener('click', () => {
-        isWeeklyBossMode = document.getElementById('weeklyBossModeBindOnly').checked;
         startRoulette('bind');
     });
     document.getElementById('showBindSelectionButton').addEventListener('click', showBindSelection);
@@ -1281,13 +1310,9 @@ function bulkCheck(type, state) {
         
         bindsToResolve.sort((a, b) => bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name));
         
-        currentRoulette = 'boss';
-        items = bosses;
-        showScreen('rouletteScreen');
-        updateDisplayInfo();
-        prerenderRouletteImage();
-        drawRoulette();
-        document.getElementById('spinButton').disabled = false;
+        // Start with the first selected bind, not boss roulette
+        currentBindIndex = 0;
+        startNextSelectedBind();
     }
 
     updatePlayerNameInputs();
