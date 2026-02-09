@@ -114,9 +114,12 @@
         <div class="modal-content large">
             <button class="close-button" id="closeMemberSettings">&times;</button>
             <h2>メンバーの所持・完凸設定</h2>
-            <div class="member-select-row" style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <input type="text" id="settingPlayerName" placeholder="設定するプレイヤー名" style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #7f8c8d; background: #34495e; color: white;">
-                <button id="loadPlayerData">読込/新規</button>
+          <div class="member-select-row" style="display: flex; gap: 10px; margin-bottom: 20px;">
+    <select style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #7f8c8d; background: #34495e; color: white;">
+        <!-- JSで生成 -->
+    </select>
+    <button id="loadPlayerData">読込/新規</button>
+</div>
             </div>
             <div id="possessionTabs" class="hidden">
                 <div class="tab-buttons" style="display: flex; gap: 5px; margin-bottom: 15px;">
