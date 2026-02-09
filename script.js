@@ -19,6 +19,21 @@ window.adjustCount = function(id, diff) {
     input.dispatchEvent(event);
 };
 
+// プレイヤー名入力欄を更新する関数（adjustCountから呼ばれるためDOMContentLoadedの外に定義）
+window.updatePlayerNameInputs = function() {
+    const container = document.getElementById('playerNameInputsContainer');
+    const count = parseInt(document.getElementById('playerCount').value) || 1;
+    const currentInputs = Array.from(container.querySelectorAll('input')).map(i => i.value);
+    container.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        const input = document.createElement('input');
+        input.type = 'text'; input.className = 'playerNameInput';
+        input.placeholder = `プレイヤー${i + 1}の名前`;
+        if (currentInputs[i]) input.value = currentInputs[i];
+        container.appendChild(input);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- データベース（2026/02/09版、トワリン除外） ---
@@ -423,19 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let playerPossession = JSON.parse(localStorage.getItem('genshin_roulette_possession') || '{}');
     let editingPlayer = "";
 
-    function updatePlayerNameInputs() {
-        const container = document.getElementById('playerNameInputsContainer');
-        const count = parseInt(document.getElementById('playerCount').value) || 1;
-        const currentInputs = Array.from(container.querySelectorAll('input')).map(i => i.value);
-        container.innerHTML = '';
-        for (let i = 0; i < count; i++) {
-            const input = document.createElement('input');
-            input.type = 'text'; input.className = 'playerNameInput';
-            input.placeholder = `プレイヤー${i + 1}の名前`;
-            if (currentInputs[i]) input.value = currentInputs[i];
-            container.appendChild(input);
-        }
-    }
+
 
     function showScreen(screenId) {
         ['startScreen', 'bindSelection', 'rouletteScreen', 'resultScreen', 'customBindScreen'].forEach(id => {
