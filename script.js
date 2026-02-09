@@ -814,74 +814,141 @@ document.addEventListener('DOMContentLoaded', function() {
 
       function backToStart() { spinning = false; initialize(); showScreen('startScreen'); }
 
-    function showMemberSettings() {
-        const modal = document.getElementById('memberSettingsModal');
-        if (modal) modal.classList.remove('hidden');
+   function showMemberSettings() {
+    const modal = document.getElementById('memberSettingsModal');
+    if (modal) modal.classList.remove('hidden');
+    
+    // プレイヤー選択エリアを生成
+    const memberSelectRow = document.querySelector('.member-select-row');
+    memberSelectRow.innerHTML = '';
+    
+    playerNames.forEach((name, idx) => {
+        const label = document.createElement('label');
+        label.style.display = 'flex';
+        label.style.gap = '10px';
+        label.style.alignItems = 'center';
         
-        const playerSelect = document.querySelector('.member-select-row select');
-        if (playerSelect) {
-            playerSelect.innerHTML = playerNames.map((name, i) => `<option value="${i}">${name}</option>`).join('');
-            playerSelect.value = 0;
-            loadPlayerData();
-        }
-    }
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'playerSelection';
+        radio.value = idx;
+        radio.checked = idx === 0;
+        radio.addEventListener('change', () => loadPlayerData(idx));
+        
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(name));
+        memberSelectRow.appendChild(label);
+    });
+    
+    // possessionTabsを表示
+    const possessionTabs = document.getElementById('possessionTabs');
+    if (possessionTabs) possessionTabs.classList.remove('hidden');
+    
+    // 最初のプレイヤーのデータを読み込む
+    loadPlayerData(0);
+}
 
-    function closeMemberSettings() {
-        const modal = document.getElementById('memberSettingsModal');
-        if (modal) modal.classList.add('hidden');
-    }
+function closeMemberSettings() {
+    const modal = document.getElementById('memberSettingsModal');
+    if (modal) modal.classList.add('hidden');
+}
 
-    function loadPlayerData() {
-        const playerSelect = document.querySelector('.member-select-row select');
-        if (!playerSelect) return;
-        
-        const playerIdx = parseInt(playerSelect.value);
-        const playerName = playerNames[playerIdx];
-        editingPlayer = playerName;
-        
-        if (!playerPossession[playerName]) {
-            playerPossession[playerName] = { chars: {}, weapons: {} };
-        }
-        
-        const pData = playerPossession[playerName];
-        const charList = document.getElementById('charSettingList');
-        const weaponList = document.getElementById('weaponSettingList');
-        
-        charList.innerHTML = '';
-        characters.forEach(char => {
-            const div = document.createElement('div');
-            div.className = 'possession-item';
-            const owned = pData.chars[char.name] ? pData.chars[char.name].owned !== false : true;
-            const c6 = pData.chars[char.name] ? pData.chars[char.name].c6 : false;
-            
-            div.innerHTML = `
-                <label>
-                    <input type="checkbox" class="char-owned" data-char="${char.name}" ${owned ? 'checked' : ''}>
-                    ${char.name}
-                </label>
-                <label style="margin-left: 10px;">
-                    <input type="checkbox" class="char-c6" data-char="${char.name}" ${c6 ? 'checked' : ''}>
-                    完凸
-                </label>
-            `;
-            charList.appendChild(div);
-        });
-        
-        weaponList.innerHTML = '';
-        Object.values(allWeapons).flat().forEach(weapon => {
-            const div = document.createElement('div');
-            div.className = 'possession-item';
-            const owned = pData.weapons[weapon.name] !== false;
-            
-            div.innerHTML = `
-                <label>
-                    <input type="checkbox" class="weapon-owned" data-weapon="${weapon.name}" ${owned ? 'checked' : ''}>
-                    ${weapon.name}
-                </label>
-            `;
-            weaponList.appendChild(div);
-        });
+function loadPlayerData(playerIdx = 0) {
+    const playerName = playerNames[playerIdx];
+    editingPlayer = playerName;
+    
+    if (!playerPossession[playerName]) {
+        playerPossession[playerName] = { chars: {}, weapons: {} };
     }
+    
+    const pData = playerPossession[playerName];
+    const charList = document.getElementById('charSettingList');
+    const weaponList = document.getElementById('weaponSettingList');
+    
+    charList.innerHTML = '';
+    characters.forEach(char => {
+        const div = document.createElement('div');
+        div.className = 'possession-item';
+        const owned = pData.chars[char.name] ? pData.chars[char.name].owned !== false : true;
+        const c6 = pData.chars[char.name] ? pData.chars[char.name].c6 : false;
+        
+        div.innerHTML = `
+            <label>
+                <input type="checkbox" class="char-owned" data-char="${char.name}" ${owned ? 'checked' : ''}>
+                ${char.name}
+            </label>
+            <label style="margin-left: 10px;">
+                <input type="checkbox" class="char-c6" data-char="${char.name}" ${c6 ? 'checked' : ''}>
+                完凸
+            </label>
+        `;
+        charList.appendChild(div);
+    });
+    
+    weaponList.innerHTML = '';
+    Object.values(allWeapons).flat().forEach(weapon => {
+        const div = document.createElement('div');
+        div.className = 'possession-item';
+        const owned = pData.weapons[weapon.name] !== false;
+        
+        div.innerHTML = `
+            <label>
+                <input type="checkbox" class="weapon-owned" data-weapon="${weapon.name}" ${owned ? 'checked' : ''}>
+                ${weapon.name}
+            </label>
+        `;
+        weaponList.appendChild(div);
+    });
+}
+
+function savePlayerData() {
+    const playerName = editingPlayer;
+    
+    if (!playerPossession[playerName]) {
+        playerPossession[playerName] = { chars: {}, weapons: {} };
+    }
+    
+    const pData = playerPossession[playerName];
+    
+    document.querySelectorAll('.char-owned').forEach(cb => {
+        const charName = cb.dataset.char;
+        if (!pData.chars[charName]) pData.chars[charName] = {};
+        pData.chars[charName].owned = cb.checked;
+    });
+    
+    document.querySelectorAll('.char-c6').forEach(cb => {
+        const charName = cb.dataset.char;
+        if (!pData.chars[charName]) pData.chars[charName] = {};
+        pData.chars[charName].c6 = cb.checked;
+    });
+    
+    document.querySelectorAll('.weapon-owned').forEach(cb => {
+        const weaponName = cb.dataset.weapon;
+        pData.weapons[weaponName] = cb.checked;
+    });
+    
+    localStorage.setItem('genshin_roulette_possession', JSON.stringify(playerPossession));
+    alert('保存しました！');
+}
+
+// タブ切り替え機能
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    document.getElementById(tabName).classList.remove('hidden');
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    if (tabName === 'charTab') document.getElementById('tab-char').classList.add('active');
+    if (tabName === 'weaponTab') document.getElementById('tab-weapon').classList.add('active');
+}
+
+// 一括チェック機能
+function bulkCheck(type, state) {
+    if (type === 'char') {
+        document.querySelectorAll('.char-owned').forEach(cb => cb.checked = state);
+    } else if (type === 'weapon') {
+        document.querySelectorAll('.weapon-owned').forEach(cb => cb.checked = state);
+    }
+}
 
     function savePlayerData() {
         const playerName = editingPlayer;
