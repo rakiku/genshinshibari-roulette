@@ -6,6 +6,14 @@ window.adjustCount = function(id, diff) {
     if (val < 1) val = 1; 
     if (val > 4) val = 4;
     input.value = val;
+    
+    // ここから追加
+    // プレイヤー数の場合は名前入力欄を更新
+    if (id === 'playerCount') {
+        updatePlayerNameInputs();
+    }
+    // ここまで追加
+    
     // プレイヤー名入力欄の数を更新するイベントを発火
     const event = new Event('input');
     input.dispatchEvent(event);
