@@ -680,7 +680,7 @@ document.addEventListener('DOMContentLoaded', function() {
         p.innerHTML = `<span class="popup-close" onclick="this.parentElement.click()">×</span>${text}`; p.style.display = 'block';
         const cb = () => {
             p.style.display = 'none'; document.getElementById('nextButton').classList.remove('hidden');
-            if(currentRoulette === 'character' || currentRoulette === 'weapon' || currentRoulette === 'sub')
+            if(currentRoulette === 'character' || currentRoulette === 'weapon')
                 document.getElementById('notOwnedButton').classList.remove('hidden');
             p.removeEventListener('click', cb);
         };
@@ -709,6 +709,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
             if (mode === 'boss') showResults();
+            else if (mode === 'custom_selected') proceedToNext();
             else { bindSelectionPhase = true; currentRoulette = 'bind'; items = getAvailableBinds(); prerenderRouletteImage(); drawRoulette(); document.getElementById('spinButton').disabled = false; }
             return;
         }
@@ -726,6 +727,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function notOwned() {
+        document.getElementById('nextButton').classList.add('hidden');
+        document.getElementById('notOwnedButton').classList.add('hidden');
         if(currentRoulette === 'character') { rerolledChars[currentPlayer].push(lastResult); items = getFilteredCharacters(null, currentPlayer).map(c => c.name); }
         else if (currentRoulette === 'weapon') {
             const cn = results.players[currentPlayer - 1]['キャラ武器ルーレット'].char;
