@@ -435,13 +435,11 @@ document.addEventListener('DOMContentLoaded', function() {
             'weapon': '武器'
         };
         const folder = folderMap[type];
+        if (!folder) return null;
         
         // Remove spaces from name before encoding
         const cleanName = name.trim().replace(/\s+/g, '');
         const encodedName = encodeURIComponent(cleanName);
-        
-        // Debug logging
-        console.log(`[IMAGE LOAD] Type: ${type}, Original: ${name}, Clean: ${cleanName}, Encoded: ${encodedName}`);
         
         return `/${folder}/${encodedName}.png`;
     }
