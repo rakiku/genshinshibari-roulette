@@ -6,6 +6,7 @@ function encodeImagePath(type, name) {
         'weapon': 'weapons'
     };
     const folder = folderMap[type];
+    if (!folder) return null;
     const cleanName = name.trim().replace(/\s+/g, '');
     // URLエンコード処理を削除
     return `/${folder}/${cleanName}.png`;
