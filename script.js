@@ -679,7 +679,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showPopup(text) {
         const p = document.getElementById('popup');
-        p.innerHTML = `<span class="popup-close" onclick="this.parentElement.click()">×</span>${text}`; p.style.display = 'block';
+        let content = `<span class="popup-close" onclick="this.parentElement.click()">×</span>${text}`;
+        
+        // ボスルーレットの場合、画像を表示
+        if (currentRoulette === 'boss') {
+            const imagePath = `/BOSS/${text}.png`;
+            content += `<img src="${imagePath}" alt="${text}" class="popup-image" onerror="this.style.display='none'">`;
+        }
+        
+        p.innerHTML = content;
+        p.style.display = 'block';
         const cb = () => {
             p.style.display = 'none'; document.getElementById('nextButton').classList.remove('hidden');
             if(currentRoulette === 'character' || currentRoulette === 'weapon')
@@ -749,7 +758,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showResults() {
         showScreen('resultScreen'); const resDiv = document.getElementById('results');
-        let html = `<h2>ボス：${results.boss || "未選択"}</h2>`;
+        
+        // ボス画像の表示
+        let html = `<div class="result-section"><h2>ボス：${results.boss || "未選択"}</h2>`;
+        if (results.boss && results.boss !== "未選択") {
+            html += `<img src="/BOSS/${results.boss}.png" alt="${results.boss}" class="result-image" onerror="this.style.display='none'">`;
+        }
+        html += `</div>`;
+        
         if (Object.keys(results.common).length > 0) html += `<h3>共通の縛り：</h3><ul>` + Object.keys(results.common).map(k => `<li>${k}${results.common[k]===true?'':': '+results.common[k]}</li>`).join('') + `</ul>`;
         for (let i = 0; i < playerCount; i++) {
             const pb = results.players[i];
@@ -762,6 +778,14 @@ document.addEventListener('DOMContentLoaded', function() {
             html += `</ul>`;
             const f = {...results.common, ...pb};
             let chars = (pb['キャラルーレット']||(pb['キャラ武器ルーレット']&&pb['キャラ武器ルーレット'].char)) ? [{name:pb['キャラルーレット']||pb['キャラ武器ルーレット'].char}] : characters.filter(c => checkCharEligibility(c, f, i + 1));
+            
+            // キャラクター画像の表示
+            const selectedChar = pb['キャラルーレット'] || (pb['キャラ武器ルーレット'] && pb['キャラ武器ルーレット'].char);
+            if (selectedChar) {
+                html += `<div class="result-section"><h4>キャラクター：</h4><p class="char-list-final">${selectedChar}</p>`;
+                html += `<img src="/キャラ/${selectedChar}.png" alt="${selectedChar}" class="result-image" onerror="this.style.display='none'"></div>`;
+            }
+            
             let wepText = "すべて";
             if (f["武器種縛り"]) wepText = f["武器種縛り"];
             if (f["☆４キャラ武器"]) wepText = "☆４" + (f["武器種縛り"] || "武器");
@@ -771,8 +795,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) wepText = pb["キャラ武器ルーレット"].weapon;
             else if (f["武器縛り"]) wepText = f["武器縛り"];
-            html += `<h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
-            html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'条件不一致'}</p>`;
+            
+            // 武器画像の表示
+            const selectedWeapon = (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) || f["武器縛り"];
+            if (selectedWeapon && selectedWeapon !== "すべて") {
+                html += `<div class="result-section"><h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
+                html += `<img src="/武器/${selectedWeapon}.png" alt="${selectedWeapon}" class="result-image" onerror="this.style.display='none'"></div>`;
+            } else {
+                html += `<h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
+            }
+            
+            if (!selectedChar) {
+                html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'条件不一致'}</p>`;
+            }
             html += `<button class="reroll-player-button" data-player-index="${i+1}">再抽選</button></div>`;
         }
         resDiv.innerHTML = html;
