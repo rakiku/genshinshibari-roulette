@@ -2,7 +2,6 @@
 // グローバル変数
 // =============================================================================
 let playerNames = ['プレイヤー1'];
-let currentPlayerData = {};
 
 // =============================================================================
 // 初期化処理
@@ -220,12 +219,7 @@ function generatePlayerSelectBoxes() {
         select.style.color = 'white';
         select.style.border = '1px solid #7f8c8d';
         
-        // 選択肢を追加
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = '選択してください';
-        select.appendChild(defaultOption);
-        
+        // 選択肢を追加（デフォルトで現在のプレイヤーを選択）
         for (let j = 0; j < playerCount; j++) {
             const option = document.createElement('option');
             option.value = j;
@@ -238,11 +232,12 @@ function generatePlayerSelectBoxes() {
         
         // セレクトボックスの変更イベント
         select.addEventListener('change', (e) => {
-            const playerIndex = parseInt(e.target.dataset.playerIndex);
             const selectedPlayerIndex = parseInt(e.target.value);
             
             // 選択されたプレイヤーのデータをロード
-            loadPlayerData(selectedPlayerIndex);
+            if (!isNaN(selectedPlayerIndex)) {
+                loadPlayerData(selectedPlayerIndex);
+            }
         });
         
         wrapper.appendChild(label);
@@ -269,7 +264,10 @@ function generatePossessionLists() {
     const charList = document.getElementById('charSettingList');
     const weaponList = document.getElementById('weaponSettingList');
     
-    if (charList && charList.children.length === 0) {
+    if (charList) {
+        // 既存のリストをクリア
+        charList.innerHTML = '';
+        
         // キャラクターリストのサンプル
         const sampleChars = [
             'アイノ', 'アルハイゼン', 'アルベド', 'アンバー', 'ウェンティ',
@@ -282,7 +280,10 @@ function generatePossessionLists() {
         });
     }
     
-    if (weaponList && weaponList.children.length === 0) {
+    if (weaponList) {
+        // 既存のリストをクリア
+        weaponList.innerHTML = '';
+        
         // 武器リストのサンプル
         const sampleWeapons = [
             '「漁獲」', 'アモスの弓', 'サイフォスの月明かり', 
