@@ -57,13 +57,14 @@ window.bulkCheck = function(type, state) {
 function encodeImagePath(type, name) {
     if (!name) return null;
     const folderMap = {
-        'boss': 'BOSS',
-        'character': 'キャラ',
-        'weapon': '武器'
+        'boss': 'boss',
+        'character': 'characters',
+        'weapon': 'weapons'
     };
     const folder = folderMap[type];
     const cleanName = name.trim().replace(/\s+/g, '');
     const encodedName = encodeURIComponent(cleanName);
+    console.log(`[IMAGE] type:${type}, name:${name}, path:/${folder}/${encodedName}.png`);
     return `/${folder}/${encodedName}.png`;
 }
 
