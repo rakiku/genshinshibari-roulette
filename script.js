@@ -1037,25 +1037,6 @@ function savePlayerData() {
     alert('保存しました！');
 }
 
-// タブ切り替え機能（HTMLのonclickから呼ばれるためwindowに定義）
-window.showTab = function(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-    document.getElementById(tabName).classList.remove('hidden');
-    
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    if (tabName === 'charTab') document.getElementById('tab-char').classList.add('active');
-    if (tabName === 'weaponTab') document.getElementById('tab-weapon').classList.add('active');
-};
-
-// 一括チェック機能（HTMLのonclickから呼ばれるためwindowに定義）
-window.bulkCheck = function(type, state) {
-    if (type === 'char') {
-        document.querySelectorAll('.char-owned').forEach(cb => cb.checked = state);
-    } else if (type === 'weapon') {
-        document.querySelectorAll('.weapon-owned').forEach(cb => cb.checked = state);
-    }
-};
-
 function showAbout() {
     const modal = document.getElementById('aboutScreen');
     if (modal) modal.classList.remove('hidden');
