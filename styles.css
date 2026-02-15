@@ -102,6 +102,45 @@ button:disabled {
     width: 100%;
 }
 
+/* ボタングループ */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+/* ルーレット画面のコントロール */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+/* 設定グループ */
+.settings-group {
+    margin-top: 20px;
+}
+
+/* アバウトボタンコンテナ */
+.about-button-container {
+    margin-top: 20px;
+}
+
+/* アバウトボタン */
+.about-button {
+    background-color: #34495e;
+    border: 1px solid #3498db;
+    width: 100%;
+}
+
+/* タブコンテンツ */
+.tab-content {
+    margin: 10px 0;
+}
+
 /* --- スマホ対応：数値入力コントロール --- */
 .number-controls {
     display: flex;

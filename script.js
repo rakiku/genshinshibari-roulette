@@ -1037,73 +1037,37 @@ function savePlayerData() {
     alert('保存しました！');
 }
 
-// タブ切り替え機能
-function showTab(tabName) {
+// タブ切り替え機能（HTMLのonclickから呼ばれるためwindowに定義）
+window.showTab = function(tabName) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
     document.getElementById(tabName).classList.remove('hidden');
     
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     if (tabName === 'charTab') document.getElementById('tab-char').classList.add('active');
     if (tabName === 'weaponTab') document.getElementById('tab-weapon').classList.add('active');
-}
+};
 
-// 一括チェック機能
-function bulkCheck(type, state) {
+// 一括チェック機能（HTMLのonclickから呼ばれるためwindowに定義）
+window.bulkCheck = function(type, state) {
     if (type === 'char') {
         document.querySelectorAll('.char-owned').forEach(cb => cb.checked = state);
     } else if (type === 'weapon') {
         document.querySelectorAll('.weapon-owned').forEach(cb => cb.checked = state);
     }
+};
+
+function showAbout() {
+    const modal = document.getElementById('aboutScreen');
+    if (modal) modal.classList.remove('hidden');
 }
 
-    function savePlayerData() {
-        const playerName = editingPlayer;
-        
-        if (!playerPossession[playerName]) {
-            playerPossession[playerName] = { chars: {}, weapons: {} };
-        }
-        
-        const pData = playerPossession[playerName];
-        
-        document.querySelectorAll('.char-owned').forEach(cb => {
-            const charName = cb.dataset.char;
-            if (!pData.chars[charName]) pData.chars[charName] = {};
-            pData.chars[charName].owned = cb.checked;
-        });
-        
-        document.querySelectorAll('.char-c6').forEach(cb => {
-            const charName = cb.dataset.char;
-            if (!pData.chars[charName]) pData.chars[charName] = {};
-            pData.chars[charName].c6 = cb.checked;
-        });
-        
-        document.querySelectorAll('.char-c0').forEach(cb => {
-            const charName = cb.dataset.char;
-            if (!pData.chars[charName]) pData.chars[charName] = {};
-            pData.chars[charName].c0 = cb.checked;
-        });
-        
-        document.querySelectorAll('.weapon-owned').forEach(cb => {
-            const weaponName = cb.dataset.weapon;
-            pData.weapons[weaponName] = cb.checked;
-        });
-        
-        localStorage.setItem('genshin_roulette_possession', JSON.stringify(playerPossession));
-        alert('保存しました！');
-    }
+function closeAbout() {
+    const modal = document.getElementById('aboutScreen');
+    if (modal) modal.classList.add('hidden');
+}
 
-    function showAbout() {
-        const modal = document.getElementById('aboutScreen');
-        if (modal) modal.classList.remove('hidden');
-    }
-
-    function closeAbout() {
-        const modal = document.getElementById('aboutScreen');
-        if (modal) modal.classList.add('hidden');
-    }
-
-    function startRoulette(rouletteMode) {
-        initialize();
+function startRoulette(rouletteMode) {
+    initialize();
         mode = rouletteMode;
         
         if (mode === 'all' || mode === 'boss') {
@@ -1234,94 +1198,6 @@ function bulkCheck(type, state) {
     
     document.getElementById('showAboutButton').addEventListener('click', showAbout);
     document.getElementById('closeAboutButton').addEventListener('click', closeAbout);
-
-    updatePlayerNameInputs();
-    function startRoulette(rouletteMode) {
-        initialize();
-        mode = rouletteMode;
-        
-        if (mode === 'all' || mode === 'boss') {
-            currentRoulette = 'boss';
-            items = bosses;
-            updateDisplayInfo();
-            prerenderRouletteImage();
-            showScreen('rouletteScreen');
-            drawRoulette();
-            document.getElementById('spinButton').disabled = false;
-        } else if (mode === 'bind') {
-            bindSelectionPhase = true;
-            items = getAvailableBinds();
-            currentRoulette = 'bind';
-            updateDisplayInfo();
-            prerenderRouletteImage();
-            showScreen('rouletteScreen');
-            drawRoulette();
-            document.getElementById('spinButton').disabled = false;
-        }
-    }
-
-    function showBindSelection() {
-        initialize();
-        mode = 'selection';
-        
-        // bindButtonsに縛り選択チェックボックスを生成
-        const bindButtonsDiv = document.getElementById('bindButtons');
-        bindButtonsDiv.innerHTML = '';
-        
-        binds.forEach(bindName => {
-            const label = document.createElement('label');
-            label.className = 'checkbox-label';
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.dataset.bindName = bindName;
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(' ' + bindName));
-            bindButtonsDiv.appendChild(label);
-        });
-        
-        showScreen('bindSelection');
-    }
-
-    function startNextSelectedBind() {
-        if (currentBindIndex >= bindsToResolve.length) {
-            showResults();
-            return;
-        }
-        
-        const bindItem = bindsToResolve[currentBindIndex];
-        const bindName = bindItem.name;
-        const player = bindItem.player || currentPlayer;
-        
-        if (player > 0) {
-            currentPlayer = player;
-        }
-        
-        setupRouletteForBind(bindName, player > 0 ? player : currentPlayer);
-    }
-
-    function executeBinds() {
-        initialize();
-        mode = 'selected';
-        
-        const checkboxes = document.querySelectorAll('#bindButtons input[type="checkbox"]:checked');
-        bindsToResolve = [];
-        
-        checkboxes.forEach(checkbox => {
-            const bindName = checkbox.dataset.bindName;
-            bindsToResolve.push({ name: bindName, player: 0 });
-        });
-        
-        if (bindsToResolve.length === 0) {
-            alert('縛りを選択してください');
-            return;
-        }
-        
-        bindsToResolve.sort((a, b) => bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name));
-        
-        // Start with the first selected bind, not boss roulette
-        currentBindIndex = 0;
-        startNextSelectedBind();
-    }
 
     updatePlayerNameInputs();
 });
