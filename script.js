@@ -53,6 +53,20 @@ window.bulkCheck = function(type, state) {
     }
 };
 
+// 画像パスのエンコード関数（DOMContentLoadedの外に定義して、loadPlayerDataから呼べるようにする）
+function encodeImagePath(type, name) {
+    if (!name) return null;
+    const folderMap = {
+        'boss': 'BOSS',
+        'character': 'キャラ',
+        'weapon': '武器'
+    };
+    const folder = folderMap[type];
+    const cleanName = name.trim().replace(/\s+/g, '');
+    const encodedName = encodeURIComponent(cleanName);
+    return `/${folder}/${encodedName}.png`;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- データベース（2026/02/09版、トワリン除外） ---
@@ -415,8 +429,60 @@ document.addEventListener('DOMContentLoaded', function() {
         ]
     };
 
-    const bosses = ["集光の月ヤモリ","故郷を偲ぶ孤独の狼","ハイジェード","十六倍マンドラゴラ","博士","昏き魘夢の主","重量級陸巡艦「バトルシップ」","シグルド", "ラスコーリニコフ", "カニ皇帝", "集光の幻月蝶", "ボコボコダック", "無相の炎", "無相の水", "無相の風", "無相の雷", "無相の草", "無相の氷", "無相の岩", "純水精霊", "雷音権現", "水形タルパ", "深罪の浸礼者", "霜夜の空を巡る霊主","黄金王獣", "深淵なるミミック・パピラ", "遺跡サーペント", "恒常からくり陣形", "兆載永劫ドレイク", "半永久統制マトリックス", "氷風組曲コペリウス", "氷風組曲コッペリア", "秘源機兵・機構デバイス", "魔偶剣鬼", "実験用フィールド生成装置", "迷える霊覚の修権者", "爆炎樹", "迅電樹", "急凍樹", "エンシェントヴィシャップ・岩", "アビサルヴィシャップ", "マッシュラプトル", "風食ウェネト", "鉄甲熔炎帝王", "千年真珠の海駿", "山隠れの猊獣", "魔像レガトゥス", "暴君・金焔のクク竜", "山の王・貪食のユムカ竜", "輝ける溶岩の龍像", "秘源機兵・統御デバイス", "アンドリアス", "公子", "若陀龍王", "淑女", "禍津御建鳴神命", "正機の神", "アペプ", "吞星の鯨", "召使", "グーシートース", "キング＆クイーン", "ヴィヴィアン", "ニニアン", "イゾルト", "リアム", "ロッキー", "ディアンナラ", "赤璋巡岳府君", "シネアス", "異色三連星", "バラチコ", "コシーホ", "ジャプー", "リライ", "銅の掟", "ピーク", "戦羊・鉄爪", "微末", "最後のテノチズトク人"];
-    const weeklyBosses = ["博士", "グーシートース", "キング＆クイーン", "召使", "吞星の鯨", "アペプ", "正機の神", "若陀龍王", "禍津御建鳴神命", "アンドリアス", "淑女", "公子"];
+    const bosses = [
+        "アビサルヴィシャップ",
+        "アペプ",
+        "アンドリアス",
+        "エンシェントヴィシャップ・岩",
+        "キング＆クイーン",
+        "グーシートース",
+        "ボコボコダック",
+        "マッシュラプトル",
+        "兆載永劫ドレイク",
+        "公子",
+        "千年真珠の海駿",
+        "半永久統制マトリックス",
+        "召使",
+        "吞星の鯨",
+        "実験用フィールド生成装置",
+        "山の王・貪食のユムカ竜",
+        "山隠れの猊獣",
+        "急凍樹",
+        "恒常からくり陣形",
+        "暴君・金焔のクク竜",
+        "正機の神",
+        "水形タルパ",
+        "氷風組曲・コッペリア",
+        "氷風組曲・コペリウス",
+        "淑女",
+        "深淵なるミミックパピラ",
+        "深罪の浸礼者",
+        "無相の岩",
+        "無相の水",
+        "無相の氷",
+        "無相の炎",
+        "無相の草",
+        "無相の雷",
+        "無相の風",
+        "爆炎樹",
+        "禍津御建鳴神命",
+        "秘源機兵・機構デバイス",
+        "秘源機兵・統御デバイス",
+        "純水精霊",
+        "若陀龍王",
+        "輝ける溶岩の龍像",
+        "迅電樹",
+        "迷える霊覚の修権者",
+        "遺跡サーペント",
+        "鉄甲熔炎帝王",
+        "集光の幻月蝶",
+        "雷音権現",
+        "風食ウェネト",
+        "魔偶剣鬼",
+        "魔像レガトゥス",
+        "黄金王獣"
+    ];
+    const weeklyBosses = ["グーシートース", "キング＆クイーン", "召使", "吞星の鯨", "アペプ", "正機の神", "若陀龍王", "禍津御建鳴神命", "アンドリアス", "淑女", "公子"];
     const elementColors = { "水": "#00c0fe", "炎": "#fe6640", "雷": "#cc85ff", "氷": "#74E4E2", "風": "#36d6a0", "岩": "#F3AC11", "草": "#8dcc06", "その他": "#808080" };
     const ownership100Characters = ["香菱", "旅人", "ガイア", "バーバラ", "コレイ", "ノエル", "リサ", "アンバー"];
     const initialCharacters = ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー"];
@@ -425,24 +491,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const binds = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示+リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止+リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし", "武器縛り", "体型縛り", "役割縛り", "スキル禁止", "元素エネルギー縛り", "完凸禁止", "配布武器縛り", "配布キャラ縛り", "ボス素材縛り", "特産品縛り", "クラウン禁止", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)", "聖遺物セット禁止", "天賦素材縛り", "別衣装縛り", "オリジナル料理種別縛り", "軌跡ついてるキャラ縛り", "週ボス素材縛り"];
     
     const jpSort = (list) => [...list].sort((a, b) => String(a).localeCompare(String(b), 'ja'));
-
-    // URL encode function for Japanese filenames
-    function encodeImagePath(type, name) {
-        if (!name || typeof name !== 'string') return null;
-        const folderMap = {
-            'boss': 'BOSS',
-            'character': 'キャラ',
-            'weapon': '武器'
-        };
-        const folder = folderMap[type];
-        if (!folder) return null;
-        
-        // Remove spaces from name before encoding
-        const cleanName = name.trim().replace(/\s+/g, '');
-        const encodedName = encodeURIComponent(cleanName);
-        
-        return `/${folder}/${encodedName}.png`;
-    }
 
     const subRoulettes = {
         "国縛り": jpSort([...new Set(characters.map(c => c.country))]),
@@ -697,21 +745,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showPopup(text) {
         const p = document.getElementById('popup');
+        if (!p) {
+            console.error('popup要素が見つかりません');
+            return;
+        }
+        
         let content = `<span class="popup-close" onclick="this.parentElement.click()">×</span>`;
         content += `<div class="popup-text">${text}</div>`;
         
-        // ボスルーレットの場合、画像を表示
-        if (currentRoulette === 'boss') {
+        // ボスルーレット時に画像を表示
+        if (currentRoulette === 'boss' && text) {
             const imagePath = encodeImagePath('boss', text);
+            console.log(`[POPUP] ボス: ${text}, パス: ${imagePath}`);
             if (imagePath) {
-                content += `<img src="${imagePath}" alt="${text}" class="popup-image" onerror="this.style.display='none'">`;
+                content += `<img src="${imagePath}" alt="${text}" class="popup-image" onerror="console.log('画像読み込みエラー: ${imagePath}'); this.style.display='none'">`;
             }
         }
         
         p.innerHTML = content;
         p.style.display = 'block';
+        
         const cb = () => {
-            p.style.display = 'none'; document.getElementById('nextButton').classList.remove('hidden');
+            p.style.display = 'none';
+            document.getElementById('nextButton').classList.remove('hidden');
             if(currentRoulette === 'character' || currentRoulette === 'weapon')
                 document.getElementById('notOwnedButton').classList.remove('hidden');
             p.removeEventListener('click', cb);
@@ -778,40 +834,62 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showResults() {
-        showScreen('resultScreen'); const resDiv = document.getElementById('results');
+        showScreen('resultScreen'); 
+        const resDiv = document.getElementById('results');
+        
+        let html = '';
         
         // ===== ボス画像セクション =====
-        let html = `<div class="result-section"><h2>ボス：${results.boss || "未選択"}</h2>`;
+        html += `<div class="result-section">`;
+        html += `<h2>ボス：${results.boss || "未選択"}</h2>`;
         if (results.boss && results.boss !== "未選択") {
             const bossImagePath = encodeImagePath('boss', results.boss);
+            console.log(`[RESULTS] ボス: ${results.boss}, パス: ${bossImagePath}`);
             if (bossImagePath) {
-                html += `<img src="${bossImagePath}" alt="${results.boss}" class="result-image" onerror="this.style.display='none'">`;
+                html += `<img src="${bossImagePath}" alt="${results.boss}" class="result-image" onerror="console.log('ボス画像読み込みエラー'); this.style.display='none'">`;
             }
         }
         html += `</div>`;
         
-        if (Object.keys(results.common).length > 0) html += `<h3>共通の縛り：</h3><ul>` + Object.keys(results.common).map(k => `<li>${k}${results.common[k]===true?'':': '+results.common[k]}</li>`).join('') + `</ul>`;
+        // ===== 共通の縛り =====
+        if (Object.keys(results.common).length > 0) {
+            html += `<h3>共通の縛り：</h3><ul>` + 
+                    Object.keys(results.common).map(k => 
+                        `<li>${k}${results.common[k]===true?'':': '+results.common[k]}</li>`
+                    ).join('') + 
+                    `</ul>`;
+        }
         
         // ===== プレイヤーごとのセクション =====
         for (let i = 0; i < playerCount; i++) {
             const pb = results.players[i];
-            html += `<div style="border-top:1px solid #7f8c8d; padding:15px 0;"><h3>${playerNames[i]}の結果</h3><ul>`;
+            html += `<div style="border-top:1px solid #7f8c8d; padding:15px 0;">`;
+            html += `<h3>${playerNames[i]}の結果</h3>`;
+            html += `<ul>`;
+            
             Object.keys(pb).forEach(k => {
                 let val = pb[k];
-                if (k === 'キャラ武器ルーレット') val = `${pb[k].char} - ${pb[k].weapon || '未選択'}`;
+                if (k === 'キャラ武器ルーレット') {
+                    val = `${pb[k].char} - ${pb[k].weapon || '未選択'}`;
+                }
                 html += `<li>${k}: ${val}</li>`;
             });
             html += `</ul>`;
+            
             const f = {...results.common, ...pb};
             let chars = (pb['キャラルーレット']||(pb['キャラ武器ルーレット']&&pb['キャラ武器ルーレット'].char)) ? [{name:pb['キャラルーレット']||pb['キャラ武器ルーレット'].char}] : characters.filter(c => checkCharEligibility(c, f, i + 1));
             
-            // ===== キャラクター画像表示 =====
-            const selectedChar = pb['キャラルーレット'] || (pb['キャラ武器ルーレット'] && pb['キャラ武器ルーレット'].char);
+            // ===== キャラクター画像 =====
+            const selectedChar = pb['キャラルーレット'] || 
+                                (pb['キャラ武器ルーレット'] && pb['キャラ武器ルーレット'].char);
             if (selectedChar) {
                 const charImagePath = encodeImagePath('character', selectedChar);
-                html += `<div class="result-section"><h4>キャラクター：</h4><p class="char-list-final">${selectedChar}</p>`;
+                console.log(`[RESULTS] キャラ: ${selectedChar}, パス: ${charImagePath}`);
+                html += `<div class="result-section">`;
+                html += `<h4>キャラクター：</h4>`;
+                html += `<p class="char-list-final">${selectedChar}</p>`;
                 if (charImagePath) {
-                    html += `<img src="${charImagePath}" alt="${selectedChar}" class="result-image" onerror="this.style.display='none'">`;
+                    html += `<img src="${charImagePath}" alt="${selectedChar}" class="result-image" onerror="console.log('キャラ画像読み込みエラー'); this.style.display='none'">`;
                 }
                 html += `</div>`;
             }
@@ -826,13 +904,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) wepText = pb["キャラ武器ルーレット"].weapon;
             else if (f["武器縛り"]) wepText = f["武器縛り"];
             
-            // ===== 武器画像表示 =====
+            // ===== 武器画像 =====
             const selectedWeapon = (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) || f["武器縛り"];
             if (selectedWeapon && selectedWeapon !== "すべて") {
                 const weaponImagePath = encodeImagePath('weapon', selectedWeapon);
-                html += `<div class="result-section"><h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
+                console.log(`[RESULTS] 武器: ${selectedWeapon}, パス: ${weaponImagePath}`);
+                html += `<div class="result-section">`;
+                html += `<h4>使用可能武器:</h4>`;
+                html += `<p class="char-list-final">${wepText}</p>`;
                 if (weaponImagePath) {
-                    html += `<img src="${weaponImagePath}" alt="${selectedWeapon}" class="result-image" onerror="this.style.display='none'">`;
+                    html += `<img src="${weaponImagePath}" alt="${selectedWeapon}" class="result-image" onerror="console.log('武器画像読み込みエラー'); this.style.display='none'">`;
                 }
                 html += `</div>`;
             } else {
@@ -844,6 +925,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             html += `<button class="reroll-player-button" data-player-index="${i+1}">再抽選</button></div>`;
         }
+        
         resDiv.innerHTML = html;
         document.querySelectorAll('.reroll-player-button').forEach(b => b.addEventListener('click', e => rerollPlayer(parseInt(e.target.dataset.playerIndex))));
     }
