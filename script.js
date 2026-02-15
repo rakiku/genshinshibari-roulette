@@ -426,6 +426,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const jpSort = (list) => [...list].sort((a, b) => String(a).localeCompare(String(b), 'ja'));
 
+    // URL encode function for Japanese filenames
+    function encodeImagePath(type, name) {
+        if (!name) return null;
+        const folderMap = {
+            'boss': 'BOSS',
+            'character': 'キャラ',
+            'weapon': '武器'
+        };
+        const folder = folderMap[type];
+        const encodedName = encodeURIComponent(name);
+        return `/${folder}/${encodedName}.png`;
+    }
+
     const subRoulettes = {
         "国縛り": jpSort([...new Set(characters.map(c => c.country))]),
         "モノ元素縛り": jpSort([...new Set(characters.filter(c => c.element !== "その他").map(c => c.element))]),
@@ -683,7 +696,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // ボスルーレットの場合、画像を表示
         if (currentRoulette === 'boss') {
-            const imagePath = `/BOSS/${text}.png`;
+            const imagePath = encodeImagePath('boss', text);
             content += `<img src="${imagePath}" alt="${text}" class="popup-image" onerror="this.style.display='none'">`;
         }
         
@@ -762,7 +775,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // ボス画像の表示
         let html = `<div class="result-section"><h2>ボス：${results.boss || "未選択"}</h2>`;
         if (results.boss && results.boss !== "未選択") {
-            html += `<img src="/BOSS/${results.boss}.png" alt="${results.boss}" class="result-image" onerror="this.style.display='none'">`;
+            const bossImagePath = encodeImagePath('boss', results.boss);
+            html += `<img src="${bossImagePath}" alt="${results.boss}" class="result-image" onerror="this.style.display='none'">`;
         }
         html += `</div>`;
         
@@ -782,8 +796,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // キャラクター画像の表示
             const selectedChar = pb['キャラルーレット'] || (pb['キャラ武器ルーレット'] && pb['キャラ武器ルーレット'].char);
             if (selectedChar) {
+                const charImagePath = encodeImagePath('character', selectedChar);
                 html += `<div class="result-section"><h4>キャラクター：</h4><p class="char-list-final">${selectedChar}</p>`;
-                html += `<img src="/キャラ/${selectedChar}.png" alt="${selectedChar}" class="result-image" onerror="this.style.display='none'"></div>`;
+                html += `<img src="${charImagePath}" alt="${selectedChar}" class="result-image" onerror="this.style.display='none'"></div>`;
             }
             
             let wepText = "すべて";
@@ -799,8 +814,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // 武器画像の表示
             const selectedWeapon = (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) || f["武器縛り"];
             if (selectedWeapon && selectedWeapon !== "すべて") {
+                const weaponImagePath = encodeImagePath('weapon', selectedWeapon);
                 html += `<div class="result-section"><h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
-                html += `<img src="/武器/${selectedWeapon}.png" alt="${selectedWeapon}" class="result-image" onerror="this.style.display='none'"></div>`;
+                html += `<img src="${weaponImagePath}" alt="${selectedWeapon}" class="result-image" onerror="this.style.display='none'"></div>`;
             } else {
                 html += `<h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
             }
@@ -995,7 +1011,20 @@ function loadPlayerData(playerName) {
             const c6 = pData.chars[char.name] ? pData.chars[char.name].c6 : false;
             const c0 = pData.chars[char.name] ? pData.chars[char.name].c0 : false;
             
-            div.innerHTML = `
+            // Create thumbnail image
+            const imageThumb = document.createElement('span');
+            imageThumb.className = 'possession-item-thumbnail';
+            const thumbImg = document.createElement('img');
+            thumbImg.src = encodeImagePath('character', char.name);
+            thumbImg.alt = char.name;
+            thumbImg.style.display = 'block';
+            thumbImg.style.marginBottom = '8px';
+            thumbImg.onerror = function() { this.style.display = 'none'; };
+            imageThumb.appendChild(thumbImg);
+            div.appendChild(imageThumb);
+            
+            const labelsContainer = document.createElement('div');
+            labelsContainer.innerHTML = `
                 <label style="display: block; margin-bottom: 5px;">
                     <input type="checkbox" class="char-owned" data-char="${char.name}" ${owned ? 'checked' : ''}>
                     ${char.name}
@@ -1009,6 +1038,7 @@ function loadPlayerData(playerName) {
                     無凸
                 </label>
             `;
+            div.appendChild(labelsContainer);
             charList.appendChild(div);
         });
     });
@@ -1030,12 +1060,28 @@ function loadPlayerData(playerName) {
             div.className = 'possession-item';
             const owned = pData.weapons[weapon.name] !== false;
             
-            div.innerHTML = `
+            // Create thumbnail image
+            const imageThumb = document.createElement('span');
+            imageThumb.className = 'possession-item-thumbnail';
+            const weaponThumb = document.createElement('img');
+            weaponThumb.src = encodeImagePath('weapon', weapon.name);
+            weaponThumb.alt = weapon.name;
+            weaponThumb.style.maxWidth = '50px';
+            weaponThumb.style.maxHeight = '50px';
+            weaponThumb.style.display = 'block';
+            weaponThumb.style.marginBottom = '8px';
+            weaponThumb.onerror = function() { this.style.display = 'none'; };
+            imageThumb.appendChild(weaponThumb);
+            div.appendChild(imageThumb);
+            
+            const labelContainer = document.createElement('div');
+            labelContainer.innerHTML = `
                 <label>
                     <input type="checkbox" class="weapon-owned" data-weapon="${weapon.name}" ${owned ? 'checked' : ''}>
                     ${weapon.name}
                 </label>
             `;
+            div.appendChild(labelContainer);
             weaponList.appendChild(div);
         });
     });
