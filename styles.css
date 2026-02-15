@@ -419,6 +419,20 @@ canvas { width: 100%; height: 100%; }
     justify-content: flex-start;
 }
 
+/* サムネイル表示用スタイル */
+.possession-item-thumbnail {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.possession-item-thumbnail img {
+    max-width: 60px;
+    max-height: 60px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
 .tab-buttons {
     display: flex;
     gap: 10px;
