@@ -1017,10 +1017,6 @@ function loadPlayerData(playerName) {
             const thumbImg = document.createElement('img');
             thumbImg.src = encodeImagePath('character', char.name);
             thumbImg.alt = char.name;
-            thumbImg.style.maxWidth = '60px';
-            thumbImg.style.maxHeight = '60px';
-            thumbImg.style.borderRadius = '5px';
-            thumbImg.style.marginRight = '10px';
             thumbImg.style.display = 'block';
             thumbImg.style.marginBottom = '8px';
             thumbImg.onerror = function() { this.style.display = 'none'; };
@@ -1072,8 +1068,6 @@ function loadPlayerData(playerName) {
             weaponThumb.alt = weapon.name;
             weaponThumb.style.maxWidth = '50px';
             weaponThumb.style.maxHeight = '50px';
-            weaponThumb.style.borderRadius = '5px';
-            weaponThumb.style.marginRight = '10px';
             weaponThumb.style.display = 'block';
             weaponThumb.style.marginBottom = '8px';
             weaponThumb.onerror = function() { this.style.display = 'none'; };
