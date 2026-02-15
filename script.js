@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // URL encode function for Japanese filenames
     function encodeImagePath(type, name) {
-        if (!name) return null;
+        if (!name || typeof name !== 'string') return null;
         const folderMap = {
             'boss': 'BOSS',
             'character': 'キャラ',
