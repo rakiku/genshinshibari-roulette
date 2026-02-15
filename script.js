@@ -435,7 +435,14 @@ document.addEventListener('DOMContentLoaded', function() {
             'weapon': '武器'
         };
         const folder = folderMap[type];
-        const encodedName = encodeURIComponent(name);
+        
+        // Remove spaces from name before encoding
+        const cleanName = name.trim().replace(/\s+/g, '');
+        const encodedName = encodeURIComponent(cleanName);
+        
+        // Debug logging
+        console.log(`[IMAGE LOAD] Type: ${type}, Original: ${name}, Clean: ${cleanName}, Encoded: ${encodedName}`);
+        
         return `/${folder}/${encodedName}.png`;
     }
 
@@ -692,12 +699,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showPopup(text) {
         const p = document.getElementById('popup');
-        let content = `<span class="popup-close" onclick="this.parentElement.click()">×</span>${text}`;
+        let content = `<span class="popup-close" onclick="this.parentElement.click()">×</span>`;
+        content += `<div class="popup-text">${text}</div>`;
         
         // ボスルーレットの場合、画像を表示
         if (currentRoulette === 'boss') {
             const imagePath = encodeImagePath('boss', text);
-            content += `<img src="${imagePath}" alt="${text}" class="popup-image" onerror="this.style.display='none'">`;
+            if (imagePath) {
+                content += `<img src="${imagePath}" alt="${text}" class="popup-image" onerror="this.style.display='none'">`;
+            }
         }
         
         p.innerHTML = content;
@@ -772,15 +782,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function showResults() {
         showScreen('resultScreen'); const resDiv = document.getElementById('results');
         
-        // ボス画像の表示
+        // ===== ボス画像セクション =====
         let html = `<div class="result-section"><h2>ボス：${results.boss || "未選択"}</h2>`;
         if (results.boss && results.boss !== "未選択") {
             const bossImagePath = encodeImagePath('boss', results.boss);
-            html += `<img src="${bossImagePath}" alt="${results.boss}" class="result-image" onerror="this.style.display='none'">`;
+            if (bossImagePath) {
+                html += `<img src="${bossImagePath}" alt="${results.boss}" class="result-image" onerror="this.style.display='none'">`;
+            }
         }
         html += `</div>`;
         
         if (Object.keys(results.common).length > 0) html += `<h3>共通の縛り：</h3><ul>` + Object.keys(results.common).map(k => `<li>${k}${results.common[k]===true?'':': '+results.common[k]}</li>`).join('') + `</ul>`;
+        
+        // ===== プレイヤーごとのセクション =====
         for (let i = 0; i < playerCount; i++) {
             const pb = results.players[i];
             html += `<div style="border-top:1px solid #7f8c8d; padding:15px 0;"><h3>${playerNames[i]}の結果</h3><ul>`;
@@ -793,12 +807,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const f = {...results.common, ...pb};
             let chars = (pb['キャラルーレット']||(pb['キャラ武器ルーレット']&&pb['キャラ武器ルーレット'].char)) ? [{name:pb['キャラルーレット']||pb['キャラ武器ルーレット'].char}] : characters.filter(c => checkCharEligibility(c, f, i + 1));
             
-            // キャラクター画像の表示
+            // ===== キャラクター画像表示 =====
             const selectedChar = pb['キャラルーレット'] || (pb['キャラ武器ルーレット'] && pb['キャラ武器ルーレット'].char);
             if (selectedChar) {
                 const charImagePath = encodeImagePath('character', selectedChar);
                 html += `<div class="result-section"><h4>キャラクター：</h4><p class="char-list-final">${selectedChar}</p>`;
-                html += `<img src="${charImagePath}" alt="${selectedChar}" class="result-image" onerror="this.style.display='none'"></div>`;
+                if (charImagePath) {
+                    html += `<img src="${charImagePath}" alt="${selectedChar}" class="result-image" onerror="this.style.display='none'">`;
+                }
+                html += `</div>`;
             }
             
             let wepText = "すべて";
@@ -811,12 +828,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) wepText = pb["キャラ武器ルーレット"].weapon;
             else if (f["武器縛り"]) wepText = f["武器縛り"];
             
-            // 武器画像の表示
+            // ===== 武器画像表示 =====
             const selectedWeapon = (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) || f["武器縛り"];
             if (selectedWeapon && selectedWeapon !== "すべて") {
                 const weaponImagePath = encodeImagePath('weapon', selectedWeapon);
                 html += `<div class="result-section"><h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
-                html += `<img src="${weaponImagePath}" alt="${selectedWeapon}" class="result-image" onerror="this.style.display='none'"></div>`;
+                if (weaponImagePath) {
+                    html += `<img src="${weaponImagePath}" alt="${selectedWeapon}" class="result-image" onerror="this.style.display='none'">`;
+                }
+                html += `</div>`;
             } else {
                 html += `<h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
             }
@@ -1011,16 +1031,23 @@ function loadPlayerData(playerName) {
             const c6 = pData.chars[char.name] ? pData.chars[char.name].c6 : false;
             const c0 = pData.chars[char.name] ? pData.chars[char.name].c0 : false;
             
-            // Create thumbnail image
+            // ===== キャラクター画像サムネイル =====
             const imageThumb = document.createElement('span');
             imageThumb.className = 'possession-item-thumbnail';
             const thumbImg = document.createElement('img');
-            thumbImg.src = encodeImagePath('character', char.name);
-            thumbImg.alt = char.name;
-            thumbImg.style.display = 'block';
-            thumbImg.style.marginBottom = '8px';
-            thumbImg.onerror = function() { this.style.display = 'none'; };
-            imageThumb.appendChild(thumbImg);
+            
+            const charImagePath = encodeImagePath('character', char.name);
+            if (charImagePath) {
+                thumbImg.src = charImagePath;
+                thumbImg.alt = char.name;
+                thumbImg.style.display = 'block';
+                thumbImg.style.marginBottom = '8px';
+                thumbImg.style.maxWidth = '60px';
+                thumbImg.style.maxHeight = '60px';
+                thumbImg.style.borderRadius = '5px';
+                thumbImg.onerror = function() { this.style.display = 'none'; };
+                imageThumb.appendChild(thumbImg);
+            }
             div.appendChild(imageThumb);
             
             const labelsContainer = document.createElement('div');
