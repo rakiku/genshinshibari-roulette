@@ -57,16 +57,26 @@ window.bulkCheck = function(type, state) {
 // 画像パスのエンコード関数（DOMContentLoadedの外に定義して、loadPlayerDataから呼べるようにする）
 function encodeImagePath(type, name) {
     if (!name) return null;
+    
+    // セキュリティチェック（入力時）- パス走査攻撃を防ぐ
+    if (name.includes('..') || name.includes('/') || name.includes('\\')) {
+        console.error(`[IMAGE] Invalid name detected: ${name}`);
+        return null;
+    }
+    
     const folderMap = {
-        'boss': 'boss',
-        'character': 'characters',
-        'weapon': 'weapons'
+        'boss': 'files/boss',
+        'character': 'files/characters',
+        'weapon': 'files/weapons'
     };
     const folder = folderMap[type];
     const cleanName = name.trim().replace(/\s+/g, '');
+
+    // encodeURIComponent()で正しくエンコード
     const encodedName = encodeURIComponent(cleanName);
-    console.log(`[IMAGE] type:${type}, name:${name}, path:/${folder}/${encodedName}.png`);
-    return `/${folder}/${encodedName}.png`;
+    
+    console.log(`[IMAGE] type:${type}, name:${name}, path:${folder}/${encodedName}.png`);
+    return `${folder}/${encodedName}.png`;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -713,7 +723,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 const charData = characters.find(c => c.name === results.players[player - 1]['キャラ武器ルーレット'].char);
                 currentRoulette = 'weapon'; items = getFilteredWeapons(charData.weapon, charData.name);
             } else {
-                 items = getFilteredCharacters(null, player).map(c => c.name);
+                // 配布武器縛り × キャラ武器ルーレット の制約ロジック
+                if (bindName === 'キャラ武器ルーレット' && currentFilters["配布武器縛り"]) {
+                    // 配布武器が決まっている場合、その武器が使えるキャラのみをフィルタリング
+                    // Note: 配布武器縛り can be either boolean true or string (weapon name)
+                    const distributedWeaponName = (typeof currentFilters["配布武器縛り"] === 'string' && currentFilters["配布武器縛り"] !== "true") 
+                        ? currentFilters["配布武器縛り"] 
+                        : null;
+                    
+                    if (distributedWeaponName) {
+                        // 特定の配布武器が指定されている場合、その武器種のキャラのみ
+                        const weaponData = Object.values(allWeapons).flat().find(w => w.name === distributedWeaponName);
+                        if (weaponData) {
+                            items = getFilteredCharacters(null, player).filter(c => c.weapon === weaponData.type).map(c => c.name);
+                        } else {
+                            items = getFilteredCharacters(null, player).map(c => c.name);
+                        }
+                    } else {
+                        // 配布武器縛りが有効だが特定武器未指定の場合、配布武器が存在する武器種のキャラのみ
+                        items = getFilteredCharacters(null, player).filter(c => {
+                            const weaponType = c.weapon;
+                            const distributedWeapons = allWeapons[weaponType]?.filter(w => w.is_distributed) || [];
+                            return distributedWeapons.length > 0;
+                        }).map(c => c.name);
+                    }
+                } else {
+                    items = getFilteredCharacters(null, player).map(c => c.name);
+                }
             }
         } else {
             results.common[bindName] = true; proceedToNext(); return;
@@ -798,8 +834,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
-            if (mode === 'boss') showResults();
-            else if (mode === 'custom_selected') proceedToNext();
+            // カスタムモード判定を最優先に
+            if (mode === 'custom_selected') proceedToNext();
+            else if (mode === 'boss') showResults();
             else { bindSelectionPhase = true; currentRoulette = 'bind'; items = getAvailableBinds(); prerenderRouletteImage(); drawRoulette(); document.getElementById('spinButton').disabled = false; }
             return;
         }
@@ -895,13 +932,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 html += `</div>`;
             }
-            
             let wepText = "すべて";
+            let availableWeapons = [];
             if (f["武器種縛り"]) wepText = f["武器種縛り"];
             if (f["☆４キャラ武器"]) wepText = "☆４" + (f["武器種縛り"] || "武器");
             if (f["配布武器縛り"]) {
                 const charWeaponType = characters.find(cd => cd.name === chars[0]?.name)?.weapon;
-                wepText = jpSort(allWeapons[charWeaponType || "片手剣"].filter(w => w.is_distributed).map(w => w.name)).join('、') || "なし";
+                const distributedWeaponsList = allWeapons[charWeaponType || "片手剣"].filter(w => w.is_distributed);
+                availableWeapons = distributedWeaponsList;
+                wepText = jpSort(distributedWeaponsList.map(w => w.name)).join('、') || "なし";
             }
             if (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) wepText = pb["キャラ武器ルーレット"].weapon;
             else if (f["武器縛り"]) wepText = f["武器縛り"];
@@ -918,12 +957,43 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += `<img src="${weaponImagePath}" alt="${selectedWeapon}" class="result-image" onerror="console.log('武器画像読み込みエラー'); this.style.display='none'">`;
                 }
                 html += `</div>`;
+            } else if (availableWeapons.length >= 1 && availableWeapons.length <= 8) {
+                // 候補武器が8つ以内なら画像を横並び表示
+                html += `<div class="result-section">`;
+                html += `<h4>使用可能武器 (${availableWeapons.length}種):</h4>`;
+                html += `<div class="result-image-container">`;
+                availableWeapons.forEach(w => {
+                    const weaponImagePath = encodeImagePath('weapon', w.name);
+                    html += `
+                        <div class="result-card">
+                            <img src="${weaponImagePath}" alt="${w.name}" class="result-mini-image" onerror="this.style.display='none'">
+                            <span>${w.name}</span>
+                        </div>`;
+                });
+                html += `</div></div>`;
             } else {
                 html += `<h4>使用可能武器:</h4><p class="char-list-final">${wepText}</p>`;
             }
             
             if (!selectedChar) {
-                html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'条件不一致'}</p>`;
+                // 候補キャラが8人以内なら画像を横並び表示
+                if (chars.length >= 1 && chars.length <= 8) {
+                    html += `<div class="result-section">`;
+                    html += `<h4>対象キャラクター (${chars.length}人)：</h4>`;
+                    html += `<div class="result-image-container">`;
+                    chars.forEach(c => {
+                        const charImagePath = encodeImagePath('character', c.name);
+                        html += `
+                            <div class="result-card">
+                                <img src="${charImagePath}" alt="${c.name}" class="result-mini-image" onerror="this.style.display='none'">
+                                <span>${c.name}</span>
+                            </div>`;
+                    });
+                    html += `</div></div>`;
+                } else {
+                    // 8人より多い場合、または0人の場合は名前リストのみ表示
+                    html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'条件不一致'}</p>`;
+                }
             }
             html += `<button class="reroll-player-button" data-player-index="${i+1}">再抽選</button></div>`;
         }
