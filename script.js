@@ -65,8 +65,8 @@ function encodeImagePath(type, name) {
     const folder = folderMap[type];
     const cleanName = name.trim().replace(/\s+/g, '');
     const encodedName = encodeURIComponent(cleanName);
-    console.log(`[IMAGE] type:${type}, name:${name}, path:/${folder}/${encodedName}.png`);
-    return `/${folder}/${encodedName}.png`;
+    console.log(`[IMAGE] type:${type}, name:${name}, path:${folder}/${encodedName}.png`);
+    return `${folder}/${encodedName}.png`;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
