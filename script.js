@@ -831,8 +831,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
-            if (mode === 'boss') showResults();
-            else if (mode === 'custom_selected') proceedToNext();
+            // カスタムモード判定を最優先に
+            if (mode === 'custom_selected') proceedToNext();
+            else if (mode === 'boss') showResults();
             else { bindSelectionPhase = true; currentRoulette = 'bind'; items = getAvailableBinds(); prerenderRouletteImage(); drawRoulette(); document.getElementById('spinButton').disabled = false; }
             return;
         }
