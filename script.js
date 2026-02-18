@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "リングボウ", rarity: 4, type: "弓", ascension_stat: "物理ダメージ", is_distributed: false },
             { name: "澹月・試作", rarity: 4, type: "弓", ascension_stat: "攻撃力", is_distributed: false },
             { name: "西風猟弓", rarity: 4, type: "弓", ascension_stat: "元素チャージ効率", is_distributed: false },
-            { name: "青翠の狩猟弓", rarity: 4, type: "弓", ascension_stat: "会心率", is_distributed: false },
+            { name: "蒼翠の狩猟弓", rarity: 4, type: "弓", ascension_stat: "会心率", is_distributed: false },
             { name: "絶弦", rarity: 4, type: "弓", ascension_stat: "元素熟知", is_distributed: false },
             { name: "終焉を嘆く詩", rarity: 5, type: "弓", ascension_stat: "元素チャージ効率", is_distributed: false },
             { name: "祭礼の弓", rarity: 4, type: "弓", ascension_stat: "元素チャージ効率", is_distributed: false },
