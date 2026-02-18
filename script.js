@@ -78,14 +78,8 @@ function encodeImagePath(type, name) {
     
     const folder = folderMap[type];
     
-    // Clean the name: trim whitespace and remove any path traversal attempts
+    // Clean the name: trim whitespace first
     let cleanName = name.trim();
-    
-    // Security: prevent path traversal attacks by removing ../ and ..\
-    if (cleanName.includes('..') || cleanName.includes('/') || cleanName.includes('\\')) {
-        console.error('[IMAGE] Invalid characters in name (potential path traversal):', name);
-        return null;
-    }
     
     // Remove internal whitespace (spaces within the name)
     cleanName = cleanName.replace(/\s+/g, '');
@@ -93,6 +87,15 @@ function encodeImagePath(type, name) {
     // Validate that we still have a name after cleaning
     if (!cleanName) {
         console.warn('[IMAGE] Name is empty after cleaning:', name);
+        return null;
+    }
+    
+    // Security: prevent path traversal attacks
+    // Note: We block forward slashes, backslashes, and parent directory references
+    // because image filenames should only be simple names without path separators.
+    // This is intentional and appropriate for the image naming context.
+    if (cleanName.includes('..') || cleanName.includes('/') || cleanName.includes('\\')) {
+        console.error('[IMAGE] Invalid characters in name (potential path traversal):', name);
         return null;
     }
     
