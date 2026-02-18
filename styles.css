@@ -301,6 +301,54 @@ canvas { width: 100%; height: 100%; }
     margin-bottom: 10px;
 }
 
+/* --- 結果画面の複数候補画像グリッド表示 --- */
+.result-image-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.result-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100px;
+    font-size: 0.85em;
+    background: rgba(52, 152, 219, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(52, 152, 219, 0.5);
+}
+
+.result-mini-image {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .result-image-container {
+        gap: 10px;
+    }
+    
+    .result-card {
+        width: 80px;
+        padding: 8px;
+        font-size: 0.75em;
+    }
+    
+    .result-mini-image {
+        width: 55px;
+        height: 55px;
+    }
+}
+
 /* --- 設定・カスタム画面 --- */
 .custom-section {
     background-color: #34495e;
