@@ -55,18 +55,60 @@ window.bulkCheck = function(type, state) {
 };
 
 // 画像パスのエンコード関数（DOMContentLoadedの外に定義して、loadPlayerDataから呼べるようにする）
+// This function properly encodes image paths for Japanese characters and special symbols
 function encodeImagePath(type, name) {
-    if (!name) return null;
+    // Validation: check for null, undefined, or empty name
+    if (!name || typeof name !== 'string') {
+        console.warn('[IMAGE] Invalid name provided:', name);
+        return null;
+    }
+    
+    // Folder mapping for different image types
     const folderMap = {
         'boss': 'boss',
         'character': 'characters',
         'weapon': 'weapons'
     };
+    
+    // Validate type parameter
+    if (!folderMap[type]) {
+        console.error('[IMAGE] Invalid type provided:', type);
+        return null;
+    }
+    
     const folder = folderMap[type];
-    const cleanName = name.trim().replace(/\s+/g, '');
+    
+    // Clean the name: trim whitespace first
+    let cleanName = name.trim();
+    
+    // Remove internal whitespace (spaces within the name)
+    cleanName = cleanName.replace(/\s+/g, '');
+    
+    // Validate that we still have a name after cleaning
+    if (!cleanName) {
+        console.warn('[IMAGE] Name is empty after cleaning:', name);
+        return null;
+    }
+    
+    // Security: prevent path traversal attacks
+    // Note: We block forward slashes, backslashes, and parent directory references
+    // because image filenames should only be simple names without path separators.
+    // This is intentional and appropriate for the image naming context.
+    if (cleanName.includes('..') || cleanName.includes('/') || cleanName.includes('\\')) {
+        console.error('[IMAGE] Invalid characters in name (potential path traversal):', name);
+        return null;
+    }
+    
+    // Use encodeURIComponent for proper percent-encoding of Japanese characters and special symbols
     const encodedName = encodeURIComponent(cleanName);
-    console.log(`[IMAGE] type:${type}, name:${name}, path:/${folder}/${encodedName}.png`);
-    return `/${folder}/${encodedName}.png`;
+    
+    // Construct the final path
+    const path = `/${folder}/${encodedName}.png`;
+    
+    // Debug logging
+    console.log(`[IMAGE] type:${type}, name:${name}, cleanName:${cleanName}, path:${path}`);
+    
+    return path;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
