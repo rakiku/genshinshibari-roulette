@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "特産品縛り": 1, "突破ステータス縛り(キャラ)": 1, "誕生月": 1, "アルファベット縛り": 1,
         "天賦素材縛り": 1, "別衣装縛り": 1, "オリジナル料理種別縛り": 1, "軌跡ついてるキャラ縛り": 1, "週ボス素材縛り": 1,
 
-        // 2. 武器・装備系
+        // 2. 武器・装備系 (武器縛りは最後に実行するため優先度11)
         "武器種縛り": 10, "突破ステータス縛り(武器)": 10, "配布武器縛り": 10, "武器縛り": 11,
 
         // 3. 最終確定系
@@ -739,15 +739,21 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 // キャラ武器ルーレット: 配布武器縛りで武器が決まっている場合、その武器が使えるキャラのみをフィルタリング
                 if (bindName === 'キャラ武器ルーレット' && currentFilters["配布武器縛り"]) {
+                    // 配布武器縛りの値: true(すべての配布武器) または 武器名(特定の配布武器)
                     const distributedWeaponName = typeof currentFilters["配布武器縛り"] === 'string' && currentFilters["配布武器縛り"] !== "true" 
                         ? currentFilters["配布武器縛り"] 
                         : null;
                     
                     if (distributedWeaponName) {
                         // 配布武器が指定されている場合、その武器種を使えるキャラのみを候補にする
-                        const weaponData = Object.values(allWeapons).flat().find(w => w.name === distributedWeaponName);
-                        if (weaponData) {
-                            const weaponType = Object.keys(allWeapons).find(type => allWeapons[type].some(w => w.name === distributedWeaponName));
+                        let weaponType = null;
+                        for (const [type, weapons] of Object.entries(allWeapons)) {
+                            if (weapons.some(w => w.name === distributedWeaponName)) {
+                                weaponType = type;
+                                break;
+                            }
+                        }
+                        if (weaponType) {
                             items = getFilteredCharacters(null, player).filter(c => c.weapon === weaponType).map(c => c.name);
                         } else {
                             items = getFilteredCharacters(null, player).map(c => c.name);
