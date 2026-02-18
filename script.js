@@ -57,6 +57,13 @@ window.bulkCheck = function(type, state) {
 // 画像パスのエンコード関数（DOMContentLoadedの外に定義して、loadPlayerDataから呼べるようにする）
 function encodeImagePath(type, name) {
     if (!name) return null;
+    
+    // セキュリティチェック（入力時）- パス走査攻撃を防ぐ
+    if (name.includes('..') || name.includes('/') || name.includes('\\')) {
+        console.error(`[IMAGE] Invalid name detected: ${name}`);
+        return null;
+    }
+    
     const folderMap = {
         'boss': 'files/boss',
         'character': 'files/characters',
@@ -65,14 +72,9 @@ function encodeImagePath(type, name) {
     const folder = folderMap[type];
     const cleanName = name.trim().replace(/\s+/g, '');
 
-    // セキュリティチェック
-    if (cleanName.includes('..') || cleanName.includes('/') || cleanName.includes('\\')) {
-        console.error(`[IMAGE] Invalid name detected: ${name}`);
-        return null;
-    }
-
     // encodeURIComponent()で正しくエンコード
     const encodedName = encodeURIComponent(cleanName);
+    
     console.log(`[IMAGE] type:${type}, name:${name}, path:${folder}/${encodedName}.png`);
     return `${folder}/${encodedName}.png`;
 }
@@ -724,6 +726,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 配布武器縛り × キャラ武器ルーレット の制約ロジック
                 if (bindName === 'キャラ武器ルーレット' && currentFilters["配布武器縛り"]) {
                     // 配布武器が決まっている場合、その武器が使えるキャラのみをフィルタリング
+                    // Note: 配布武器縛り can be either boolean true or string (weapon name)
                     const distributedWeaponName = (typeof currentFilters["配布武器縛り"] === 'string' && currentFilters["配布武器縛り"] !== "true") 
                         ? currentFilters["配布武器縛り"] 
                         : null;
@@ -987,8 +990,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>`;
                     });
                     html += `</div></div>`;
-                } else if (chars.length > 8) {
-                    // 8人より多い場合は名前リストのみ表示
+                } else {
+                    // 8人より多い場合、または0人の場合は名前リストのみ表示
                     html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'条件不一致'}</p>`;
                 }
             }
