@@ -737,6 +737,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const wd = Object.values(allWeapons).flat().find(d => d.name === wName);
                     return wd && wd.rarity < 5;
                 });
+            } else if (bindName === "突破ステータス縛り(武器)") {
+                const breakStatus = currentFilters["突破ステータス縛り(武器)"];
+                if (breakStatus) {
+                    subItems = subItems.filter(wName => {
+                        const wd = Object.values(allWeapons).flat().find(w => w.name === wName);
+                        return wd && wd.ascension_stat === breakStatus;
+                    });
+                }
             } else {
                  subItems = subItems.filter(opt => characters.some(char => checkCharEligibility(char, {...currentFilters, [bindName]: opt}, player)));
             }
@@ -859,7 +867,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentRoulette === 'boss') {
             results.boss = lastResult;
             // カスタムモード判定を最優先に
-            if (mode === 'custom_selected') proceedToNext();
+            if (mode === 'custom_selected') { currentBindIndex = 0; startNextSelectedBind(); }
             else if (mode === 'boss') showResults();
             else { bindSelectionPhase = true; currentRoulette = 'bind'; items = getAvailableBinds(); prerenderRouletteImage(); drawRoulette(); document.getElementById('spinButton').disabled = false; }
             return;
@@ -961,10 +969,17 @@ document.addEventListener('DOMContentLoaded', function() {
             if (f["武器種縛り"]) wepText = f["武器種縛り"];
             if (f["☆４キャラ武器"]) wepText = "☆４" + (f["武器種縛り"] || "武器");
             if (f["配布武器縛り"]) {
-                const charWeaponType = characters.find(cd => cd.name === chars[0]?.name)?.weapon;
-                const distributedWeaponsList = allWeapons[charWeaponType || "片手剣"].filter(w => w.is_distributed);
-                availableWeapons = distributedWeaponsList;
-                wepText = jpSort(distributedWeaponsList.map(w => w.name)).join('、') || "なし";
+                if (typeof f["配布武器縛り"] === 'string' && f["配布武器縛り"] !== "true") {
+                    const selectedDistWeapon = f["配布武器縛り"];
+                    const wd = Object.values(allWeapons).flat().find(w => w.name === selectedDistWeapon);
+                    availableWeapons = wd ? [wd] : [];
+                    wepText = selectedDistWeapon;
+                } else {
+                    const charWeaponType = characters.find(cd => cd.name === chars[0]?.name)?.weapon;
+                    const distributedWeaponsList = allWeapons[charWeaponType || "片手剣"].filter(w => w.is_distributed);
+                    availableWeapons = distributedWeaponsList;
+                    wepText = jpSort(distributedWeaponsList.map(w => w.name)).join('、') || "なし";
+                }
             }
             if (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) wepText = pb["キャラ武器ルーレット"].weapon;
             else if (f["武器縛り"]) wepText = f["武器縛り"];
