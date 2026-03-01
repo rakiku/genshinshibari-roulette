@@ -740,8 +740,26 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (bindName === "突破ステータス縛り(武器)") {
                 const breakStatus = currentFilters["突破ステータス縛り(武器)"];
                 if (breakStatus) {
+                    // subItems には武器名が含まれている前提
                     subItems = subItems.filter(wName => {
-                        const wd = Object.values(allWeapons).flat().find(w => w.name === wName);
+                        // allWeapons からプロパティを探す
+                        let wd = null;
+
+                        // パターン1: allWeapons[category][index] 形式
+                        for (const category in allWeapons) {
+                            const found = Object.values(allWeapons[category]).find(w => w && w.name === wName);
+                            if (found) {
+                                wd = found;
+                                break;
+                            }
+                        }
+
+                        // パターン2: 全カテゴリをフラット化して検索
+                        if (!wd) {
+                            wd = Object.values(allWeapons).flat().find(w => w && w.name === wName);
+                        }
+
+                        // ascension_stat が breakStatus と一致するか確認
                         return wd && wd.ascension_stat === breakStatus;
                     });
                 }
