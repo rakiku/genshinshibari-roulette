@@ -856,7 +856,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const cb = () => {
             p.style.display = 'none';
             document.getElementById('nextButton').classList.remove('hidden');
-            if(currentRoulette === 'character' || currentRoulette === 'weapon')
+            if(currentRoulette === 'character' || currentRoulette === 'weapon' ||
+                (currentRoulette === 'sub' && ['配布武器縛り', '武器縛り', '突破ステータス縛り(武器)'].includes(currentBindName)))
                 document.getElementById('notOwnedButton').classList.remove('hidden');
             p.removeEventListener('click', cb);
         };
@@ -1057,6 +1058,52 @@ document.addEventListener('DOMContentLoaded', function() {
         
         resDiv.innerHTML = html;
         document.querySelectorAll('.reroll-player-button').forEach(b => b.addEventListener('click', e => rerollPlayer(parseInt(e.target.dataset.playerIndex))));
+
+        // リトライドロップダウンを生成
+        const retryContainer = document.getElementById('retryContainer');
+        if (retryContainer) {
+            retryContainer.innerHTML = '';
+            const commonBinds = Object.keys(results.common);
+            const playerBinds = results.players[0] ? Object.keys(results.players[0]) : [];
+            const totalBinds = commonBinds.length + playerBinds.length;
+
+            if (totalBinds > 1) {
+                const select = document.createElement('select');
+                select.id = 'retryBindSelect';
+                select.innerHTML = '<option value="">--- やり直す項目を選択 ---</option>';
+
+                commonBinds.forEach(bindName => {
+                    const option = document.createElement('option');
+                    option.value = `common_${bindName}`;
+                    option.textContent = `${bindName}をやり直す`;
+                    select.appendChild(option);
+                });
+
+                playerBinds.forEach(bindName => {
+                    for (let p = 1; p <= playerCount; p++) {
+                        const option = document.createElement('option');
+                        option.value = `player_${p}_${bindName}`;
+                        option.textContent = `プレイヤー${p}: ${bindName}をやり直す`;
+                        select.appendChild(option);
+                    }
+                });
+
+                const optionAll = document.createElement('option');
+                optionAll.value = 'retry_all';
+                optionAll.textContent = 'すべてやり直す';
+                select.appendChild(optionAll);
+
+                select.addEventListener('change', (e) => {
+                    if (e.target.value === 'retry_all') {
+                        backToStart();
+                    } else if (e.target.value) {
+                        retryBind(e.target.value);
+                    }
+                });
+
+                retryContainer.appendChild(select);
+            }
+        }
     }
 
     function rerollPlayer(idx) {
@@ -1069,7 +1116,41 @@ document.addEventListener('DOMContentLoaded', function() {
         } else showResults();
     }
 
-       function showCustomBindScreen() {
+    function retryBind(selection) {
+        const firstSep = selection.indexOf('_');
+        const type = selection.substring(0, firstSep);
+        const rest = selection.substring(firstSep + 1);
+        let bindName, playerNum;
+
+        if (type === 'common') {
+            bindName = rest;
+            playerNum = 0;
+            delete results.common[bindName];
+            Object.keys(excludedSubItems).forEach(key => {
+                if (key.startsWith(bindName + '_')) delete excludedSubItems[key];
+            });
+        } else if (type === 'player') {
+            const secondSep = rest.indexOf('_');
+            playerNum = parseInt(rest.substring(0, secondSep));
+            bindName = rest.substring(secondSep + 1);
+            delete results.players[playerNum - 1][bindName];
+            if (bindName === 'キャラ武器ルーレット') {
+                rerolledChars[playerNum] = [];
+                rerolledWeapons[playerNum] = {};
+            }
+            delete excludedSubItems[bindName + '_' + playerNum];
+        } else {
+            return;
+        }
+
+        bindSelectionPhase = false;
+        bindsToResolve = [{ name: bindName, player: playerNum }];
+        currentBindIndex = 0;
+        mode = 'reroll';
+        startNextSelectedBind();
+    }
+
+    function showCustomBindScreen() {
         initialize(); mode = 'custom'; showScreen('customBindScreen');
         const bSel = document.getElementById('customBossSelect');
         bSel.innerHTML = '<option value="random">ランダム</option>' + jpSort(bosses).map(b => `<option value="${b}">${b}</option>`).join('');
