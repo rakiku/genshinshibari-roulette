@@ -1053,40 +1053,77 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'条件不一致'}</p>`;
                 }
             }
-            html += `<button class="reroll-player-button" data-player-index="${i+1}">再抽選</button></div>`;
+            const playerBindKeys = Object.keys(pb);
+            if (playerBindKeys.length > 0) {
+                html += `<div class="retry-player-container" id="retryPlayerContainer${i+1}"></div>`;
+            }
+            html += `</div>`;
         }
         
         resDiv.innerHTML = html;
-        document.querySelectorAll('.reroll-player-button').forEach(b => b.addEventListener('click', e => rerollPlayer(parseInt(e.target.dataset.playerIndex))));
 
-        // リトライドロップダウンを生成
+        // 各プレイヤーの再抽選ドロップダウンを生成（DOM APIで安全に構築）
+        for (let i = 0; i < playerCount; i++) {
+            const pb = results.players[i];
+            const container = document.getElementById(`retryPlayerContainer${i+1}`);
+            if (!container || !pb) continue;
+            const playerBindKeys = Object.keys(pb);
+            if (playerBindKeys.length === 0) continue;
+            const sel = document.createElement('select');
+            sel.className = 'retry-player-select';
+            sel.dataset.playerIndex = String(i + 1);
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = '--- やり直す項目を選択 ---';
+            sel.appendChild(defaultOpt);
+            playerBindKeys.forEach(bindName => {
+                const opt = document.createElement('option');
+                opt.value = `player_${i+1}_${bindName}`;
+                opt.textContent = `${bindName}をやり直す`;
+                sel.appendChild(opt);
+            });
+            sel.addEventListener('change', e => {
+                if (e.target.value) retryBind(e.target.value);
+            });
+            container.appendChild(sel);
+        }
+
+        // 全員分リトライドロップダウンを生成
         const retryContainer = document.getElementById('retryContainer');
         if (retryContainer) {
             retryContainer.innerHTML = '';
             const commonBinds = Object.keys(results.common);
-            const playerBinds = results.players[0] ? Object.keys(results.players[0]) : [];
-            const totalBinds = commonBinds.length + playerBinds.length;
+            let hasAnyBind = commonBinds.length > 0;
+            if (!hasAnyBind) {
+                for (let p = 0; p < playerCount; p++) {
+                    if (results.players[p] && Object.keys(results.players[p]).length > 0) { hasAnyBind = true; break; }
+                }
+            }
 
-            if (totalBinds > 1) {
+            if (hasAnyBind) {
                 const select = document.createElement('select');
                 select.id = 'retryBindSelect';
-                select.innerHTML = '<option value="">--- やり直す項目を選択 ---</option>';
+                select.className = 'retry-all-select';
+                select.innerHTML = '<option value="">--- 全員分やり直す項目を選択 ---</option>';
 
                 commonBinds.forEach(bindName => {
                     const option = document.createElement('option');
                     option.value = `common_${bindName}`;
-                    option.textContent = `${bindName}をやり直す`;
+                    option.textContent = `共通: ${bindName}をやり直す`;
                     select.appendChild(option);
                 });
 
-                playerBinds.forEach(bindName => {
-                    for (let p = 1; p <= playerCount; p++) {
-                        const option = document.createElement('option');
-                        option.value = `player_${p}_${bindName}`;
-                        option.textContent = `プレイヤー${p}: ${bindName}をやり直す`;
-                        select.appendChild(option);
+                for (let p = 1; p <= playerCount; p++) {
+                    const pb = results.players[p - 1];
+                    if (pb) {
+                        Object.keys(pb).forEach(bindName => {
+                            const option = document.createElement('option');
+                            option.value = `player_${p}_${bindName}`;
+                            option.textContent = `${playerNames[p-1]}: ${bindName}をやり直す`;
+                            select.appendChild(option);
+                        });
                     }
-                });
+                }
 
                 const optionAll = document.createElement('option');
                 optionAll.value = 'retry_all';
