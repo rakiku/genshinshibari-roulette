@@ -1259,62 +1259,95 @@ document.addEventListener('DOMContentLoaded', function() {
       function backToStart() { spinning = false; initialize(); showScreen('startScreen'); }
 
    function showMemberSettings() {
-    const modal = document.getElementById('memberSettingsModal');
-    if (modal) modal.classList.remove('hidden');
-    
-    // Show player name input screen initially
-    document.getElementById('playerNameInputScreen').classList.remove('hidden');
-    document.querySelector('.member-select-row').classList.add('hidden');
-    document.getElementById('possessionTabs').classList.add('hidden');
-}
+        const modal = document.getElementById('memberSettingsModal');
+        if (modal) modal.classList.remove('hidden');
 
-function closeMemberSettings() {
-    const modal = document.getElementById('memberSettingsModal');
-    if (modal) modal.classList.add('hidden');
-    // Reset the modal to initial state
-    document.getElementById('playerNameInputScreen').classList.remove('hidden');
-    document.querySelector('.member-select-row').classList.add('hidden');
-    document.getElementById('possessionTabs').classList.add('hidden');
-}
+        const playerNameInputScreen = document.getElementById('playerNameInputScreen');
+        playerNameInputScreen.classList.remove('hidden');
+        document.querySelector('.member-select-row').classList.add('hidden');
+        document.getElementById('possessionTabs').classList.add('hidden');
 
-function goToSettingsScreen() {
-    const playerName = document.getElementById('modalPlayerNameInput').value.trim();
-    if (!playerName) {
-        alert('プレイヤー名を入力してください');
-        return;
+        // Clear text input
+        const nameInput = document.getElementById('modalPlayerNameInput');
+        nameInput.value = '';
+
+        // Populate quick-select buttons from the current player list
+        let quickSelectDiv = document.getElementById('playerQuickSelect');
+        if (!quickSelectDiv) {
+            quickSelectDiv = document.createElement('div');
+            quickSelectDiv.id = 'playerQuickSelect';
+            playerNameInputScreen.insertBefore(quickSelectDiv, playerNameInputScreen.firstChild);
+        }
+
+        const currentPlayerNames = Array.from(document.querySelectorAll('.playerNameInput'))
+            .map((inp, i) => inp.value.trim() || `プレイヤー${i + 1}`);
+
+        if (currentPlayerNames.length > 0) {
+            quickSelectDiv.innerHTML = '<p style="margin-bottom: 8px; font-weight: bold;">プレイヤーを選択：</p>';
+            currentPlayerNames.forEach(name => {
+                const btn = document.createElement('button');
+                btn.textContent = name;
+                btn.className = 'player-quick-select-btn';
+                btn.addEventListener('click', () => {
+                    nameInput.value = name;
+                    goToSettingsScreen();
+                });
+                quickSelectDiv.appendChild(btn);
+            });
+            quickSelectDiv.style.marginBottom = '16px';
+        } else {
+            quickSelectDiv.innerHTML = '';
+        }
     }
-    
-    // Hide player name input screen
-    document.getElementById('playerNameInputScreen').classList.add('hidden');
-    
-    // Show player selection area (for switching between players if needed)
-    const memberSelectRow = document.querySelector('.member-select-row');
-    memberSelectRow.classList.remove('hidden');
-    memberSelectRow.innerHTML = '';
-    
-    // Add radio button for current player
-    const label = document.createElement('label');
-    label.style.display = 'flex';
-    label.style.gap = '10px';
-    label.style.alignItems = 'center';
-    
-    const radio = document.createElement('input');
-    radio.type = 'radio';
-    radio.name = 'playerSelection';
-    radio.value = 0;
-    radio.checked = true;
-    
-    label.appendChild(radio);
-    label.appendChild(document.createTextNode(playerName));
-    memberSelectRow.appendChild(label);
-    
-    // Show possession tabs
-    const possessionTabs = document.getElementById('possessionTabs');
-    if (possessionTabs) possessionTabs.classList.remove('hidden');
-    
-    // Load data for this player
-    loadPlayerData(playerName);
-}
+
+    function closeMemberSettings() {
+        const modal = document.getElementById('memberSettingsModal');
+        if (modal) modal.classList.add('hidden');
+        // Reset the modal to initial state
+        document.getElementById('playerNameInputScreen').classList.remove('hidden');
+        document.querySelector('.member-select-row').classList.add('hidden');
+        document.getElementById('possessionTabs').classList.add('hidden');
+        document.getElementById('modalPlayerNameInput').value = '';
+    }
+
+    function goToSettingsScreen() {
+        const playerName = document.getElementById('modalPlayerNameInput').value.trim();
+        if (!playerName) {
+            alert('プレイヤー名を入力してください');
+            return;
+        }
+
+        // Hide player name input screen
+        document.getElementById('playerNameInputScreen').classList.add('hidden');
+
+        // Show the member-select-row with player name and a "back" button
+        const memberSelectRow = document.querySelector('.member-select-row');
+        memberSelectRow.classList.remove('hidden');
+        memberSelectRow.innerHTML = '';
+
+        const infoDiv = document.createElement('div');
+        infoDiv.style.cssText = 'display: flex; align-items: center; gap: 10px; margin-bottom: 10px;';
+
+        const backBtn = document.createElement('button');
+        backBtn.textContent = '← プレイヤー選択に戻る';
+        backBtn.className = 'back-to-player-list-btn';
+        backBtn.addEventListener('click', showMemberSettings);
+
+        const playerLabel = document.createElement('span');
+        playerLabel.textContent = `${playerName} の設定`;
+        playerLabel.className = 'editing-player-label';
+
+        infoDiv.appendChild(backBtn);
+        infoDiv.appendChild(playerLabel);
+        memberSelectRow.appendChild(infoDiv);
+
+        // Show possession tabs
+        const possessionTabs = document.getElementById('possessionTabs');
+        if (possessionTabs) possessionTabs.classList.remove('hidden');
+
+        // Load data for this player
+        loadPlayerData(playerName);
+    }
 
 function loadPlayerData(playerName) {
     editingPlayer = playerName;
@@ -1441,60 +1474,6 @@ function loadPlayerData(playerName) {
     });
 }
 
-function savePlayerData() {
-    const playerName = editingPlayer;
-    
-    if (!playerPossession[playerName]) {
-        playerPossession[playerName] = { chars: {}, weapons: {} };
-    }
-    
-    const pData = playerPossession[playerName];
-    
-    document.querySelectorAll('.char-owned').forEach(cb => {
-        const charName = cb.dataset.char;
-        if (!pData.chars[charName]) pData.chars[charName] = {};
-        pData.chars[charName].owned = cb.checked;
-    });
-    
-    document.querySelectorAll('.char-c6').forEach(cb => {
-        const charName = cb.dataset.char;
-        if (!pData.chars[charName]) pData.chars[charName] = {};
-        pData.chars[charName].c6 = cb.checked;
-    });
-    
-    document.querySelectorAll('.char-c0').forEach(cb => {
-        const charName = cb.dataset.char;
-        if (!pData.chars[charName]) pData.chars[charName] = {};
-        pData.chars[charName].c0 = cb.checked;
-    });
-    
-    document.querySelectorAll('.weapon-owned').forEach(cb => {
-        const weaponName = cb.dataset.weapon;
-        pData.weapons[weaponName] = cb.checked;
-    });
-    
-    localStorage.setItem('genshin_roulette_possession', JSON.stringify(playerPossession));
-    alert('保存しました！');
-}
-
-// タブ切り替え機能
-function showTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-    document.getElementById(tabName).classList.remove('hidden');
-    
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    if (tabName === 'charTab') document.getElementById('tab-char').classList.add('active');
-    if (tabName === 'weaponTab') document.getElementById('tab-weapon').classList.add('active');
-}
-
-// 一括チェック機能
-function bulkCheck(type, state) {
-    if (type === 'char') {
-        document.querySelectorAll('.char-owned').forEach(cb => cb.checked = state);
-    } else if (type === 'weapon') {
-        document.querySelectorAll('.weapon-owned').forEach(cb => cb.checked = state);
-    }
-}
 
     function savePlayerData() {
         const playerName = editingPlayer;
@@ -1540,97 +1519,6 @@ function bulkCheck(type, state) {
     function closeAbout() {
         const modal = document.getElementById('aboutScreen');
         if (modal) modal.classList.add('hidden');
-    }
-
-    function startRoulette(rouletteMode) {
-        initialize();
-        mode = rouletteMode;
-        
-        if (mode === 'all' || mode === 'boss') {
-            currentRoulette = 'boss';
-            items = bosses;
-            updateDisplayInfo();
-            prerenderRouletteImage();
-            showScreen('rouletteScreen');
-            drawRoulette();
-            document.getElementById('spinButton').disabled = false;
-        } else if (mode === 'bind') {
-            bindSelectionPhase = true;
-            items = getAvailableBinds();
-            currentRoulette = 'bind';
-            updateDisplayInfo();
-            prerenderRouletteImage();
-            showScreen('rouletteScreen');
-            drawRoulette();
-            document.getElementById('spinButton').disabled = false;
-        }
-    }
-
-    function showBindSelection() {
-        initialize();
-        mode = 'selection';
-        
-        // bindButtonsに縛り選択チェックボックスを生成
-        const bindButtonsDiv = document.getElementById('bindButtons');
-        bindButtonsDiv.innerHTML = '';
-        
-        binds.forEach(bindName => {
-            const label = document.createElement('label');
-            label.className = 'checkbox-label';
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.dataset.bindName = bindName;
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(' ' + bindName));
-            bindButtonsDiv.appendChild(label);
-        });
-        
-        showScreen('bindSelection');
-    }
-
-    function startNextSelectedBind() {
-        if (currentBindIndex >= bindsToResolve.length) {
-            showResults();
-            return;
-        }
-        
-        const bindItem = bindsToResolve[currentBindIndex];
-        const bindName = bindItem.name;
-        const player = bindItem.player || currentPlayer;
-        
-        if (player > 0) {
-            currentPlayer = player;
-        }
-        
-        setupRouletteForBind(bindName, player > 0 ? player : currentPlayer);
-    }
-
-    function executeBinds() {
-        initialize();
-        mode = 'selected';
-        
-        const checkboxes = document.querySelectorAll('#bindButtons input[type="checkbox"]:checked');
-        bindsToResolve = [];
-        
-        checkboxes.forEach(checkbox => {
-            const bindName = checkbox.dataset.bindName;
-            bindsToResolve.push({ name: bindName, player: 0 });
-        });
-        
-        if (bindsToResolve.length === 0) {
-            alert('縛りを選択してください');
-            return;
-        }
-        
-        bindsToResolve.sort((a, b) => bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name));
-        
-        currentRoulette = 'boss';
-        items = bosses;
-        showScreen('rouletteScreen');
-        updateDisplayInfo();
-        prerenderRouletteImage();
-        drawRoulette();
-        document.getElementById('spinButton').disabled = false;
     }
 
     document.getElementById('stopButton').addEventListener('click', stopRoulette);
@@ -1748,7 +1636,17 @@ function bulkCheck(type, state) {
         
         checkboxes.forEach(checkbox => {
             const bindName = checkbox.dataset.bindName;
-            bindsToResolve.push({ name: bindName, player: 0 });
+            // playerBindTypes are binds that apply individually to each player
+            // (e.g. キャラルーレット, 武器縛り). Add one entry per player so
+            // each player's roulette is resolved separately.
+            if (playerBindTypes.includes(bindName)) {
+                // Per-player binds are added once for each player
+                for (let i = 1; i <= playerCount; i++) {
+                    bindsToResolve.push({ name: bindName, player: i });
+                }
+            } else {
+                bindsToResolve.push({ name: bindName, player: 0 });
+            }
         });
         
         if (bindsToResolve.length === 0) {
