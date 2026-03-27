@@ -445,6 +445,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const bosses = [
         "アビサルヴィシャップ",
+        "チャールデリック",
+        "マハーヴァスデヴァーヤヴァ太子",
         "アペプ",
         "アンドリアス",
         "エンシェントヴィシャップ・岩",
