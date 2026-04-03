@@ -604,7 +604,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function checkCharEligibility(char, filters, playerIdx) {
         const pName = playerNames[playerIdx - 1];
         const pData = playerPossession[pName];
-        if (pData && pData.chars[char.name] && pData.chars[char.name].owned === false) return false;
+        if (pData && (!pData.chars[char.name] || pData.chars[char.name].owned === false)) return false;
         if (filters["完凸禁止"] && pData && pData.chars[char.name] && pData.chars[char.name].c6 === true) return false;
         if (filters["無凸縛り"] && pData && pData.chars[char.name] && pData.chars[char.name].c0 !== true) return false;
         for (const bindName in filters) {
@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 case "武器縛り": case "配布武器縛り": case "突破ステータス縛り(武器)": case "☆１、聖遺物なし":
                     const pool = allWeapons[char.weapon] || [];
                     match = pool.some(w => {
-                        if (pData && pData.weapons[w.name] === false) return false;
+                        if (pData && pData.weapons[w.name] !== true) return false;
                         if (bindName === "武器縛り" && w.name !== value) return false;
                         if (bindName === "配布武器縛り" && typeof value === 'string' && value !== "true" && w.name !== value) return false;
                         if (bindName === "配布武器縛り" && (typeof value !== 'string' || value === "true") && !w.is_distributed) return false;
@@ -846,12 +846,19 @@ document.addEventListener('DOMContentLoaded', function() {
         let content = `<span class="popup-close" onclick="this.parentElement.click()">×</span>`;
         content += `<div class="popup-text">${text}</div>`;
         
-        // ボスルーレット時に画像を表示
-        if (currentRoulette === 'boss' && text) {
-            const imagePath = encodeImagePath('boss', text);
-            console.log(`[POPUP] ボス: ${text}, パス: ${imagePath}`);
+        // ルーレット種別に応じて画像を表示
+        let imageType = null;
+        if (currentRoulette === 'boss') imageType = 'boss';
+        else if (currentRoulette === 'character') imageType = 'character';
+        else if (currentRoulette === 'weapon') imageType = 'weapon';
+        else if (currentRoulette === 'sub' && ['配布武器縛り', '武器縛り', '突破ステータス縛り(武器)'].includes(currentBindName)) imageType = 'weapon';
+
+        const imageName = imageType === 'boss' ? text : lastResult;
+        if (imageType && imageName) {
+            const imagePath = encodeImagePath(imageType, imageName);
+            console.log(`[POPUP] ${imageType}: ${imageName}, パス: ${imagePath}`);
             if (imagePath) {
-                content += `<img src="${imagePath}" alt="${text}" class="popup-image" onerror="console.log('画像読み込みエラー: ${imagePath}'); this.style.display='none'">`;
+                content += `<img src="${imagePath}" alt="${imageName}" class="popup-image" onerror="console.log('画像読み込みエラー: ${imagePath}'); this.style.display='none'">`;
             }
         }
         
@@ -1039,8 +1046,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (!selectedChar) {
-                // 候補キャラが8人以内なら画像を横並び表示
-                if (chars.length >= 1 && chars.length <= 8) {
+                // 候補キャラが20人以内なら画像を横並び表示（足りなくなったら2段目・3段目と自動展開）
+                if (chars.length >= 1 && chars.length <= 20) {
                     html += `<div class="result-section">`;
                     html += `<h4>対象キャラクター (${chars.length}人)：</h4>`;
                     html += `<div class="result-image-container">`;
@@ -1054,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     html += `</div></div>`;
                 } else {
-                    // 8人より多い場合、または0人の場合は名前リストのみ表示
+                    // 21人より多い場合、または0人の場合は名前リストのみ表示
                     html += `<h4>対象キャラクター:</h4><p class="char-list-final">${chars.map(c=>c.name).join('、')||'条件不一致'}</p>`;
                 }
             }
@@ -1392,7 +1399,7 @@ function loadPlayerData(playerName) {
         countryChars.forEach(char => {
             const div = document.createElement('div');
             div.className = 'possession-item';
-            const owned = pData.chars[char.name] ? pData.chars[char.name].owned !== false : true;
+            const owned = pData.chars[char.name] ? pData.chars[char.name].owned !== false : false;
             const c6 = pData.chars[char.name] ? pData.chars[char.name].c6 : false;
             const c0 = pData.chars[char.name] ? pData.chars[char.name].c0 : false;
             
@@ -1450,7 +1457,7 @@ function loadPlayerData(playerName) {
         weaponsOfType.forEach(weapon => {
             const div = document.createElement('div');
             div.className = 'possession-item';
-            const owned = pData.weapons[weapon.name] !== false;
+            const owned = pData.weapons[weapon.name] === true;
             
             // Create thumbnail image
             const imageThumb = document.createElement('span');
