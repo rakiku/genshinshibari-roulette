@@ -1024,7 +1024,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += `<img src="${weaponImagePath}" alt="${selectedWeapon}" class="result-image" onerror="console.log('武器画像読み込みエラー'); this.style.display='none'">`;
                 }
                 html += `</div>`;
-            } else if (availableWeapons.length >= 1 && availableWeapons.length <= 8) {
+            } else if (availableWeapons.length >= 1 && availableWeapons.length <= 20) {
                 // 候補武器が8つ以内なら画像を横並び表示
                 html += `<div class="result-section">`;
                 html += `<h4>使用可能武器 (${availableWeapons.length}種):</h4>`;
