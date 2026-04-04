@@ -743,31 +743,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     return wd && wd.rarity < 5;
                 });
             } else if (bindName === "突破ステータス縛り(武器)") {
-                const breakStatus = currentFilters["突破ステータス縛り(武器)"];
-                if (breakStatus) {
-                    // subItems には武器名が含まれている前提
-                    subItems = subItems.filter(wName => {
-                        // allWeapons からプロパティを探す
-                        let wd = null;
-
-                        // パターン1: allWeapons[category][index] 形式
-                        for (const category in allWeapons) {
-                            const found = Object.values(allWeapons[category]).find(w => w && w.name === wName);
-                            if (found) {
-                                wd = found;
-                                break;
-                            }
-                        }
-
-                        // パターン2: 全カテゴリをフラット化して検索
-                        if (!wd) {
-                            wd = Object.values(allWeapons).flat().find(w => w && w.name === wName);
-                        }
-
-                        // ascension_stat が breakStatus と一致するか確認
-                        return wd && wd.ascension_stat === breakStatus;
-                    });
-                }
+                const weaponType = currentFilters["武器種縛り"];
+                let weaponPool = weaponType ? (allWeapons[weaponType] || []) : Object.values(allWeapons).flat();
+                if (currentFilters["☆４キャラ武器"]) weaponPool = weaponPool.filter(w => w.rarity < 5);
+                if (currentFilters["配布武器縛り"]) weaponPool = weaponPool.filter(w => w.is_distributed);
+                const pDataLocal = playerPossession[playerNames[player - 1]];
+                if (pDataLocal) weaponPool = weaponPool.filter(w => pDataLocal.weapons[w.name] !== false);
+                const availableStats = new Set(weaponPool.map(w => w.ascension_stat).filter(s => s));
+                subItems = subItems.filter(stat => availableStats.has(stat));
             } else {
                  subItems = subItems.filter(opt => characters.some(char => checkCharEligibility(char, {...currentFilters, [bindName]: opt}, player)));
             }
@@ -1014,6 +997,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) wepText = pb["キャラ武器ルーレット"].weapon;
             else if (f["武器縛り"]) wepText = f["武器縛り"];
+            // 突破ステータス縛り(武器)が設定されていて、かつ特定武器が未確定の場合に利用可能武器リストを生成
+            // 特定武器確定ケース: キャラ武器ルーレットで武器が決定済み、武器縛りで名称指定済み、配布武器縛りで特定武器名指定済み
+            const hasSpecificWeapon = (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) ||
+                f["武器縛り"] ||
+                (typeof f["配布武器縛り"] === 'string' && f["配布武器縛り"] !== "true");
+            if (f["突破ステータス縛り(武器)"] && !hasSpecificWeapon) {
+                const statFilter = f["突破ステータス縛り(武器)"];
+                let pool = f["武器種縛り"] ? (allWeapons[f["武器種縛り"]] || []) : Object.values(allWeapons).flat();
+                if (f["☆４キャラ武器"]) pool = pool.filter(w => w.rarity < 5);
+                if (f["配布武器縛り"]) pool = pool.filter(w => w.is_distributed);
+                const pDataW = playerPossession[playerNames[i]];
+                availableWeapons = pool.filter(w => w.ascension_stat === statFilter && !(pDataW && pDataW.weapons[w.name] === false));
+                wepText = availableWeapons.length > 0 ? jpSort(availableWeapons.map(w => w.name)).join('、') : "条件不一致";
+            }
             
             // ===== 武器画像 =====
             const selectedWeapon = (pb["キャラ武器ルーレット"] && pb["キャラ武器ルーレット"].weapon) || f["武器縛り"];
