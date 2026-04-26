@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "サイフォスの月明かり", rarity: 4, type: "片手剣", ascension_stat: "元素熟知", is_distributed: false },
             { name: "聖顕の鍵", rarity: 5, type: "片手剣", ascension_stat: "HP", is_distributed: false },
             { name: "原木刀", rarity: 4, type: "片手剣", ascension_stat: "元素チャージ効率", is_distributed: false },
-            { name: "籠鶴瓶一心", rarity: 4, type: "片手剣", ascension_stat: "攻撃力", is_distributed: false },
+            { name: "籠釣瓶一心", rarity: 4, type: "片手剣", ascension_stat: "攻撃力", is_distributed: false },
             { name: "黒岩の長剣", rarity: 4, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },
             { name: "黒剣", rarity: 4, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "黎明の神剣", rarity: 3, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },
