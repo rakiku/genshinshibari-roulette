@@ -561,7 +561,80 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const playerBindTypes = ["キャラルーレット", "キャラ武器ルーレット", "武器縛り", "アルファベット縛り", "誕生月", "武器種縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)", "配布キャラ縛り", "配布武器縛り", "天賦素材縛り", "別衣装縛り", "オリジナル料理種別縛り", "軌跡ついてるキャラ縛り", "週ボス素材縛り"];
-    const bindOrder = ["国縛り", "モノ元素縛り", "恒常☆５縛り", "☆４キャラ武器", "初期キャラのみ", "所持率100％縛り", "旅人縛り", "配布キャラ縛り", "各1.1縛り", "体型縛り", "役割縛り", "元素エネルギー縛り", "ボス素材縛り", "特産品縛り", "突破ステータス縛り(キャラ)", "武器種縛り", "突破ステータス縛り(武器)", "配布武器縛り", "武器縛り", "誕生月", "アルファベット縛り", "天賦素材縛り", "別衣装縛り", "オリジナル料理種別縛り", "軌跡ついてるキャラ縛り", "週ボス素材縛り", "キャラルーレット", "キャラ武器ルーレット"];
+    const bindPhaseOrder = { prerequisite: 0, equipment: 1, finalRoulette: 2 };
+    const bindPhaseByName = {
+        "武器種縛り": "equipment",
+        "突破ステータス縛り(武器)": "equipment",
+        "配布武器縛り": "equipment",
+        "武器縛り": "equipment",
+        "☆４キャラ武器": "equipment",
+        "☆１、聖遺物なし": "equipment",
+        "キャラルーレット": "finalRoulette",
+        "キャラ武器ルーレット": "finalRoulette"
+    };
+    const bindPriorityByName = {
+        "軌跡ついてるキャラ縛り": 0,
+        "旅人縛り": 5,
+        "初期キャラのみ": 10,
+        "所持率100％縛り": 15,
+        "恒常☆５縛り": 20,
+        "配布キャラ縛り": 25,
+        "国縛り": 30,
+        "モノ元素縛り": 35,
+        "各1.1縛り": 40,
+        "体型縛り": 45,
+        "役割縛り": 50,
+        "元素エネルギー縛り": 55,
+        "ボス素材縛り": 60,
+        "特産品縛り": 65,
+        "突破ステータス縛り(キャラ)": 70,
+        "誕生月": 75,
+        "アルファベット縛り": 80,
+        "天賦素材縛り": 85,
+        "週ボス素材縛り": 90,
+        "別衣装縛り": 95,
+        "オリジナル料理種別縛り": 100,
+        "武器種縛り": 110,
+        "突破ステータス縛り(武器)": 120,
+        "配布武器縛り": 130,
+        "武器縛り": 140,
+        "☆４キャラ武器": 145,
+        "☆１、聖遺物なし": 150,
+        "キャラルーレット": 200,
+        "キャラ武器ルーレット": 210
+    };
+    const BIND_FALLBACK_PRIORITY_OFFSET = 1000;
+    const BIND_UNKNOWN_PRIORITY = 9999;
+    const BIND_SORT_LOCALE = 'ja';
+
+    function getBindResolutionMeta(bindName) {
+        const hasBindName = typeof bindName === 'string' && bindName.length > 0;
+        return {
+            phase: bindPhaseByName[bindName] || "prerequisite",
+            priority: bindPriorityByName[bindName] ?? (hasBindName ? BIND_FALLBACK_PRIORITY_OFFSET : BIND_UNKNOWN_PRIORITY)
+        };
+    }
+
+    function getBindName(bindItem) {
+        if (typeof bindItem === 'string') return bindItem;
+        if (bindItem && typeof bindItem === 'object' && typeof bindItem.name === 'string') return bindItem.name;
+        return '';
+    }
+
+    function compareBindResolutionOrder(a, b) {
+        const aName = getBindName(a);
+        const bName = getBindName(b);
+        const aMeta = getBindResolutionMeta(aName);
+        const bMeta = getBindResolutionMeta(bName);
+        const phaseDiff = bindPhaseOrder[aMeta.phase] - bindPhaseOrder[bMeta.phase];
+        if (phaseDiff !== 0) return phaseDiff;
+        if (aMeta.priority !== bMeta.priority) return aMeta.priority - bMeta.priority;
+        const nameDiff = aName.localeCompare(bName, BIND_SORT_LOCALE);
+        if (nameDiff !== 0) return nameDiff;
+        const aPlayer = typeof a === 'object' ? (a.player || 0) : 0;
+        const bPlayer = typeof b === 'object' ? (b.player || 0) : 0;
+        return aPlayer - bPlayer;
+    }
 
     let playerCount, bindCount, mode, currentRoulette, currentBindName, currentBindIndex, items, angle = 0, spinning = false, results = {}, currentPlayer = 1, lastResult;
     let rerolledChars, rerolledWeapons, rerolledCommonWeapons, playerNames = [], bindSelectionPhase, bindsToResolve, excludedSubItems = {};
@@ -879,7 +952,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (playerBindTypes.includes(bName)) for (let i = 1; i <= playerCount; i++) full.push({ name: bName, player: i });
                     else full.push({ name: bName, player: 0 });
                 });
-                full.sort((a, b) => (bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name)));
+                full.sort(compareBindResolutionOrder);
                 bindsToResolve = full; currentBindIndex = 0; startNextSelectedBind();
             }
             return;
@@ -1164,7 +1237,7 @@ document.addEventListener('DOMContentLoaded', function() {
         playerBindTypes.forEach(bt => { if (results.players[idx-1][bt] !== undefined) pBinds.push({ name: bt, player: idx }); });
         if (pBinds.length > 0) {
             results.players[idx-1] = {}; rerolledChars[idx] = []; rerolledWeapons[idx] = {}; excludedSubItems = {};
-            bindsToResolve = pBinds.sort((a, b) => (bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name)));
+            bindsToResolve = pBinds.sort(compareBindResolutionOrder);
             currentBindIndex = 0; mode = 'reroll'; startNextSelectedBind();
         } else showResults();
     }
@@ -1244,7 +1317,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (s && s.value !== 'random') t[n] = (n === '元素エネルギー縛り') ? parseInt(s.value) : s.value;
             else bindsToResolve.push({ name: n, player: p });
         });
-        bindsToResolve.sort((a, b) => (bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name)));
+        bindsToResolve.sort(compareBindResolutionOrder);
         if (!results.boss) { 
             currentRoulette = 'boss'; 
             items = bosses; 
@@ -1682,7 +1755,7 @@ function loadPlayerData(playerName) {
             return;
         }
         
-        bindsToResolve.sort((a, b) => bindOrder.indexOf(a.name) - bindOrder.indexOf(b.name));
+        bindsToResolve.sort(compareBindResolutionOrder);
         
         // Start with the first selected bind, not boss roulette
         currentBindIndex = 0;
@@ -2047,4 +2120,3 @@ function loadPlayerData(playerName) {
     });
 
 });
-
