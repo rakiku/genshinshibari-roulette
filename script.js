@@ -603,15 +603,17 @@ document.addEventListener('DOMContentLoaded', function() {
         "キャラルーレット": 200,
         "キャラ武器ルーレット": 210
     };
+    const BIND_FALLBACK_PRIORITY_OFFSET = 1000;
+    const BIND_UNKNOWN_PRIORITY = 9999;
     const bindFallbackPriority = binds.reduce((acc, name, idx) => {
-        acc[name] = idx + 1000;
+        acc[name] = idx + BIND_FALLBACK_PRIORITY_OFFSET;
         return acc;
     }, {});
 
     function getBindResolutionMeta(bindName) {
         return {
             phase: bindPhaseByName[bindName] || "prerequisite",
-            priority: bindPriorityByName[bindName] ?? bindFallbackPriority[bindName] ?? 9999
+            priority: bindPriorityByName[bindName] ?? bindFallbackPriority[bindName] ?? BIND_UNKNOWN_PRIORITY
         };
     }
 
