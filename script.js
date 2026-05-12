@@ -1818,6 +1818,13 @@ function loadPlayerData(playerName) {
             { key: 'trace', label: '軌跡', type: 'select', values: () => ['', 'true', 'false'] },
             { key: 'costume', label: '別衣装', type: 'select', values: () => ['', 'true', 'false'] },
         ];
+        const defaultFilters = Object.fromEntries(filterDefs.map(def => [def.key, '']));
+        charDataFilters = { ...defaultFilters, ...charDataFilters };
+        let resetButton = null;
+        const updateResetButtonState = () => {
+            if (!resetButton) return;
+            resetButton.disabled = filterDefs.every(def => !charDataFilters[def.key]);
+        };
         filterDefs.forEach(def => {
             const item = document.createElement('div');
             item.className = 'data-filter-item';
@@ -1828,7 +1835,12 @@ function loadPlayerData(playerName) {
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.placeholder = def.label + '検索';
-                input.addEventListener('input', () => { charDataFilters[def.key] = input.value.trim(); renderCharDataList(); });
+                input.value = charDataFilters[def.key] || '';
+                input.addEventListener('input', () => {
+                    charDataFilters[def.key] = input.value.trim();
+                    updateResetButtonState();
+                    renderCharDataList();
+                });
                 item.appendChild(input);
             } else {
                 const sel = document.createElement('select');
@@ -1838,11 +1850,27 @@ function loadPlayerData(playerName) {
                     opt.textContent = v === '' ? 'すべて' : v === 'true' ? 'あり' : v === 'false' ? 'なし' : v;
                     sel.appendChild(opt);
                 });
-                sel.addEventListener('change', () => { charDataFilters[def.key] = sel.value; renderCharDataList(); });
+                sel.value = charDataFilters[def.key] || '';
+                sel.addEventListener('change', () => {
+                    charDataFilters[def.key] = sel.value;
+                    updateResetButtonState();
+                    renderCharDataList();
+                });
                 item.appendChild(sel);
             }
             container.appendChild(item);
         });
+        resetButton = document.createElement('button');
+        resetButton.type = 'button';
+        resetButton.className = 'data-filter-reset-button';
+        resetButton.textContent = 'フィルターをリセット';
+        resetButton.addEventListener('click', () => {
+            charDataFilters = { ...defaultFilters };
+            buildCharDataFilters();
+            renderCharDataList();
+        });
+        container.appendChild(resetButton);
+        updateResetButtonState();
     }
 
     function renderCharDataList() {
