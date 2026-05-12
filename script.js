@@ -1819,11 +1819,11 @@ function loadPlayerData(playerName) {
             { key: 'costume', label: '別衣装', type: 'select', values: () => ['', 'true', 'false'] },
         ];
         const defaultFilters = Object.fromEntries(filterDefs.map(def => [def.key, '']));
-        charDataFilters = { ...defaultFilters, ...charDataFilters };
+        charDataFilters = Object.fromEntries(filterDefs.map(def => [def.key, charDataFilters[def.key] ?? defaultFilters[def.key]]));
         let resetButton = null;
         const updateResetButtonState = () => {
             if (!resetButton) return;
-            resetButton.disabled = filterDefs.every(def => !charDataFilters[def.key]);
+            resetButton.disabled = filterDefs.every(def => (charDataFilters[def.key] ?? '') === '');
         };
         filterDefs.forEach(def => {
             const item = document.createElement('div');
@@ -1835,6 +1835,7 @@ function loadPlayerData(playerName) {
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.placeholder = def.label + '検索';
+                input.dataset.filterKey = def.key;
                 input.value = charDataFilters[def.key] || '';
                 input.addEventListener('input', () => {
                     charDataFilters[def.key] = input.value.trim();
@@ -1844,6 +1845,7 @@ function loadPlayerData(playerName) {
                 item.appendChild(input);
             } else {
                 const sel = document.createElement('select');
+                sel.dataset.filterKey = def.key;
                 def.values().forEach(v => {
                     const opt = document.createElement('option');
                     opt.value = v;
@@ -1866,7 +1868,11 @@ function loadPlayerData(playerName) {
         resetButton.textContent = 'フィルターをリセット';
         resetButton.addEventListener('click', () => {
             charDataFilters = { ...defaultFilters };
-            buildCharDataFilters();
+            container.querySelectorAll('input[data-filter-key], select[data-filter-key]').forEach(el => {
+                const key = el.dataset.filterKey;
+                el.value = defaultFilters[key] ?? '';
+            });
+            updateResetButtonState();
             renderCharDataList();
         });
         container.appendChild(resetButton);
