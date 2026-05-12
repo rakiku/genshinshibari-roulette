@@ -54,6 +54,7 @@
             </div>
 
             <div class="about-button-container">
+                <button id="showCharDataButton" class="about-button">キャラクターデータ</button>
                 <button id="showAboutButton" class="about-button">このルーレットについて</button>
             </div>
         </div>
@@ -305,6 +306,35 @@
                 これは非公式のファンメイドツールです。アップデートは作者がやりたいときに頑張ります。作者がプログラムを組むのはこれが初めてなのでバグがめちゃくちゃあるかもしれませんがご容赦ください。<br>
                 製作者Twitter:<a href="https://x.com/rakiku_genshin" target="_blank" rel="noopener noreferrer">@rakiku_genshin</a>
             </p>
+        </div>
+    </div>
+
+
+    <!-- 8. キャラクター/武器データモーダル -->
+    <div id="charDataModal" class="modal-overlay hidden">
+        <div class="modal-content large">
+            <button class="close-button" id="closeCharDataModal">&times;</button>
+            <h2>キャラクター・武器データ</h2>
+            <div class="tab-buttons">
+                <button class="tab-btn active" id="charDataTab-char" onclick="showCharDataTab('charDataCharTab')">キャラクター</button>
+                <button class="tab-btn" id="charDataTab-weapon" onclick="showCharDataTab('charDataWeaponTab')">武器</button>
+            </div>
+            <div id="charDataCharTab" class="tab-content">
+                <div id="charDataFilters" class="data-filters"></div>
+                <div id="charDataList" class="possession-grid data-list"></div>
+            </div>
+            <div id="charDataWeaponTab" class="tab-content hidden">
+                <div id="weaponDataFilters" class="data-filters"></div>
+                <div id="weaponDataList" class="possession-grid data-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. キャラクター詳細モーダル -->
+    <div id="detailModal" class="modal-overlay hidden">
+        <div class="modal-content" id="detailModalContent">
+            <button class="close-button" id="closeDetailModal">&times;</button>
+            <div id="detailModalBody"></div>
         </div>
     </div>
 
