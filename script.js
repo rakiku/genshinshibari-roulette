@@ -1818,6 +1818,13 @@ function loadPlayerData(playerName) {
             { key: 'trace', label: '軌跡', type: 'select', values: () => ['', 'true', 'false'] },
             { key: 'costume', label: '別衣装', type: 'select', values: () => ['', 'true', 'false'] },
         ];
+        const defaultFilters = Object.fromEntries(filterDefs.map(def => [def.key, '']));
+        charDataFilters = Object.fromEntries(filterDefs.map(def => [def.key, charDataFilters[def.key] ?? defaultFilters[def.key]]));
+        let resetButton = null;
+        const updateResetButtonState = () => {
+            if (!resetButton) return;
+            resetButton.disabled = filterDefs.every(def => (charDataFilters[def.key] ?? '') === '');
+        };
         filterDefs.forEach(def => {
             const item = document.createElement('div');
             item.className = 'data-filter-item';
@@ -1828,21 +1835,48 @@ function loadPlayerData(playerName) {
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.placeholder = def.label + '検索';
-                input.addEventListener('input', () => { charDataFilters[def.key] = input.value.trim(); renderCharDataList(); });
+                input.dataset.filterKey = def.key;
+                input.value = charDataFilters[def.key] || '';
+                input.addEventListener('input', () => {
+                    charDataFilters[def.key] = input.value.trim();
+                    updateResetButtonState();
+                    renderCharDataList();
+                });
                 item.appendChild(input);
             } else {
                 const sel = document.createElement('select');
+                sel.dataset.filterKey = def.key;
                 def.values().forEach(v => {
                     const opt = document.createElement('option');
                     opt.value = v;
                     opt.textContent = v === '' ? 'すべて' : v === 'true' ? 'あり' : v === 'false' ? 'なし' : v;
                     sel.appendChild(opt);
                 });
-                sel.addEventListener('change', () => { charDataFilters[def.key] = sel.value; renderCharDataList(); });
+                sel.value = charDataFilters[def.key] || '';
+                sel.addEventListener('change', () => {
+                    charDataFilters[def.key] = sel.value;
+                    updateResetButtonState();
+                    renderCharDataList();
+                });
                 item.appendChild(sel);
             }
             container.appendChild(item);
         });
+        resetButton = document.createElement('button');
+        resetButton.type = 'button';
+        resetButton.className = 'data-filter-reset-button';
+        resetButton.textContent = 'フィルターをリセット';
+        resetButton.addEventListener('click', () => {
+            charDataFilters = { ...defaultFilters };
+            container.querySelectorAll('input[data-filter-key], select[data-filter-key]').forEach(el => {
+                const key = el.dataset.filterKey;
+                el.value = defaultFilters[key] ?? '';
+            });
+            updateResetButtonState();
+            renderCharDataList();
+        });
+        container.appendChild(resetButton);
+        updateResetButtonState();
     }
 
     function renderCharDataList() {
