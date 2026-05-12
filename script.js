@@ -605,6 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     const BIND_FALLBACK_PRIORITY_OFFSET = 1000;
     const BIND_UNKNOWN_PRIORITY = 9999;
+    const BIND_SORT_LOCALE = 'ja';
     const bindFallbackPriority = binds.reduce((acc, name, idx) => {
         acc[name] = idx + BIND_FALLBACK_PRIORITY_OFFSET;
         return acc;
@@ -625,7 +626,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const phaseDiff = bindPhaseOrder[aMeta.phase] - bindPhaseOrder[bMeta.phase];
         if (phaseDiff !== 0) return phaseDiff;
         if (aMeta.priority !== bMeta.priority) return aMeta.priority - bMeta.priority;
-        const nameDiff = String(aName).localeCompare(String(bName), 'ja');
+        const nameDiff = String(aName).localeCompare(String(bName), BIND_SORT_LOCALE);
         if (nameDiff !== 0) return nameDiff;
         const aPlayer = typeof a === 'object' ? (a.player || 0) : 0;
         const bPlayer = typeof b === 'object' ? (b.player || 0) : 0;
