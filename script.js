@@ -606,27 +606,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const BIND_FALLBACK_PRIORITY_OFFSET = 1000;
     const BIND_UNKNOWN_PRIORITY = 9999;
     const BIND_SORT_LOCALE = 'ja';
-    const bindFallbackPriority = binds.reduce((acc, name, idx) => {
-        acc[name] = idx + BIND_FALLBACK_PRIORITY_OFFSET;
-        return acc;
-    }, {});
 
     function getBindResolutionMeta(bindName) {
+        const hasBindName = typeof bindName === 'string' && bindName.length > 0;
         return {
             phase: bindPhaseByName[bindName] || "prerequisite",
-            priority: bindPriorityByName[bindName] ?? bindFallbackPriority[bindName] ?? BIND_UNKNOWN_PRIORITY
+            priority: bindPriorityByName[bindName] ?? (hasBindName ? BIND_FALLBACK_PRIORITY_OFFSET : BIND_UNKNOWN_PRIORITY)
         };
     }
 
+    function getBindName(bindItem) {
+        if (typeof bindItem === 'string') return bindItem;
+        if (bindItem && typeof bindItem === 'object' && typeof bindItem.name === 'string') return bindItem.name;
+        return '';
+    }
+
     function compareBindResolutionOrder(a, b) {
-        const aName = typeof a === 'object' ? a.name : a;
-        const bName = typeof b === 'object' ? b.name : b;
+        const aName = getBindName(a);
+        const bName = getBindName(b);
         const aMeta = getBindResolutionMeta(aName);
         const bMeta = getBindResolutionMeta(bName);
         const phaseDiff = bindPhaseOrder[aMeta.phase] - bindPhaseOrder[bMeta.phase];
         if (phaseDiff !== 0) return phaseDiff;
         if (aMeta.priority !== bMeta.priority) return aMeta.priority - bMeta.priority;
-        const nameDiff = String(aName).localeCompare(String(bName), BIND_SORT_LOCALE);
+        const nameDiff = aName.localeCompare(bName, BIND_SORT_LOCALE);
         if (nameDiff !== 0) return nameDiff;
         const aPlayer = typeof a === 'object' ? (a.player || 0) : 0;
         const bPlayer = typeof b === 'object' ? (b.player || 0) : 0;
