@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "匣中日月", rarity: 4, type: "法器", ascension_stat: "会心率", is_distributed: false },
             { name: "不滅の月華", rarity: 5, type: "法器", ascension_stat: "HP", is_distributed: false },
             { name: "万国諸海の図譜", rarity: 4, type: "法器", ascension_stat: "元素熟知", is_distributed: false },
-            { name: "塵と光の七つの誓約", rarity: 5, type: "法器", ascension_stat: "", is_distributed: false }
+            { name: "塵と光の七つの誓約", rarity: 5, type: "法器", ascension_stat: "攻撃力", is_distributed: false }
         ],
         "弓": [
             { name: "霜契の金枝", rarity: 5, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false },
