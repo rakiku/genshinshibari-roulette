@@ -951,7 +951,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 case "オリジナル料理種別縛り": match = (char.special_dish === value); break;
                 case "軌跡ついてるキャラ縛り": match = (char.trace === true); break;
                 case "週ボス素材縛り": match = (char.talent_weekly === value); break;
-                case "回復禁止": match = !char.role.some(r => r.includes("ライフキーパー")); break;
                 case "所持率100％縛り": match = ownership100Characters.includes(char.name); break;
                 case "アルファベット縛り": match = (char.name === "旅人") ? (value === "T") : (alphabetData[value] && alphabetData[value].includes(char.name)); break;
                 case "旅人縛り": match = (char.name === "旅人"); break;
