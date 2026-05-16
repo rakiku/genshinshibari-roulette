@@ -201,6 +201,14 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "ローエン", country: "モンド", weapon: "長柄武器", element: "氷", birth_month: "", birthday: "", version: "n.6", rarity: ['☆５'], body: "中身男性", role: ["オンフィールドアタッカー"], energy: "", talent_boss: "集光の月ヤモリ", local_specialty: "フェザーモス", ascension_stat: "", distributed: false, talent_book: "抗争", talent_weekly: "昇揚のサンプル「ナイト」", special_dish: "", trace: false, costume: false },
         { name: "プルーネ", country: "モンド", weapon: "法器", element: "風", birth_month: "", birthday: "", version: "n.6", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドサポーター"], energy:"70" , talent_boss: "霜夜の空を巡る霊主", local_specialty: "", ascension_stat: "", distributed: false, talent_book: "抗争", talent_weekly: "賢医の仮面", special_dish: "", trace: false, costume: false }
     ];
+    const trainingRoadCharacterNames = new Set([
+        "ジン", "ディルック", "七七", "モナ", "刻晴", "クレー", "タルタリヤ", "アルベド", "甘雨", "魈",
+        "胡桃", "エウルア", "神里綾華", "宵宮", "珊瑚宮心海", "荒瀧一斗", "申鶴", "八重神子", "神里綾人", "ティナリ",
+        "セノ", "ニィロウ", "放浪者", "ディシア", "白朮"
+    ]);
+    characters.forEach(char => {
+        char.training_road = trainingRoadCharacterNames.has(char.name);
+    });
 
     const allWeapons = {
         "長柄武器": [
@@ -534,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const initialCharacters = ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー"];
     const alphabetData = {"A": ["アイノ", "荒瀧一斗", "アルベド", "アルレッキーノ", "アルハイゼン", "アンバー", "アーロイ"], "B": ["バーバラ", "白朮", "ベネット", "北斗"], "C": ["キャンディス", "コロンビーナ", "クロリンデ", "コレイ", "シャルロット", "シュヴルーズ", "シトラリ", "セノ", "千織", "チャスカ", "重雲"], "D": ["ドール", "ドゥリン", "ドリー", "ディシア", "ディルック", "ディオナ", "ダリア"], "E": ["エミリエ", "エウルア", "エスコフィエ"], "F": ["フリンズ", "ファルザン", "フリーナ", "フレミネ", "フィッシュル"], "G": ["嘉明", "甘雨", "ゴロー"], "H": ["胡桃"], "I": ["イルーガ", "イアンサ", "イファ", "イネファ"], "J": ["ヤフォダ", "ジン"], "K": ["神里綾華", "神里綾人", "キィニチ", "綺良々", "久岐忍", "九条裟羅", "クレー", "刻晴", "カチーナ", "カーヴェ"], "L": ["ラウマ", "リサ", "リネ", "リネット", "レイラ", "藍硯"], "M": ["ミカ", "ムアラニ", "モナ", "マーヴィカ"], "N": ["ネフェル","ナヴィア", "ナヒーダ", "ニィロウ", "ヌヴィレット", "ノエル"], "O": ["オロルン"], "Q": ["七七"], "R": ["雷電将軍", "レザー", "ロサリア", "リオセスリ"], "S": ["早柚", "珊瑚宮心海", "鹿野院平蔵", "シグウィン", "申鶴", "スクロース", "セトス", "スカーク"], "T": ["旅人", "ティナリ", "タルタリヤ", "トーマ"], "V": ["ウェンティ", "ヴァレサ","ファルカ"], "W": ["放浪者"], "X": ["行秋", "魈", "香菱", "辛炎", "シロネン", "閑雲"], "Y": ["煙緋", "夜蘭", "雲菫", "八重神子", "宵宮", "ヨォーヨ", "夢見月瑞希"], "Z": ["鍾離"]};
 
-    const binds = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "UI非表示+リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止+リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし", "武器縛り", "体型縛り", "役割縛り", "スキル禁止", "元素エネルギー縛り", "完凸禁止", "配布武器縛り", "配布キャラ縛り", "ボス素材縛り", "特産品縛り", "クラウン禁止", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)", "聖遺物セット禁止", "天賦素材縛り", "別衣装縛り", "オリジナル料理種別縛り", "軌跡ついてるキャラ縛り", "週ボス素材縛り"];
+    const binds = ["☆４キャラ武器", "回復禁止", "恒常☆５縛り", "所持率100％縛り", "国縛り", "初期キャラのみ", "鍛錬の道縛り", "UI非表示+リロール", "誰か一人が倒れたら負け縛り", "無凸縛り", "キャラルーレット", "武器種縛り", "キャラ武器ルーレット", "聖遺物禁止", "爆発禁止+リロール", "旅人縛り", "モノ元素縛り", "各1.1縛り", "誕生月", "アルファベット縛り", "☆１、聖遺物なし", "武器縛り", "体型縛り", "役割縛り", "スキル禁止", "元素エネルギー縛り", "完凸禁止", "配布武器縛り", "配布キャラ縛り", "ボス素材縛り", "特産品縛り", "クラウン禁止", "突破ステータス縛り(キャラ)", "突破ステータス縛り(武器)", "聖遺物セット禁止", "天賦素材縛り", "別衣装縛り", "オリジナル料理種別縛り", "軌跡ついてるキャラ縛り", "週ボス素材縛り"];
     
     const jpSort = (list) => [...list].sort((a, b) => String(a).localeCompare(String(b), 'ja'));
 
@@ -576,6 +584,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "軌跡ついてるキャラ縛り": 0,
         "旅人縛り": 5,
         "初期キャラのみ": 10,
+        "鍛錬の道縛り": 12,
         "所持率100％縛り": 15,
         "恒常☆５縛り": 20,
         "配布キャラ縛り": 25,
@@ -714,6 +723,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 case "恒常☆５縛り": match = char.rarity.includes('恒常☆５'); break;
                 case "☆４キャラ武器": match = char.rarity.includes('☆４'); break;
                 case "初期キャラのみ": match = initialCharacters.includes(char.name); break;
+                case "鍛錬の道縛り": match = !!char.training_road; break;
                 case "武器縛り": case "配布武器縛り": case "突破ステータス縛り(武器)": case "☆１、聖遺物なし":
                     const pool = allWeapons[char.weapon] || [];
                     match = pool.some(w => {
@@ -1283,7 +1293,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const cg = document.getElementById('customBindGrid'), cb = document.getElementById('customBindButtonsCommon'), pc = document.getElementById('customBindsPlayersContainer');
         cg.innerHTML = ''; cb.innerHTML = ''; pc.innerHTML = '';
         ['国縛り', 'モノ元素縛り'].forEach(n => createBindItem(n, 'select', cg));
-        ['恒常☆５縛り', '☆４キャラ武器', '初期キャラのみ', '所持率100％縛り', '旅人縛り', 'スキル禁止', '完凸禁止', 'クラウン禁止', '配布武器縛り', '回復禁止', '聖遺物セット禁止'].forEach(n => createBindItem(n, 'check', cb));
+        ['恒常☆５縛り', '☆４キャラ武器', '初期キャラのみ', '鍛錬の道縛り', '所持率100％縛り', '旅人縛り', 'スキル禁止', '完凸禁止', 'クラウン禁止', '配布武器縛り', '回復禁止', '聖遺物セット禁止'].forEach(n => createBindItem(n, 'check', cb));
         for (let i = 1; i <= playerCount; i++) {
             const d = document.createElement('div'); d.className = 'custom-bind-player-section'; d.innerHTML = `<h3>${playerNames[i-1]}の縛り</h3>`;
             const g = document.createElement('div'); g.className = 'custom-bind-grid';
@@ -1815,6 +1825,7 @@ function loadPlayerData(playerName) {
             { key: 'talent_weekly', label: '週ボス素材', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.talent_weekly).filter(w => w && !w.includes('/')))])] },
             { key: 'special_dish', label: 'オリジナル料理', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.special_dish).filter(d => d))])] },
             { key: 'distributed', label: '配布', type: 'select', values: () => ['', 'true', 'false'] },
+            { key: 'training_road', label: '鍛錬の道', type: 'select', values: () => ['', 'true', 'false'] },
             { key: 'trace', label: '軌跡', type: 'select', values: () => ['', 'true', 'false'] },
             { key: 'costume', label: '別衣装', type: 'select', values: () => ['', 'true', 'false'] },
         ];
@@ -1913,6 +1924,10 @@ function loadPlayerData(playerName) {
             if (f.distributed && f.distributed !== '') {
                 if (f.distributed === 'true' && !c.distributed) return false;
                 if (f.distributed === 'false' && c.distributed) return false;
+            }
+            if (f.training_road && f.training_road !== '') {
+                if (f.training_road === 'true' && !c.training_road) return false;
+                if (f.training_road === 'false' && c.training_road) return false;
             }
             if (f.trace && f.trace !== '') {
                 if (f.trace === 'true' && !c.trace) return false;
@@ -2057,6 +2072,7 @@ function loadPlayerData(playerName) {
             { label: '週ボス素材', value: char.talent_weekly || '' },
             { label: 'オリジナル料理', value: char.special_dish || '' },
             { label: '配布', value: char.distributed ? 'あり' : 'なし' },
+            { label: '鍛錬の道', value: char.training_road ? 'あり' : 'なし' },
             { label: '軌跡', value: char.trace ? 'あり' : 'なし' },
             { label: '別衣装', value: char.costume ? 'あり' : 'なし' },
         ];
