@@ -2038,6 +2038,12 @@ function loadPlayerData(playerName) {
     let charDataFilters = {};
     let weaponDataFilters = {};
 
+    function parseReleaseVersionSortKey(versionValue) {
+        const lunaMatch = String(versionValue || '').match(/^Luna\s+\w+\s+\((\d+\.\d+)\)/);
+        // Luna系は通常バージョン(例: 5.8)より後ろに並ぶようにオフセットを加算する
+        return lunaMatch ? parseFloat(lunaMatch[1]) + 100 : parseFloat(versionValue) || 0;
+    }
+
     function buildCharDataFilters() {
         const container = document.getElementById('charDataFilters');
         if (!container) return;
@@ -2048,10 +2054,7 @@ function loadPlayerData(playerName) {
             { key: 'weapon', label: '武器種', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.weapon))])] },
             { key: 'element', label: '元素', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.element))])] },
             { key: 'birth_month', label: '誕生月', type: 'select', values: () => ['', ...["１月","２月","３月","４月","５月","６月","７月","８月","９月","１０月","１１月","１２月","その他"]] },
-            { key: 'release_version', label: '実装バージョン', type: 'select', values: () => ['', ...([...new Set(characters.map(c => c.release_version).filter(Boolean))].sort((a, b) => {
-                const parse = v => { const m = v.match(/^Luna\s+\w+\s+\((\d+\.\d+)\)/); return m ? parseFloat(m[1]) + 100 : parseFloat(v) || 0; };
-                return parse(a) - parse(b);
-            }))] },
+            { key: 'release_version', label: '実装バージョン', type: 'select', values: () => ['', ...([...new Set(characters.map(c => c.release_version).filter(Boolean))].sort((a, b) => parseReleaseVersionSortKey(a) - parseReleaseVersionSortKey(b)))] },
             { key: 'version', label: 'バージョン', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.version))])] },
             { key: 'rarity', label: 'レアリティ', type: 'select', values: () => ['', '☆５', '☆４'] },
             { key: 'body', label: '体型', type: 'select', values: () => ['', ...jpSort([...new Set(characters.flatMap(c => Array.isArray(c.body) ? c.body : [c.body]))])] },
@@ -2214,10 +2217,7 @@ function loadPlayerData(playerName) {
             { key: 'type', label: '武器種', type: 'select', values: () => ['', ...jpSort(Object.keys(allWeapons))] },
             { key: 'rarity', label: 'レアリティ', type: 'select', values: () => ['', ...[...new Set(allWeaponList.map(w => w.rarity))].sort((a,b) => b-a).map(String)] },
             { key: 'ascension_stat', label: '突破ステータス', type: 'select', values: () => ['', ...jpSort([...new Set(allWeaponList.map(w => w.ascension_stat).filter(s => s))])] },
-            { key: 'release_version', label: '実装バージョン', type: 'select', values: () => ['', ...([...new Set(allWeaponList.map(w => w.release_version).filter(Boolean))].sort((a, b) => {
-                const parse = v => { const m = v.match(/^Luna\s+\w+\s+\((\d+\.\d+)\)/); return m ? parseFloat(m[1]) + 100 : parseFloat(v) || 0; };
-                return parse(a) - parse(b);
-            }))] },
+            { key: 'release_version', label: '実装バージョン', type: 'select', values: () => ['', ...([...new Set(allWeaponList.map(w => w.release_version).filter(Boolean))].sort((a, b) => parseReleaseVersionSortKey(a) - parseReleaseVersionSortKey(b)))] },
             { key: 'is_distributed', label: '配布', type: 'select', values: () => ['', 'true', 'false'] },
         ];
         filterDefs.forEach(def => {
