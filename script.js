@@ -723,7 +723,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 case "恒常☆５縛り": match = char.rarity.includes('恒常☆５'); break;
                 case "☆４キャラ武器": match = char.rarity.includes('☆４'); break;
                 case "初期キャラのみ": match = initialCharacters.includes(char.name); break;
-                case "鍛錬の道縛り": match = (char.training_road === true); break;
+                case "鍛錬の道縛り": match = !!char.training_road; break;
                 case "武器縛り": case "配布武器縛り": case "突破ステータス縛り(武器)": case "☆１、聖遺物なし":
                     const pool = allWeapons[char.weapon] || [];
                     match = pool.some(w => {
