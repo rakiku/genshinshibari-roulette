@@ -661,13 +661,16 @@ document.addEventListener('DOMContentLoaded', function() {
         "千烈の日輪": "5.3",
         "祭星者の眺め": "5.3",
         "玉響停の御噺": "5.4",
+        "寝正月の初晴": "5.4",
         "ヴィヴィッド・ハート": "5.5",
         "香りのシンフォニスト": "5.6",
         "冷寂の音": "5.6",
         "蒼耀": "5.7",
         "砕け散る光輪": "5.8",
         "知恵の溶炎": "5.8",
+        "プレデター": "2.1",
         "夜を紡ぐ天鏡": "Luna I (6.0)",
+        "月紡ぎの曙光": "Luna I (6.0)",
         "血染めの荒れ地": "Luna I (6.0)",
         "静謐の笛": "Luna I (6.0)",
         "万能の鍵": "Luna I (6.0)",
@@ -675,6 +678,8 @@ document.addEventListener('DOMContentLoaded', function() {
         "烏髄の孤灯": "Luna I (6.0)",
         "羅網の針": "Luna I (6.0)",
         "天光のリュート": "Luna I (6.0)",
+        "聖祭者の輝杖": "Luna II (6.1)",
+        "霜辰": "Luna II (6.1)",
         "真言の匣": "Luna II (6.1)",
         "黒蝕": "Luna III (6.2)",
         "暁を告げる歴史": "Luna III (6.2)",
@@ -896,6 +901,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let theaterSelectedElements = new Set();
     let theaterOpeningCast = new Set();
     let theaterSpecialCast = new Set();
+    let theaterSpecialSearchKeyword = '';
 
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
@@ -917,6 +923,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (homeButton) {
             if (screenId === 'startScreen') homeButton.classList.add('hidden');
             else homeButton.classList.remove('hidden');
+        }
+        updateScreenBackground(screenId);
+    }
+
+    function updateScreenBackground(screenId) {
+        if (!document.body) return;
+        document.body.classList.remove('screen-background-spiral', 'screen-background-theater');
+        if (screenId === 'spiralModeScreen') {
+            document.body.classList.add('screen-background-spiral');
+        } else if (screenId === 'theaterModeScreen') {
+            document.body.classList.add('screen-background-theater');
         }
     }
     
@@ -1107,7 +1124,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('theaterSpecialCastSelector');
         if (!container) return;
         container.innerHTML = '';
-        const candidates = getTheaterSpecialCandidates();
+        const normalizedKeyword = theaterSpecialSearchKeyword.toLocaleLowerCase('ja');
+        const candidates = getTheaterSpecialCandidates().filter(char => {
+            return !normalizedKeyword || char.name.toLocaleLowerCase('ja').includes(normalizedKeyword);
+        });
+        if (candidates.length === 0) {
+            container.innerHTML = '<p style="grid-column:1/-1;color:#bdc3c7;">該当するキャラがいません。</p>';
+            return;
+        }
         candidates.forEach(char => {
             const selected = theaterSpecialCast.has(char.name);
             const card = createCharacterCard(char, selected, false);
@@ -1915,6 +1939,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function showTheaterMode() {
         const input = document.getElementById('theaterPlayerNameInput');
         if (input && !input.value.trim()) input.value = 'プレイヤー1';
+        theaterSpecialSearchKeyword = '';
+        const searchInput = document.getElementById('theaterSpecialSearchInput');
+        if (searchInput) searchInput.value = '';
         syncTheaterSelections();
         renderTheaterSelectors();
         setModeMessage('theaterModeMessage', '');
@@ -2119,11 +2146,7 @@ function loadPlayerData(playerName) {
         typeHeader.style.borderBottom = '2px solid #3498db';
         weaponList.appendChild(typeHeader);
         
-        const weaponsOfType = [...allWeapons[weaponType]].sort((a, b) => {
-            const versionDiff = parseReleaseVersionSortKey(a.release_version) - parseReleaseVersionSortKey(b.release_version);
-            if (versionDiff !== 0) return versionDiff;
-            return b.rarity - a.rarity;
-        });
+        const weaponsOfType = [...allWeapons[weaponType]].sort(compareWeaponDisplayOrder);
         weaponsOfType.forEach(weapon => {
             const div = document.createElement('div');
             div.className = 'possession-item';
@@ -2232,6 +2255,13 @@ function loadPlayerData(playerName) {
     document.getElementById('openSpiralMemberSettingsButton').addEventListener('click', () => openMemberSettingsFromMode('spiralPlayerNameInput'));
     document.getElementById('openTheaterMemberSettingsButton').addEventListener('click', () => openMemberSettingsFromMode('theaterPlayerNameInput'));
     document.getElementById('showMemberSettingsButton').addEventListener('click', showMemberSettings);
+    const theaterSpecialSearchInput = document.getElementById('theaterSpecialSearchInput');
+    if (theaterSpecialSearchInput) {
+        theaterSpecialSearchInput.addEventListener('input', () => {
+            theaterSpecialSearchKeyword = theaterSpecialSearchInput.value.trim();
+            renderTheaterSpecialSelector();
+        });
+    }
     
     const goToSettingsBtn = document.getElementById('goToSettingsButton');
     if (goToSettingsBtn) {
@@ -2386,6 +2416,14 @@ function loadPlayerData(playerName) {
         const lunaMatch = String(versionValue || '').match(/^Luna\s+\w+\s+\((\d+\.\d+)\)/);
         // Luna系は通常バージョン(例: 5.8)より後ろに並ぶようにオフセットを加算する
         return lunaMatch ? parseFloat(lunaMatch[1]) + 100 : parseFloat(versionValue) || 0;
+    }
+
+    function compareWeaponDisplayOrder(a, b) {
+        const rarityDiff = (b.rarity || 0) - (a.rarity || 0);
+        if (rarityDiff !== 0) return rarityDiff;
+        const versionDiff = parseReleaseVersionSortKey(a.release_version) - parseReleaseVersionSortKey(b.release_version);
+        if (versionDiff !== 0) return versionDiff;
+        return String(a.name || '').localeCompare(String(b.name || ''), 'ja');
     }
 
     function buildCharDataFilters() {
@@ -2608,7 +2646,7 @@ function loadPlayerData(playerName) {
                 if (f.is_distributed === 'false' && w.is_distributed) return false;
             }
             return true;
-        });
+        }).sort(compareWeaponDisplayOrder);
         if (filtered.length === 0) {
             container.innerHTML = '<p style="text-align:center;color:#95a5a6;">該当する武器がありません</p>';
             return;
