@@ -906,6 +906,46 @@ document.addEventListener('DOMContentLoaded', function() {
     let theaterOpeningCast = new Set();
     let theaterSpecialCast = new Set();
     let theaterSpecialSearchKeyword = '';
+    const kanjiCharacterReadings = {
+        "魈": "しょう",
+        "北斗": "ほくと",
+        "凝光": "ぎょうこう",
+        "香菱": "しゃんりん",
+        "行秋": "ゆくあき",
+        "重雲": "ちょううん",
+        "七七": "なな",
+        "刻晴": "こくせい",
+        "鍾離": "しょうり",
+        "辛炎": "しんえん",
+        "甘雨": "かんう",
+        "胡桃": "ふーたお",
+        "煙緋": "えんひ",
+        "申鶴": "しんかく",
+        "雲菫": "うんきん",
+        "夜蘭": "いぇらん",
+        "白朮": "びゃくじゅつ",
+        "閑雲": "かんうん",
+        "嘉明": "がみん",
+        "藍硯": "らんやん",
+        "兹白": "しはく",
+        "神里綾華": "かみさとあやか",
+        "神里綾人": "かみさとあやと",
+        "楓原万葉": "かえではらかずは",
+        "宵宮": "よいみや",
+        "早柚": "さゆ",
+        "雷電将軍": "らいでんしょうぐん",
+        "九条裟羅": "くじょうさら",
+        "珊瑚宮心海": "さんごのみやここみ",
+        "荒瀧一斗": "あらたきいっと",
+        "八重神子": "やえみこ",
+        "久岐忍": "くきしのぶ",
+        "鹿野院平蔵": "しかのいんへいぞう",
+        "綺良々": "きらら",
+        "千織": "ちおり",
+        "夢見月瑞希": "ゆめみづきみずき",
+        "放浪者": "ほうろうしゃ",
+        "旅人": "たびびと"
+    };
 
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
@@ -960,6 +1000,21 @@ document.addEventListener('DOMContentLoaded', function() {
             [copy[i], copy[j]] = [copy[j], copy[i]];
         }
         return copy;
+    }
+
+    function katakanaToHiragana(text) {
+        return String(text || '').replace(/[\u30a1-\u30f6]/g, s => String.fromCharCode(s.charCodeAt(0) - 0x60));
+    }
+
+    function normalizeNameSearchText(text) {
+        return katakanaToHiragana(String(text || '').trim().toLocaleLowerCase('ja'));
+    }
+
+    function getCharacterSearchTarget(name) {
+        const normalizedName = String(name || '').toLocaleLowerCase('ja');
+        const hiraganaName = katakanaToHiragana(normalizedName);
+        const reading = kanjiCharacterReadings[name] || '';
+        return `${normalizedName}\n${hiraganaName}\n${reading}`;
     }
 
     function isTraveler(charName) {
@@ -1141,9 +1196,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('theaterSpecialCastSelector');
         if (!container) return;
         container.innerHTML = '';
-        const normalizedKeyword = theaterSpecialSearchKeyword.toLocaleLowerCase('ja');
+        const normalizedKeyword = normalizeNameSearchText(theaterSpecialSearchKeyword);
         const candidates = getTheaterSpecialCandidates().filter(char => {
-            return !normalizedKeyword || char.name.toLocaleLowerCase('ja').includes(normalizedKeyword);
+            return !normalizedKeyword || getCharacterSearchTarget(char.name).includes(normalizedKeyword);
         });
         if (candidates.length === 0) {
             container.innerHTML = '<p style="grid-column:1/-1;color:#bdc3c7;">該当するキャラがいません。</p>';
@@ -1226,9 +1281,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const ownedSet = new Set(ownedInfo.owned.map(c => c.name));
-        const openingOwned = Array.from(theaterOpeningCast).filter(name => ownedSet.has(name));
-        if (openingOwned.length < 6) {
-            setModeMessage('theaterModeMessage', '開幕キャストに未所持キャラが含まれているよ！');
+        const specialOwned = Array.from(theaterSpecialCast).filter(name => ownedSet.has(name));
+        if (specialOwned.length < 4) {
+            setModeMessage('theaterModeMessage', '特別招待キャストに未所持キャラが含まれているよ！');
             return;
         }
 
@@ -1241,13 +1296,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (selectedElements.includes(char.element)) theaterCandidates.set(char.name, char);
         });
-        Array.from(theaterSpecialCast).forEach(name => {
-            if (ownedSet.has(name)) {
-                const char = characters.find(c => c.name === name);
-                if (!char || isDoll(char.name)) return;
-                if (isTraveler(char.name) && !canUseTravelerInTheater(selectedElements)) return;
-                theaterCandidates.set(char.name, char);
-            }
+        specialOwned.forEach(name => {
+            const char = characters.find(c => c.name === name);
+            if (!char || isDoll(char.name)) return;
+            if (isTraveler(char.name) && !canUseTravelerInTheater(selectedElements)) return;
+            theaterCandidates.set(char.name, char);
         });
 
         const difficulty = document.getElementById('theaterDifficultySelect').value;
@@ -1260,7 +1313,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const finalMembers = [...openingOwned];
+        const finalMembers = Array.from(theaterOpeningCast);
         const remaining = shuffleArray(candidateNames.filter(name => !finalMembers.includes(name)));
         while (finalMembers.length < targetCount && remaining.length > 0) {
             finalMembers.push(remaining.shift());
@@ -2538,8 +2591,9 @@ function loadPlayerData(playerName) {
         if (!container) return;
         container.innerHTML = '';
         const f = charDataFilters;
+        const normalizedNameFilter = normalizeNameSearchText(f.name);
         let filtered = characters.filter(c => {
-            if (f.name && !c.name.includes(f.name)) return false;
+            if (normalizedNameFilter && !getCharacterSearchTarget(c.name).includes(normalizedNameFilter)) return false;
             if (f.country && f.country !== '' && c.country !== f.country) return false;
             if (f.weapon && f.weapon !== '' && c.weapon !== f.weapon) return false;
             if (f.element && f.element !== '' && c.element !== f.element) return false;
