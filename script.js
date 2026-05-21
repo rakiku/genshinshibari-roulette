@@ -691,6 +691,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "塵と光の七つの誓約": "Luna VII (6.6)",
         "災憾": "Luna VII (6.6)"
     };
+    const weaponReleaseOrderMap = Object.fromEntries(
+        Object.keys(weaponReleaseVersionMap).map((weaponName, index) => [weaponName, index])
+    );
 
     Object.values(allWeapons).flat().forEach(weapon => {
         weapon.release_version = weaponReleaseVersionMap[weapon.name] || weapon.release_version || '';
@@ -2423,6 +2426,8 @@ function loadPlayerData(playerName) {
         if (rarityDiff !== 0) return rarityDiff;
         const versionDiff = parseReleaseVersionSortKey(a.release_version) - parseReleaseVersionSortKey(b.release_version);
         if (versionDiff !== 0) return versionDiff;
+        const releaseOrderDiff = (weaponReleaseOrderMap[a.name] ?? Number.MAX_SAFE_INTEGER) - (weaponReleaseOrderMap[b.name] ?? Number.MAX_SAFE_INTEGER);
+        if (releaseOrderDiff !== 0) return releaseOrderDiff;
         return String(a.name || '').localeCompare(String(b.name || ''), 'ja');
     }
 
