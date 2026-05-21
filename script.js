@@ -1035,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedElements = Array.from(theaterSelectedElements);
         return characters.filter(char => {
             if (isDoll(char.name)) return false;
-            if (isTraveler(char.name) && selectedElements.length > 0) return canUseTravelerInTheater(selectedElements);
+            if (isTraveler(char.name)) return canUseTravelerInTheater(selectedElements);
             return true;
         });
     }
@@ -1147,7 +1147,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         if (ownedInfo.owned.length < 8) {
-            setModeMessage('spiralModeMessage', '所持キャラが8人足りないよ！');
+            setModeMessage('spiralModeMessage', '所持キャラは8人以上必要です。');
             return;
         }
 
