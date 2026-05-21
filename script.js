@@ -197,9 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "スカーク", country: "例外", weapon: "片手剣", element: "氷", birth_month: "１１月", birthday: "11月5日", version: "n.7", rarity: ['☆５'], body: "長身女性", role: ["オンフィールドアタッカー"], energy: 0, talent_boss: "深淵なるミミック・パピラ", local_specialty: "岩裂の花", ascension_stat: "会心ダメージ", distributed: false, talent_book: "角逐", talent_weekly: "昇揚のサンプル「ナイト」", special_dish: "回復系", trace: false, costume: false, release_version: "5.7" },
         { name: "ドール", country: "例外", weapon: "片手剣", element: "その他", birth_month: "その他", birthday: "なし", version: "n.2", rarity: ['☆５'], body: ["中身男性", "中身女性"], role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "", local_specialty: "", ascension_stat: "攻撃力", distributed: false, talent_book: "", talent_weekly: "", special_dish: "", trace: false, costume: false , release_version: "Luna II (6.1)"},
         { name: "アーロイ", country: "例外", weapon: "弓", element: "氷", birth_month: "４月", birthday: "4月4日", version: "n.2", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 40, talent_boss: "無相の氷", local_specialty: "晶化骨髄", ascension_stat: "氷元素ダメージ", distributed: true, talent_book: "自由", talent_weekly: "溶滅の刻", special_dish: "回復系", trace: false, costume: false, release_version: "2.1" },
-        { name: "ニコ", country: "例外", weapon: "法器", element: "炎", birth_month: "９月", birthday: "9月29日", version: "n.6", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター","オフフィールドライフキーパー"], energy: "60", talent_boss: "昏き魘夢の主", local_specialty: "琥珀香", ascension_stat: "", distributed: false, talent_book: "楽園", talent_weekly: "あたらしい博士", special_dish: "", trace: false, costume: false, release_version: "Luna VII (6.6)" },
+        { name: "ニコ", country: "例外", weapon: "法器", element: "炎", birth_month: "９月", birthday: "9月29日", version: "n.6", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター","オフフィールドライフキーパー"], energy: "60", talent_boss: "昏き魘夢の主", local_specialty: "琥珀香", ascension_stat: "攻撃力", distributed: false, talent_book: "楽園", talent_weekly: "偽りの樹脂", special_dish: "スタミナ回復系", trace: false, costume: false, release_version: "Luna VII (6.6)" },
         { name: "ローエン", country: "モンド", weapon: "長柄武器", element: "氷", birth_month: "", birthday: "", version: "n.6", rarity: ['☆５'], body: "中身男性", role: ["オンフィールドアタッカー"], energy: "", talent_boss: "集光の月ヤモリ", local_specialty: "フェザーモス", ascension_stat: "", distributed: false, talent_book: "抗争", talent_weekly: "昇揚のサンプル「ナイト」", special_dish: "", trace: false, costume: false, release_version: "Luna VII (6.6)" },
-        { name: "プルーネ", country: "モンド", weapon: "法器", element: "風", birth_month: "", birthday: "", version: "n.6", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドサポーター"], energy:"70" , talent_boss: "霜夜の空を巡る霊主", local_specialty: "", ascension_stat: "", distributed: false, talent_book: "抗争", talent_weekly: "賢医の仮面", special_dish: "", trace: false, costume: false, release_version: "Luna VII (6.6)" }
+        { name: "プルーネ", country: "モンド", weapon: "法器", element: "風", birth_month: "１１月", birthday: "11月20日", version: "n.6", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドサポーター"], energy:"70" , talent_boss: "霜夜の空を巡る霊主", local_specialty: "ヴィンテル草", ascension_stat: "攻撃力", distributed: false, talent_book: "抗争", talent_weekly: "賢医の仮面", special_dish: "スタミナ軽減系", trace: false, costume: false, release_version: "Luna VII (6.6)" }
     ];
     const trainingRoadCharacterNames = new Set([
         "ジン", "ディルック", "七七", "モナ", "刻晴", "クレー", "タルタリヤ", "アルベド", "甘雨", "魈",
@@ -770,8 +770,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "魔像レガトゥス",
         "守護者・堕天",
         "黄金王獣"
+        "ドットーレ"
     ];
-    const weeklyBosses = ["博士","グーシートース", "キング＆クイーン", "召使", "吞星の鯨", "アペプ", "正機の神", "若陀龍王", "禍津御建鳴神命", "アンドリアス", "淑女", "公子"];
+    const weeklyBosses = ["ドットーレ","博士","グーシートース", "キング＆クイーン", "召使", "吞星の鯨", "アペプ", "正機の神", "若陀龍王", "禍津御建鳴神命", "アンドリアス", "淑女", "公子"];
     const elementColors = { "水": "#00c0fe", "炎": "#fe6640", "雷": "#cc85ff", "氷": "#74E4E2", "風": "#36d6a0", "岩": "#F3AC11", "草": "#8dcc06", "その他": "#808080" };
     const ownership100Characters = ["香菱", "旅人", "ガイア", "バーバラ", "コレイ", "ノエル", "リサ", "アンバー"];
     const initialCharacters = ["旅人", "リサ", "アンバー", "ガイア", "ノエル", "バーバラ", "レザー", "香菱", "北斗", "ベネット", "行秋", "凝光", "フィッシュル", "重雲", "スクロース", "ジン", "ディルック", "七七", "モナ", "刻晴", "ウェンティ", "クレー"];
