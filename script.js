@@ -1124,8 +1124,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('theaterSpecialCastSelector');
         if (!container) return;
         container.innerHTML = '';
+        const normalizedKeyword = theaterSpecialSearchKeyword.toLocaleLowerCase('ja');
         const candidates = getTheaterSpecialCandidates().filter(char => {
-            return !theaterSpecialSearchKeyword || char.name.includes(theaterSpecialSearchKeyword);
+            return !normalizedKeyword || char.name.toLocaleLowerCase('ja').includes(normalizedKeyword);
         });
         if (candidates.length === 0) {
             container.innerHTML = '<p style="grid-column:1/-1;color:#bdc3c7;">該当するキャラがいません。</p>';
