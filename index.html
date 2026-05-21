@@ -128,10 +128,6 @@
         <!-- 6. 螺旋モード -->
         <div id="spiralModeScreen" class="hidden">
             <h2>螺旋モード</h2>
-            <div class="mode-background-placeholder">
-                <img src="螺旋背景.png" alt="螺旋モード背景" onerror="this.style.display='none'">
-                <span>背景画像: 螺旋背景.png</span>
-            </div>
             <div class="mode-card">
                 <label for="spiralPlayerNameInput">プレイヤー名</label>
                 <input type="text" id="spiralPlayerNameInput" value="プレイヤー1" class="mode-text-input">
@@ -145,11 +141,11 @@
                 <h3>抽選結果</h3>
                 <div class="split-result-grid">
                     <div>
-                        <h4>上半</h4>
+                        <h4>前半</h4>
                         <div id="spiralTopResult" class="result-image-container"></div>
                     </div>
                     <div>
-                        <h4>下半</h4>
+                        <h4>後半</h4>
                         <div id="spiralBottomResult" class="result-image-container"></div>
                     </div>
                 </div>
@@ -159,10 +155,6 @@
         <!-- 7. 幻想シアターモード -->
         <div id="theaterModeScreen" class="hidden">
             <h2>幻想シアターモード</h2>
-            <div class="mode-background-placeholder">
-                <img src="シアター背景.png" alt="幻想シアター背景" onerror="this.style.display='none'">
-                <span>背景画像: シアター背景.png</span>
-            </div>
             <div class="mode-card">
                 <label for="theaterPlayerNameInput">プレイヤー名</label>
                 <input type="text" id="theaterPlayerNameInput" value="プレイヤー1" class="mode-text-input">
@@ -180,6 +172,8 @@
             <div class="mode-card">
                 <h3>3. 特別招待キャストを4人選択</h3>
                 <p>※未所持でも設定できますが、抽選では未所持は選ばれません。</p>
+                <label for="theaterSpecialSearchInput">名前で検索</label>
+                <input type="text" id="theaterSpecialSearchInput" class="mode-text-input" placeholder="特別招待キャストを検索">
                 <div id="theaterSpecialCastSelector" class="selection-grid character-selection-grid"></div>
             </div>
             <div class="mode-card">
@@ -273,6 +267,10 @@
                 　このルーレットでは縛りの中身のみをルーレットにすることができます。<br>
                 「カスタム縛り設定」<br>
                 　ここでは、自分で縛りの詳細を細かく設定することができます。<br>
+                「螺旋モード」<br>
+                　所持キャラ設定をしたプレイヤーの中から8人を抽選し、前半と後半の4人ずつに分けて編成を決めることができます。深境螺旋の編成決めを手早くしたいとき向けです。<br>
+                「幻想シアターモード」<br>
+                　対応元素、開幕キャスト、特別招待キャスト、難易度を設定して、その条件に合う所持キャラの中から候補を抽選できます。幻想シアターの編成を考えるとき向けです。<br>
                 「メンバーの所持状況設定」<br>
                 　ここでは、名前とキャラクターの所持、凸状況、武器の所持状況をあらかじめ設定することができます。設定をしておくとルーレットの抽選項目に反映され、非該当のものはルーレット項目に表示されなくなります。普段使いしてくれている方向けの機能です。<br>
                 ※ルーレットで抽選された項目はポップアップにて表示されます。その際、ポップアップをクリックもしくはタップすると閉じることができます。
