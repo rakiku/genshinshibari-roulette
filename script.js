@@ -1787,7 +1787,11 @@ function loadPlayerData(playerName) {
         typeHeader.style.borderBottom = '2px solid #3498db';
         weaponList.appendChild(typeHeader);
         
-        const weaponsOfType = allWeapons[weaponType];
+        const weaponsOfType = [...allWeapons[weaponType]].sort((a, b) => {
+            const versionDiff = parseReleaseVersionSortKey(a.release_version) - parseReleaseVersionSortKey(b.release_version);
+            if (versionDiff !== 0) return versionDiff;
+            return b.rarity - a.rarity;
+        });
         weaponsOfType.forEach(weapon => {
             const div = document.createElement('div');
             div.className = 'possession-item';
