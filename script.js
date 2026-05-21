@@ -67,7 +67,8 @@ function encodeImagePath(type, name) {
     const folderMap = {
         'boss': 'files/boss',
         'character': 'files/characters',
-        'weapon': 'files/weapons'
+        'weapon': 'files/weapons',
+        'element': 'files/elements'
     };
     const folder = folderMap[type];
     const cleanName = name.trim().replace(/\s+/g, '');
@@ -1073,9 +1074,22 @@ document.addEventListener('DOMContentLoaded', function() {
         container.innerHTML = '';
         theaterElements.forEach(element => {
             const chip = document.createElement('div');
-            chip.className = 'selection-chip';
+            chip.className = 'selection-chip element-chip';
             if (theaterSelectedElements.has(element)) chip.classList.add('selected');
-            chip.textContent = element;
+
+            const imgPath = encodeImagePath('element', element + '元素');
+            if (imgPath) {
+                const img = document.createElement('img');
+                img.src = imgPath;
+                img.alt = element;
+                img.onerror = function() { this.style.display = 'none'; };
+                chip.appendChild(img);
+            }
+            const span = document.createElement('span');
+            span.className = 'selection-chip-name';
+            span.textContent = element;
+            chip.appendChild(span);
+
             chip.addEventListener('click', () => {
                 if (theaterSelectedElements.has(element)) {
                     theaterSelectedElements.delete(element);

@@ -927,8 +927,46 @@ canvas { width: 100%; height: 100%; }
     transition: all 0.2s ease;
 }
 
-.result-card.clickable:hover {
-    background: rgba(52, 152, 219, 0.4);
-    border-color: #3498db;
-    transform: translateY(-2px);
+/* --- 元素チップ（幻想シアター元素選択）--- */
+.element-chip img {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: transparent;
+    display: block;
+    margin: 0 auto 6px;
+}
+
+/* --- HOME画面 右上モード切替エリア --- */
+#homeModeSwitcher {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+#homeModeSwitcher button {
+    background-color: #7d3c98;
+    font-size: 0.88em;
+    padding: 8px 14px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+#homeModeSwitcher button:hover {
+    background-color: #9b59b6;
+}
+
+@media (max-width: 480px) {
+    #homeModeSwitcher {
+        justify-content: center;
+        gap: 6px;
+    }
+    #homeModeSwitcher button {
+        font-size: 0.82em;
+        padding: 7px 11px;
+    }
 }
