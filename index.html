@@ -45,6 +45,8 @@
                 <button id="startBindButton">縛りルーレットのみ</button>
                 <button id="showBindSelectionButton">詳細縛り設定</button>
                 <button id="showCustomBindScreenButton">カスタム縛り設定</button>
+                <button id="startSpiralModeButton">螺旋モード</button>
+                <button id="startTheaterModeButton">幻想シアターモード</button>
             </div>
 
 
@@ -122,9 +124,84 @@
             <div id="retryContainer"></div>
             <button id="backToStartButton">最初に戻る</button>
         </div>
+
+        <!-- 6. 螺旋モード -->
+        <div id="spiralModeScreen" class="hidden">
+            <h2>螺旋モード</h2>
+            <div class="mode-background-placeholder">
+                <img src="螺旋背景.png" alt="螺旋モード背景" onerror="this.style.display='none'">
+                <span>背景画像: 螺旋背景.png</span>
+            </div>
+            <div class="mode-card">
+                <label for="spiralPlayerNameInput">プレイヤー名</label>
+                <input type="text" id="spiralPlayerNameInput" value="プレイヤー1" class="mode-text-input">
+                <div class="mode-button-row">
+                    <button id="openSpiralMemberSettingsButton" class="member-settings-button">所持キャラ設定</button>
+                    <button id="executeSpiralDrawButton">螺旋抽選</button>
+                </div>
+                <div id="spiralModeMessage" class="mode-message"></div>
+            </div>
+            <div id="spiralModeResult" class="mode-card hidden">
+                <h3>抽選結果</h3>
+                <div class="split-result-grid">
+                    <div>
+                        <h4>上半</h4>
+                        <div id="spiralTopResult" class="result-image-container"></div>
+                    </div>
+                    <div>
+                        <h4>下半</h4>
+                        <div id="spiralBottomResult" class="result-image-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. 幻想シアターモード -->
+        <div id="theaterModeScreen" class="hidden">
+            <h2>幻想シアターモード</h2>
+            <div class="mode-background-placeholder">
+                <img src="シアター背景.png" alt="幻想シアター背景" onerror="this.style.display='none'">
+                <span>背景画像: シアター背景.png</span>
+            </div>
+            <div class="mode-card">
+                <label for="theaterPlayerNameInput">プレイヤー名</label>
+                <input type="text" id="theaterPlayerNameInput" value="プレイヤー1" class="mode-text-input">
+                <button id="openTheaterMemberSettingsButton" class="member-settings-button">所持キャラ設定</button>
+            </div>
+            <div class="mode-card">
+                <h3>1. 対応元素を3つ選択</h3>
+                <div id="theaterElementSelector" class="selection-grid"></div>
+            </div>
+            <div class="mode-card">
+                <h3>2. 開幕キャストを6人選択</h3>
+                <p>※対応元素キャラのみ選択できます。</p>
+                <div id="theaterOpeningCastSelector" class="selection-grid character-selection-grid"></div>
+            </div>
+            <div class="mode-card">
+                <h3>3. 特別招待キャストを4人選択</h3>
+                <p>※未所持でも設定できますが、抽選では未所持は選ばれません。</p>
+                <div id="theaterSpecialCastSelector" class="selection-grid character-selection-grid"></div>
+            </div>
+            <div class="mode-card">
+                <h3>4. 難易度を選択</h3>
+                <select id="theaterDifficultySelect" class="mode-text-input">
+                    <option value="easy">イージー</option>
+                    <option value="normal" selected>ノーマル</option>
+                    <option value="hard">ハード</option>
+                    <option value="master">マスター</option>
+                    <option value="moon">月諭</option>
+                </select>
+                <button id="executeTheaterDrawButton">幻想シアター抽選</button>
+                <div id="theaterModeMessage" class="mode-message"></div>
+            </div>
+            <div id="theaterModeResult" class="mode-card hidden">
+                <h3>抽選結果</h3>
+                <div id="theaterResultList" class="result-image-container"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- 6. 所持状況設定モーダル -->
+    <!-- 8. 所持状況設定モーダル -->
     <div id="memberSettingsModal" class="modal-overlay hidden">
         <div class="modal-content large">
             <button class="close-button" id="closeMemberSettings">&times;</button>

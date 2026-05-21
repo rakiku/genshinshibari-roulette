@@ -885,6 +885,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let rerolledChars, rerolledWeapons, rerolledCommonWeapons, playerNames = [], bindSelectionPhase, bindsToResolve, excludedSubItems = {};
     let prerenderedRoulette = null, spinSpeed = 0, visualItems = [];
     let isWeeklyBossMode = false;
+    const theaterElements = ['炎', '水', '風', '雷', '草', '氷', '岩'];
+    const theaterDifficultySettings = {
+        easy: { label: 'イージー', min: 8, max: 10 },
+        normal: { label: 'ノーマル', min: 12, max: 14 },
+        hard: { label: 'ハード', min: 16, max: 20 },
+        master: { label: 'マスター', min: 22, max: 26 },
+        moon: { label: '月諭', min: 28, max: 32 }
+    };
+    let theaterSelectedElements = new Set();
+    let theaterOpeningCast = new Set();
+    let theaterSpecialCast = new Set();
 
     const canvas = document.getElementById('rouletteCanvas');
     const ctx = canvas.getContext('2d');
@@ -896,12 +907,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function showScreen(screenId) {
-        ['startScreen', 'bindSelection', 'rouletteScreen', 'resultScreen', 'customBindScreen'].forEach(id => {
+        ['startScreen', 'bindSelection', 'rouletteScreen', 'resultScreen', 'customBindScreen', 'spiralModeScreen', 'theaterModeScreen'].forEach(id => {
             const el = document.getElementById(id);
             if(el) el.classList.add('hidden');
         });
         const target = document.getElementById(screenId);
         if(target) target.classList.remove('hidden');
+        const homeButton = document.getElementById('homeButton');
+        if (homeButton) {
+            if (screenId === 'startScreen') homeButton.classList.add('hidden');
+            else homeButton.classList.remove('hidden');
+        }
     }
     
     function initialize() {
@@ -914,6 +930,304 @@ document.addEventListener('DOMContentLoaded', function() {
         rerolledWeapons = Array(playerCount + 1).fill(0).map(() => ({}));
         rerolledCommonWeapons = []; excludedSubItems = {};
         bindSelectionPhase = false; bindsToResolve = [];
+    }
+
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    function isTraveler(charName) {
+        return charName === '旅人';
+    }
+
+    function isDoll(charName) {
+        return charName === 'ドール';
+    }
+
+    function canUseTravelerInTheater(selectedElements) {
+        return selectedElements.some(el => el !== '氷');
+    }
+
+    function getPlayerOwnedCharacters(playerName) {
+        const pData = playerPossession[playerName];
+        if (!pData) return { exists: false, owned: [] };
+        const owned = characters.filter(char => !isDoll(char.name) && pData.chars[char.name] && pData.chars[char.name].owned === true);
+        return { exists: true, owned };
+    }
+
+    function setModeMessage(elementId, message) {
+        const msgEl = document.getElementById(elementId);
+        if (msgEl) msgEl.textContent = message;
+    }
+
+    function createCharacterCard(char, selected, disabled) {
+        const card = document.createElement('div');
+        card.className = 'selection-chip';
+        if (selected) card.classList.add('selected');
+        if (disabled) card.classList.add('disabled');
+
+        const img = document.createElement('img');
+        const imagePath = encodeImagePath('character', char.name);
+        if (imagePath) {
+            img.src = imagePath;
+            img.alt = char.name;
+            img.onerror = function() { this.style.display = 'none'; };
+        } else {
+            img.style.display = 'none';
+        }
+        card.appendChild(img);
+
+        const label = document.createElement('span');
+        label.className = 'selection-chip-name';
+        label.textContent = char.name;
+        card.appendChild(label);
+        return card;
+    }
+
+    function renderResultCards(containerId, charNames) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        charNames.forEach(name => {
+            const card = document.createElement('div');
+            card.className = 'result-card';
+            const img = document.createElement('img');
+            img.className = 'result-mini-image';
+            const imagePath = encodeImagePath('character', name);
+            if (imagePath) {
+                img.src = imagePath;
+                img.alt = name;
+                img.onerror = function() { this.style.display = 'none'; };
+            } else {
+                img.style.display = 'none';
+            }
+            card.appendChild(img);
+            const span = document.createElement('span');
+            span.textContent = name;
+            card.appendChild(span);
+            container.appendChild(card);
+        });
+    }
+
+    function openMemberSettingsFromMode(inputId) {
+        const nameInput = document.getElementById(inputId);
+        const playerName = (nameInput && nameInput.value.trim()) || 'プレイヤー1';
+        showMemberSettings();
+        const modalInput = document.getElementById('modalPlayerNameInput');
+        if (modalInput) modalInput.value = playerName;
+    }
+
+    function getTheaterOpeningCandidates() {
+        const selectedElements = Array.from(theaterSelectedElements);
+        return characters.filter(char => {
+            if (isDoll(char.name)) return false;
+            if (isTraveler(char.name)) return canUseTravelerInTheater(selectedElements);
+            return selectedElements.includes(char.element);
+        });
+    }
+
+    function getTheaterSpecialCandidates() {
+        const selectedElements = Array.from(theaterSelectedElements);
+        return characters.filter(char => {
+            if (isDoll(char.name)) return false;
+            if (isTraveler(char.name) && selectedElements.length > 0) return canUseTravelerInTheater(selectedElements);
+            return true;
+        });
+    }
+
+    function syncTheaterSelections() {
+        const openingValid = new Set(getTheaterOpeningCandidates().map(c => c.name));
+        theaterOpeningCast = new Set(Array.from(theaterOpeningCast).filter(name => openingValid.has(name)).slice(0, 6));
+        const specialValid = new Set(getTheaterSpecialCandidates().map(c => c.name));
+        theaterSpecialCast = new Set(Array.from(theaterSpecialCast).filter(name => specialValid.has(name)).slice(0, 4));
+    }
+
+    function renderTheaterElementSelector() {
+        const container = document.getElementById('theaterElementSelector');
+        if (!container) return;
+        container.innerHTML = '';
+        theaterElements.forEach(element => {
+            const chip = document.createElement('div');
+            chip.className = 'selection-chip';
+            if (theaterSelectedElements.has(element)) chip.classList.add('selected');
+            chip.textContent = element;
+            chip.addEventListener('click', () => {
+                if (theaterSelectedElements.has(element)) {
+                    theaterSelectedElements.delete(element);
+                } else {
+                    if (theaterSelectedElements.size >= 3) {
+                        setModeMessage('theaterModeMessage', '元素は3つまで選択できます。');
+                        return;
+                    }
+                    theaterSelectedElements.add(element);
+                }
+                syncTheaterSelections();
+                setModeMessage('theaterModeMessage', '');
+                renderTheaterSelectors();
+            });
+            container.appendChild(chip);
+        });
+    }
+
+    function renderTheaterOpeningSelector() {
+        const container = document.getElementById('theaterOpeningCastSelector');
+        if (!container) return;
+        container.innerHTML = '';
+        const candidates = getTheaterOpeningCandidates();
+        if (theaterSelectedElements.size === 0) {
+            container.innerHTML = '<p style="grid-column:1/-1;color:#bdc3c7;">先に元素を選択してください。</p>';
+            return;
+        }
+        candidates.forEach(char => {
+            const selected = theaterOpeningCast.has(char.name);
+            const card = createCharacterCard(char, selected, false);
+            card.addEventListener('click', () => {
+                if (theaterOpeningCast.has(char.name)) {
+                    theaterOpeningCast.delete(char.name);
+                } else {
+                    if (theaterOpeningCast.size >= 6) {
+                        setModeMessage('theaterModeMessage', '開幕キャストは6人までです。');
+                        return;
+                    }
+                    theaterOpeningCast.add(char.name);
+                }
+                setModeMessage('theaterModeMessage', '');
+                renderTheaterSelectors();
+            });
+            container.appendChild(card);
+        });
+    }
+
+    function renderTheaterSpecialSelector() {
+        const container = document.getElementById('theaterSpecialCastSelector');
+        if (!container) return;
+        container.innerHTML = '';
+        const candidates = getTheaterSpecialCandidates();
+        candidates.forEach(char => {
+            const selected = theaterSpecialCast.has(char.name);
+            const card = createCharacterCard(char, selected, false);
+            card.addEventListener('click', () => {
+                if (theaterSpecialCast.has(char.name)) {
+                    theaterSpecialCast.delete(char.name);
+                } else {
+                    if (theaterSpecialCast.size >= 4) {
+                        setModeMessage('theaterModeMessage', '特別招待キャストは4人までです。');
+                        return;
+                    }
+                    theaterSpecialCast.add(char.name);
+                }
+                setModeMessage('theaterModeMessage', '');
+                renderTheaterSelectors();
+            });
+            container.appendChild(card);
+        });
+    }
+
+    function renderTheaterSelectors() {
+        renderTheaterElementSelector();
+        renderTheaterOpeningSelector();
+        renderTheaterSpecialSelector();
+    }
+
+    function executeSpiralDraw() {
+        const playerInput = document.getElementById('spiralPlayerNameInput');
+        const playerName = (playerInput && playerInput.value.trim()) || 'プレイヤー1';
+        if (playerInput) playerInput.value = playerName;
+        const resultBox = document.getElementById('spiralModeResult');
+        if (resultBox) resultBox.classList.add('hidden');
+
+        const ownedInfo = getPlayerOwnedCharacters(playerName);
+        if (!ownedInfo.exists) {
+            setModeMessage('spiralModeMessage', 'この名前の所持データがないよ！所持キャラ設定をしてね。');
+            return;
+        }
+        if (ownedInfo.owned.length < 8) {
+            setModeMessage('spiralModeMessage', '所持キャラが8人足りないよ！');
+            return;
+        }
+
+        const selected = shuffleArray(ownedInfo.owned).slice(0, 8).map(c => c.name);
+        renderResultCards('spiralTopResult', selected.slice(0, 4));
+        renderResultCards('spiralBottomResult', selected.slice(4, 8));
+        if (resultBox) resultBox.classList.remove('hidden');
+        setModeMessage('spiralModeMessage', `${playerName} の螺旋抽選が完了しました。`);
+    }
+
+    function executeTheaterDraw() {
+        const playerInput = document.getElementById('theaterPlayerNameInput');
+        const playerName = (playerInput && playerInput.value.trim()) || 'プレイヤー1';
+        if (playerInput) playerInput.value = playerName;
+        const resultBox = document.getElementById('theaterModeResult');
+        if (resultBox) resultBox.classList.add('hidden');
+
+        if (theaterSelectedElements.size !== 3) {
+            setModeMessage('theaterModeMessage', '対応元素を3つ選んでください。');
+            return;
+        }
+        if (theaterOpeningCast.size !== 6) {
+            setModeMessage('theaterModeMessage', '開幕キャストを6人選んでください。');
+            return;
+        }
+        if (theaterSpecialCast.size !== 4) {
+            setModeMessage('theaterModeMessage', '特別招待キャストを4人選んでください。');
+            return;
+        }
+
+        const ownedInfo = getPlayerOwnedCharacters(playerName);
+        if (!ownedInfo.exists) {
+            setModeMessage('theaterModeMessage', 'この名前の所持データがないよ！所持キャラ設定をしてね。');
+            return;
+        }
+
+        const ownedSet = new Set(ownedInfo.owned.map(c => c.name));
+        const openingOwned = Array.from(theaterOpeningCast).filter(name => ownedSet.has(name));
+        if (openingOwned.length < 6) {
+            setModeMessage('theaterModeMessage', '開幕キャストに未所持キャラが含まれているよ！');
+            return;
+        }
+
+        const selectedElements = Array.from(theaterSelectedElements);
+        const theaterCandidates = new Map();
+        ownedInfo.owned.forEach(char => {
+            if (isTraveler(char.name)) {
+                if (canUseTravelerInTheater(selectedElements)) theaterCandidates.set(char.name, char);
+                return;
+            }
+            if (selectedElements.includes(char.element)) theaterCandidates.set(char.name, char);
+        });
+        Array.from(theaterSpecialCast).forEach(name => {
+            if (ownedSet.has(name)) {
+                const char = characters.find(c => c.name === name);
+                if (!char || isDoll(char.name)) return;
+                if (isTraveler(char.name) && !canUseTravelerInTheater(selectedElements)) return;
+                theaterCandidates.set(char.name, char);
+            }
+        });
+
+        const difficulty = document.getElementById('theaterDifficultySelect').value;
+        const setting = theaterDifficultySettings[difficulty] || theaterDifficultySettings.normal;
+        const candidateNames = Array.from(theaterCandidates.keys());
+        const targetCount = Math.min(setting.max, candidateNames.length);
+
+        if (targetCount < setting.min) {
+            setModeMessage('theaterModeMessage', 'キャラが足りないよ！');
+            return;
+        }
+
+        const finalMembers = [...openingOwned];
+        const remaining = shuffleArray(candidateNames.filter(name => !finalMembers.includes(name)));
+        while (finalMembers.length < targetCount && remaining.length > 0) {
+            finalMembers.push(remaining.shift());
+        }
+
+        renderResultCards('theaterResultList', finalMembers);
+        if (resultBox) resultBox.classList.remove('hidden');
+        setModeMessage('theaterModeMessage', `${setting.label}で${finalMembers.length}人を抽選しました。`);
     }
 
     function updateDisplayInfo() {
@@ -1590,6 +1904,24 @@ document.addEventListener('DOMContentLoaded', function() {
         else startNextSelectedBind(); 
     }
 
+    function showSpiralMode() {
+        const input = document.getElementById('spiralPlayerNameInput');
+        if (input && !input.value.trim()) input.value = 'プレイヤー1';
+        setModeMessage('spiralModeMessage', '');
+        document.getElementById('spiralModeResult').classList.add('hidden');
+        showScreen('spiralModeScreen');
+    }
+
+    function showTheaterMode() {
+        const input = document.getElementById('theaterPlayerNameInput');
+        if (input && !input.value.trim()) input.value = 'プレイヤー1';
+        syncTheaterSelections();
+        renderTheaterSelectors();
+        setModeMessage('theaterModeMessage', '');
+        document.getElementById('theaterModeResult').classList.add('hidden');
+        showScreen('theaterModeScreen');
+    }
+
     function backToStart() {
         spinning = false;
         // Reset popup completely
@@ -1893,6 +2225,12 @@ function loadPlayerData(playerName) {
         isWeeklyBossMode = document.getElementById('weeklyBossModeCustom').checked;
         executeCustomBinds();
     });
+    document.getElementById('startSpiralModeButton').addEventListener('click', showSpiralMode);
+    document.getElementById('startTheaterModeButton').addEventListener('click', showTheaterMode);
+    document.getElementById('executeSpiralDrawButton').addEventListener('click', executeSpiralDraw);
+    document.getElementById('executeTheaterDrawButton').addEventListener('click', executeTheaterDraw);
+    document.getElementById('openSpiralMemberSettingsButton').addEventListener('click', () => openMemberSettingsFromMode('spiralPlayerNameInput'));
+    document.getElementById('openTheaterMemberSettingsButton').addEventListener('click', () => openMemberSettingsFromMode('theaterPlayerNameInput'));
     document.getElementById('showMemberSettingsButton').addEventListener('click', showMemberSettings);
     
     const goToSettingsBtn = document.getElementById('goToSettingsButton');
@@ -1914,6 +2252,8 @@ function loadPlayerData(playerName) {
     document.getElementById('closeAboutButton').addEventListener('click', closeAbout);
 
     updatePlayerNameInputs();
+    showScreen('startScreen');
+    renderTheaterSelectors();
     function startRoulette(rouletteMode) {
         initialize();
         mode = rouletteMode;
