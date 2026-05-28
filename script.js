@@ -2178,18 +2178,10 @@ function loadPlayerData(playerName) {
         countryHeader.style.borderBottom = '2px solid #3498db';
         charList.appendChild(countryHeader);
         
-        // Filter and sort characters: ☆5 first, then ☆4
+        // Filter and sort characters: rarity, then release order, then name
         const countryChars = characters
             .filter(c => c.country === country)
-            .sort((a, b) => {
-                // Check if character has ☆5 in their rarity array
-                const aIsFiveStar = a.rarity.some(r => r.includes('☆５'));
-                const bIsFiveStar = b.rarity.some(r => r.includes('☆５'));
-                
-                if (aIsFiveStar && !bIsFiveStar) return -1;
-                if (!aIsFiveStar && bIsFiveStar) return 1;
-                return 0; // Keep original order within same rarity
-            });
+            .sort(compareCharacterDisplayOrder);
             
         countryChars.forEach(char => {
             const div = document.createElement('div');
@@ -2535,6 +2527,21 @@ function loadPlayerData(playerName) {
         return String(a.name || '').localeCompare(String(b.name || ''), 'ja');
     }
 
+    function getCharacterDisplayRarity(char) {
+        const rarityList = Array.isArray(char?.rarity) ? char.rarity : [char?.rarity];
+        if (rarityList.some(rarity => String(rarity || '').includes('☆５'))) return 5;
+        if (rarityList.some(rarity => String(rarity || '').includes('☆４'))) return 4;
+        return 0;
+    }
+
+    function compareCharacterDisplayOrder(a, b) {
+        const rarityDiff = getCharacterDisplayRarity(b) - getCharacterDisplayRarity(a);
+        if (rarityDiff !== 0) return rarityDiff;
+        const versionDiff = parseReleaseVersionSortKey(a.release_version) - parseReleaseVersionSortKey(b.release_version);
+        if (versionDiff !== 0) return versionDiff;
+        return String(a.name || '').localeCompare(String(b.name || ''), 'ja');
+    }
+
     function buildCharDataFilters() {
         const container = document.getElementById('charDataFilters');
         if (!container) return;
@@ -2678,7 +2685,7 @@ function loadPlayerData(playerName) {
                 if (f.costume === 'false' && c.costume) return false;
             }
             return true;
-        });
+        }).sort(compareCharacterDisplayOrder);
         if (filtered.length === 0) {
             container.innerHTML = '<p style="text-align:center;color:#95a5a6;">該当するキャラクターがいません</p>';
             return;
