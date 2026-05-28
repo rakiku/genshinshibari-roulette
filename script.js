@@ -2520,6 +2520,11 @@ function loadPlayerData(playerName) {
         return lunaMatch ? parseFloat(lunaMatch[1]) + 100 : parseFloat(versionValue) || 0;
     }
 
+    function getEnemyMaterialList(char) {
+        if (!char) return [];
+        return Array.isArray(char.enemy_material) ? char.enemy_material : (char.enemy_material ? [char.enemy_material] : []);
+    }
+
     function compareWeaponDisplayOrder(a, b) {
         const rarityDiff = (b.rarity || 0) - (a.rarity || 0);
         if (rarityDiff !== 0) return rarityDiff;
@@ -2548,7 +2553,7 @@ function loadPlayerData(playerName) {
             { key: 'energy', label: 'エネルギー', type: 'select', values: () => ['', ...[...new Set(characters.map(c => c.energy))].sort((a,b) => a-b)] },
             { key: 'talent_boss', label: 'ボス素材', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.talent_boss).filter(b => b))])] },
             { key: 'local_specialty', label: '特産品', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.local_specialty).filter(l => l))])] },
-            { key: 'enemy_material', label: '敵素材', type: 'select', values: () => ['', ...jpSort([...new Set(characters.flatMap(c => Array.isArray(c.enemy_material) ? c.enemy_material : (c.enemy_material ? [c.enemy_material] : [])))])] },
+            { key: 'enemy_material', label: '敵素材', type: 'select', values: () => ['', ...jpSort([...new Set(characters.flatMap(c => getEnemyMaterialList(c)))])] },
             { key: 'ascension_stat', label: '突破ステータス', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.ascension_stat).filter(s => s))])] },
             { key: 'talent_book', label: '天賦', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.talent_book).filter(b => b && !b.includes('/')))])] },
             { key: 'talent_weekly', label: '週ボス素材', type: 'select', values: () => ['', ...jpSort([...new Set(characters.map(c => c.talent_weekly).filter(w => w && !w.includes('/')))])] },
@@ -2649,7 +2654,7 @@ function loadPlayerData(playerName) {
             if (f.talent_boss && f.talent_boss !== '' && c.talent_boss !== f.talent_boss) return false;
             if (f.local_specialty && f.local_specialty !== '' && c.local_specialty !== f.local_specialty) return false;
             if (f.enemy_material && f.enemy_material !== '') {
-                const eList = Array.isArray(c.enemy_material) ? c.enemy_material : (c.enemy_material ? [c.enemy_material] : []);
+                const eList = getEnemyMaterialList(c);
                 if (!eList.includes(f.enemy_material)) return false;
             }
             if (f.ascension_stat && f.ascension_stat !== '' && c.ascension_stat !== f.ascension_stat) return false;
@@ -2790,7 +2795,7 @@ function loadPlayerData(playerName) {
         const rarityText = Array.isArray(char.rarity) ? char.rarity.join(' / ') : (char.rarity || '');
         const bodyText = Array.isArray(char.body) ? char.body.join(' / ') : (char.body || '');
         const roleText = Array.isArray(char.role) ? char.role.join('、') : (char.role || '');
-        const enemyMaterialText = Array.isArray(char.enemy_material) ? char.enemy_material.join(' / ') : (char.enemy_material || '');
+        const enemyMaterialText = getEnemyMaterialList(char).join(' / ');
         const birthday = char.birthday || '';
         const fields = [
             { label: '国', value: char.country || '' },
