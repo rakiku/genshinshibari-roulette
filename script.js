@@ -202,11 +202,15 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: "ニコ", country: "例外", weapon: "法器", element: "炎", birth_month: "９月", birthday: "9月29日", version: "n.6", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター","オフフィールドライフキーパー"], energy: "60", talent_boss: "昏き魘夢の主", local_specialty: "琥珀香", ascension_stat: "攻撃力", distributed: false, talent_book: "楽園", talent_weekly: "偽りの樹脂", special_dish: "スタミナ回復系", trace: false, costume: false, enemy_material: ["破損した徽章"], training_road: false, release_version: "Luna VII (6.6)" },
         { name: "ローエン", country: "モンド", weapon: "長柄武器", element: "氷", birth_month: "４月", birthday: "4月3日", version: "n.6", rarity: ['☆５'], body: "中身男性", role: ["オンフィールドアタッカー"], energy: "60", talent_boss: "集光の月ヤモリ", local_specialty: "フェザーモス", ascension_stat: "会心ダメージ", distributed: false, talent_book: "抗争", talent_weekly: "昇揚のサンプル「ナイト」", special_dish: "復活系", trace: false, costume: false, enemy_material: ["牢固な矢先"], training_road: false, release_version: "Luna VII (6.6)" },
         { name: "サンドローネ", country: "スネージナヤ", weapon: "両手剣", element: "氷", birth_month: "１月", birthday: "1月13日", version: "n.7", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "守護者・堕天", local_specialty: "探測ユニット・子機", ascension_stat: "会心率", distributed: false, talent_book: "流浪", talent_weekly: "狂人の誓約", special_dish: "スタミナ軽減系", trace: false, costume: false, enemy_material: ["破損した駆動軸"], training_road: false, release_version: "Luna VIII(6.7)" },
+        { name: "オデット", country: "スネージナヤ", weapon: "片手剣", element: "氷", birth_month: "２月", birthday: "2月20日", version: "n.0", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドアタッカー"], energy: 60, talent_boss: "不滅派生創造物", local_specialty: "フロストフラワー", ascension_stat: "会心ダメージ", distributed: true, talent_book: "慈愛", talent_weekly: "歪曲した枯れ枝", special_dish: "攻撃系", trace: false, costume: false, enemy_material: ["幻造蛍屑"], training_road: false, release_version: "7.0" },
+       { name: "アリョーシャ", country: "スネージナヤ", weapon: "長柄武器", element: "雷", birth_month: "２月", birthday: "2月9日", version: "n.0", rarity: ['☆５'], body: "中身男性", role: ["オフフィールドサポーター","オフフィールドライフキーパー"], energy: 70, talent_boss: "キメラ・フリューゲルレーヴェ", local_specialty: "フロック草", ascension_stat: "元素チャージ効率", distributed: true, talent_book: "堅忍", talent_weekly: "異端の薬瓶", special_dish: "スタミナ軽減系", trace: false, costume: false, enemy_material: ["異種合成魔獣"], training_road: false, release_version: "7.0" },
         { name: "プルーネ", country: "モンド", weapon: "法器", element: "風", birth_month: "１１月", birthday: "11月20日", version: "n.6", rarity: ['☆４'], body: "ロリ", role: ["オフフィールドサポーター"], energy:"70" , talent_boss: "霜夜の空を巡る霊主", local_specialty: "ヴィンテル草", ascension_stat: "攻撃力", distributed: false, talent_book: "抗争", talent_weekly: "賢医の仮面", special_dish: "スタミナ軽減系", trace: false, costume: false, enemy_material: ["宝探しの鴉マーク"], training_road: false, release_version: "Luna VII (6.6)" }    ];
 
     const allWeapons = {
         "長柄武器": [
             { name: "聖祭者の輝杖", rarity: 4, type: "長柄武器", ascension_stat: "会心率", is_distributed: false },
+            { name: "氷の吐息", rarity: 4, type: "長柄武器", ascension_stat: "元素チャージ効率", is_distributed: false },
+            { name: "遠望の歌", rarity: 4, type: "長柄武器", ascension_stat: "元素熟知", is_distributed: false },
             { name: "血染めの荒れ地", rarity: 5, type: "長柄武器", ascension_stat: "会心率", is_distributed: false },
             { name: "金堀りのシャベル", rarity: 4, type: "長柄武器", ascension_stat: "攻撃力", is_distributed: false },
             { name: "香りのシンフォニスト", rarity: 5, type: "長柄武器", ascension_stat: "会心ダメージ", is_distributed: false },
@@ -249,6 +253,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "災憾", rarity: 5, type: "長柄武器", ascension_stat: "会心率", is_distributed: false }
         ],
         "法器": [
+            { name: "胸中の谺", rarity: 4, type: "法器", ascension_stat: "攻撃力", is_distributed: false },
+            { name: "諸王の対局", rarity: 4, type: "法器", ascension_stat: "会心率", is_distributed: false },
             { name: "帳の夜曲", rarity: 5, type: "法器", ascension_stat: "会心ダメージ", is_distributed: false },
             { name: "真言の匣", rarity: 5, type: "法器", ascension_stat: "会心ダメージ", is_distributed: false },
             { name: "霜辰", rarity: 4, type: "法器", ascension_stat: "会心ダメージ", is_distributed: false },
@@ -302,6 +308,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "塵と光の七つの誓約", rarity: 5, type: "法器", ascension_stat: "攻撃力", is_distributed: false }
         ],
         "弓": [
+            { name: "霜雪の契", rarity: 4, type: "弓", ascension_stat: "防御力", is_distributed: false },
+            { name: "千鈞懸黎", rarity: 4, type: "弓", ascension_stat: "会心率", is_distributed: false },
             { name: "霜契の金枝", rarity: 5, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false },
             { name: "暁を告げる歴史", rarity: 5, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false },
             { name: "虹蛇の雨弦", rarity: 4, type: "弓", ascension_stat: "元素チャージ効率", is_distributed: true },
@@ -351,6 +359,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "文使い", rarity: 3, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false }
         ],
         "両手剣": [
+            { name: "救済の剣", rarity: 4, type: "両手剣", ascension_stat: "攻撃力", is_distributed: false },
+            { name: "シンフォニーの鋳影", rarity: 4, type: "両手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "狼の武勲詩", rarity: 5, type: "両手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "超越の鍵", rarity: 5, type: "両手剣", ascension_stat: "会心ダメージ", is_distributed: false },
             { name: "万能の鍵", rarity: 4, type: "両手剣", ascension_stat: "元素チャージ効率", is_distributed: false },
@@ -396,6 +406,10 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "理屈責め", rarity: 3, type: "両手剣", ascension_stat: "攻撃力", is_distributed: false }
         ],
         "片手剣": [
+            { name: "星鋒の剣", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
+            { name: "白銀の湖を舞う翼", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
+            { name: "導炎の源", rarity: 4, type: "片手剣", ascension_stat: "元素熟知", is_distributed: false },
+            { name: "異端を狩る溶刀", rarity: 4, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "三日月の含光", rarity: 5, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },
             { name: "黒蝕", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "月紡ぎの曙光", rarity: 4, type: "片手剣", ascension_stat: "攻撃力", is_distributed: false },
