@@ -700,7 +700,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "霜契の金枝": "Luna VI (6.5)",
         "塵と光の七つの誓約": "Luna VII (6.6)",
         "災憾": "Luna VII (6.6)",
-        "超越の鍵": "Luna VIII (6.7)"
+        "超越の鍵": "Luna VIII (6.7)",
         "星鋒の剣": "7.0",
  　　　  "白銀の湖を舞う翼":"7.0",
  　　　  "霜雪の契": "7.0",
