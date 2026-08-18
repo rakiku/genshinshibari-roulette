@@ -701,6 +701,18 @@ document.addEventListener('DOMContentLoaded', function() {
         "塵と光の七つの誓約": "Luna VII (6.6)",
         "災憾": "Luna VII (6.6)",
         "超越の鍵": "Luna VIII (6.7)"
+        "星鋒の剣": "7.0",
+ 　　　  "白銀の湖を舞う翼":"7.0",
+ 　　　  "霜雪の契": "7.0",
+ 　　　  "千鈞懸黎": "7.0",
+ 　　　  "胸中の谺": "7.0",
+ 　　　  "諸王の対局": "7.0",
+  　　　 "遠望の歌": "7.0",
+  　　　 "氷の吐息":"7.0",
+  　　　 "救済の剣": "7.0",
+  　　　　"シンフォニーの鋳影": "7.0",
+  　　　　"導炎の源": "7.0",
+  　　　　"異端を狩る熔刃": "7.0",
     };
     const weaponReleaseOrderMap = Object.fromEntries(
         Object.keys(weaponReleaseVersionMap).map((weaponName, index) => [weaponName, index])
@@ -791,6 +803,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "黄金王獣",
         "ムーシュ＝テヒル",
         "プリズムスライム",
+        "チュリン",
+        "バンダースナッチ",
+        "フュリオサ",
         "ドットーレ"
     ];
     const weeklyBosses = ["ドットーレ","博士","グーシートース", "キング＆クイーン", "召使", "吞星の鯨", "アペプ", "正機の神", "若陀龍王", "禍津御建鳴神命", "アンドリアス", "淑女", "公子"];
