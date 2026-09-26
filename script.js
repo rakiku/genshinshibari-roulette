@@ -200,7 +200,9 @@ document.addEventListener('DOMContentLoaded', function() {
   { name: "ニコ", country: "例外", weapon: "法器", element: "炎", birth_month: "９月", birthday: "9月29日", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター", "オフフィールドライフキーパー"], energy: 60, talent_boss: "昏き魘夢の主", local_specialty: "琥珀香", ascension_stat: "攻撃力", distributed: false, talent_book: "楽園", talent_weekly: "偽りの樹脂", special_dish: "スタミナ回復系", trace: false, costume: false, enemy_material: ["破損した徽章"], training_road: false, release_version: "Luna VII (6.6)" },
   { name: "サンドローネ", country: "スネージナヤ", weapon: "両手剣", element: "氷", birth_month: "１月", birthday: "1月13日", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "守護者・堕天", local_specialty: "探測ユニット・子機", ascension_stat: "会心率", distributed: false, talent_book: "流浪", talent_weekly: "狂人の誓約", special_dish: "スタミナ軽減系", trace: false, costume: false, enemy_material: ["破損した駆動軸"], training_road: false, release_version: "Luna VIII (6.7)" }, 
   { name: "アリョーシャ", country: "スネージナヤ", weapon: "長柄武器", element: "雷", birth_month: "２月", birthday: "2月9日", version: "n.0", rarity: ['☆４'], body: "中身男性", role: ["オフフィールドサポーター","オフフィールドライフキーパー"], energy: 70, talent_boss: "合成獣・フリューゲルレーヴェ", local_specialty: "フロック草", ascension_stat: "元素チャージ効率", distributed: true, talent_book: "堅忍", talent_weekly: "異端の薬瓶", special_dish: "スタミナ軽減系", trace: false, costume: false, enemy_material: ["異種合成魔獣"], training_road: false, release_version: "7.0" },
-  { name: "オデット", country: "スネージナヤ", weapon: "片手剣", element: "氷", birth_month: "２月", birthday: "2月20日", version: "n.0", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドアタッカー"], energy: 60, talent_boss: "不滅派生創造物", local_specialty: "フロストフラワー", ascension_stat: "会心ダメージ", distributed: true, talent_book: "慈愛", talent_weekly: "歪曲した枯れ枝", special_dish: "攻撃系", trace: false, costume: false, enemy_material: ["幻造蛍屑"], training_road: false, release_version: "7.0" },
+  { name: "オデット", country: "スネージナヤ", weapon: "片手剣", element: "氷", birth_month: "２月", birthday: "2月20日", version: "n.0", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドアタッカー"], energy: 60, talent_boss: "不滅派生創造物", local_specialty: "フロストフラワー", ascension_stat: "会心ダメージ", distributed: false, talent_book: "慈愛", talent_weekly: "歪曲した枯れ枝", special_dish: "攻撃系", trace: false, costume: false, enemy_material: ["幻造蛍屑"], training_road: false, release_version: "7.0" },
+  { name: "ヴォジャニーツァ", country: "スネージナヤ", weapon: "法器", element: "水", birth_month: "３月", birthday: "3月29日", version: "n.1", rarity: ['☆５'], body: "中身女性", role: ["オフフィールドサポーター","オフフィールドライフキーパー"], energy: 60, talent_boss: "不滅の副産物", local_specialty: "フロストフラワー", ascension_stat: "HP", distributed: false, talent_book: "不屈", talent_weekly: "狂人の誓約", special_dish: "継続回復系", trace: false, costume: false, enemy_material: ["合成獣のコア"], training_road: false, release_version: "7.1" },
+　{ name: "ヴェスナ", country: "スネージナヤ", weapon: "片手剣", element: "風", birth_month: "２月", birthday: "2月14日", version: "n.1", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "遊雪の刃", local_specialty: "ザラトイアリャーク", ascension_stat: "HP", distributed: false, talent_book: "栄光", talent_weekly: "冒涜の新芽", special_dish: "防御系", trace: false, costume: false, enemy_material: ["幻光の屑"], training_road: false, release_version: "7.1" },
   { name: "旅人", country: "例外", weapon: "片手剣", element: "その他", birth_month: "その他", birthday: "なし", rarity: ['☆５'], body: "中身男性/中身女性", role: ["オンフィールドアタッカー"], energy: 60, talent_boss: "", local_specialty: "風車アスター", ascension_stat: "攻撃力", distributed: true, talent_book: "自由", talent_weekly: "", special_dish: "", trace: false, costume: true, enemy_material: [], training_road: false, release_version: "1.0", displayNames: ["空", "蛍"], enabled: false },
   { name: "スカーク", country: "例外", weapon: "片手剣", element: "氷", birth_month: "１１月", birthday: "11月5日", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 0, talent_boss: "深淵なるミミック・パピラ", local_specialty: "岩裂の花", ascension_stat: "会心ダメージ", distributed: false, talent_book: "角逐", talent_weekly: "昇揚のサンプル「ナイト」", special_dish: "回復系", trace: false, costume: false, enemy_material: ["整合の歯車"], training_road: false, release_version: "5.7" },
   { name: "アーロイ", country: "例外", weapon: "弓", element: "氷", birth_month: "４月", birthday: "4月4日", rarity: ['☆５'], body: "中身女性", role: ["オンフィールドアタッカー"], energy: 40, talent_boss: "無相の氷", local_specialty: "晶化骨髄", ascension_stat: "氷元素ダメージ", distributed: true, talent_book: "自由", talent_weekly: "溶滅の刻", special_dish: "回復系", trace: false, costume: false, enemy_material: ["フライムの乾核"], training_road: false, release_version: "2.1", enabled: false },
@@ -254,6 +256,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "災憾", rarity: 5, type: "長柄武器", ascension_stat: "会心率", is_distributed: false }
         ],
         "法器": [
+            { name: "旋流の讃美歌", rarity: 5, type: "法器", ascension_stat: "HP", is_distributed: false },
+            { name: "雪に沈む心", rarity: 4, type: "法器", ascension_stat: "会心ダメージ", is_distributed: false },
             { name: "胸中の谺", rarity: 4, type: "法器", ascension_stat: "攻撃力", is_distributed: false },
             { name: "諸王の対局", rarity: 4, type: "法器", ascension_stat: "会心率", is_distributed: false },
             { name: "帳の夜曲", rarity: 5, type: "法器", ascension_stat: "会心ダメージ", is_distributed: false },
@@ -309,6 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "塵と光の七つの誓約", rarity: 5, type: "法器", ascension_stat: "攻撃力", is_distributed: false }
         ],
         "弓": [
+            { name: "風に遊ぶ弦", rarity: 4, type: "弓", ascension_stat: "会心率", is_distributed: false },
             { name: "霜雪の契", rarity: 4, type: "弓", ascension_stat: "防御力", is_distributed: false },
             { name: "千鈞懸黎", rarity: 4, type: "弓", ascension_stat: "会心率", is_distributed: false },
             { name: "霜契の金枝", rarity: 5, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false },
@@ -360,6 +365,9 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "文使い", rarity: 3, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false }
         ],
         "両手剣": [
+            { name: "蝶の羽化", rarity: 5, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },
+            { name: "新たなる枝", rarity: 4, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },
+            { name: "銀灯", rarity: 4, type: "片手剣", ascension_stat: "攻撃力", is_distributed: true },
             { name: "救済の剣", rarity: 4, type: "両手剣", ascension_stat: "攻撃力", is_distributed: false },
             { name: "シンフォニーの鋳影", rarity: 4, type: "両手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "狼の武勲詩", rarity: 5, type: "両手剣", ascension_stat: "会心率", is_distributed: false },
@@ -713,6 +721,13 @@ document.addEventListener('DOMContentLoaded', function() {
   　　　　"シンフォニーの鋳影": "7.0",
   　　　　"導炎の源": "7.0",
   　　　　"異端を狩る熔刃": "7.0",
+        "蝶の羽化": "7.1",
+        "旋流の讃美歌": "7.1",
+        "風に遊ぶ弦": "7.1",
+        "雪に沈む心": "7.1",
+        "銀灯": "7.1",
+        "新たなる枝": "7.1",
+        
     };
     const weaponReleaseOrderMap = Object.fromEntries(
         Object.keys(weaponReleaseVersionMap).map((weaponName, index) => [weaponName, index])
@@ -727,6 +742,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "チャールデリック",
         "マハーヴァスデヴァーヤヴァ太子",
         "アペプ",
+        "遊雪の刃",
         "アンドリアス",
         "エンシェントヴィシャップ・岩",
         "キング＆クイーン",
