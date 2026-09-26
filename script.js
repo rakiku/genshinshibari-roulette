@@ -365,9 +365,6 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "文使い", rarity: 3, type: "弓", ascension_stat: "会心ダメージ", is_distributed: false }
         ],
         "両手剣": [
-            { name: "蝶の羽化", rarity: 5, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },
-            { name: "新たなる枝", rarity: 4, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },
-            { name: "銀灯", rarity: 4, type: "片手剣", ascension_stat: "攻撃力", is_distributed: true },
             { name: "救済の剣", rarity: 4, type: "両手剣", ascension_stat: "攻撃力", is_distributed: false },
             { name: "シンフォニーの鋳影", rarity: 4, type: "両手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "狼の武勲詩", rarity: 5, type: "両手剣", ascension_stat: "会心率", is_distributed: false },
@@ -415,6 +412,9 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: "理屈責め", rarity: 3, type: "両手剣", ascension_stat: "攻撃力", is_distributed: false }
         ],
         "片手剣": [
+            { name: "蝶の羽化", rarity: 5, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },
+            { name: "新たなる枝", rarity: 4, type: "片手剣", ascension_stat: "会心ダメージ", is_distributed: false },
+            { name: "銀灯", rarity: 4, type: "片手剣", ascension_stat: "攻撃力", is_distributed: true },
             { name: "星鋒の剣", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "白銀の湖を舞う翼", rarity: 5, type: "片手剣", ascension_stat: "会心率", is_distributed: false },
             { name: "導炎の源", rarity: 4, type: "片手剣", ascension_stat: "元素熟知", is_distributed: false },
